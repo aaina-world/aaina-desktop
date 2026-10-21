@@ -1,7 +1,7 @@
 name: App end to end
 
 # Builds the real app on fresh Windows and Linux machines and drives it like a person would (WebDriver through
-# tauri-driver on Linux, the WebView2 DevTools port on Windows):
+# tauri-driver on Linux, the WebView2 DevTools port of a test build on Windows):
 # welcome, connecting OpenAI (a made-up key that OpenAI must refuse, so the app really reaches OpenAI and the key goes
 # through the system keychain), the photos folder, the studio catalogue, models, a new shoot, settings, and opening the
 # app again. Before that, the keychain itself is tested with a long value (Credential Manager, GNOME Keyring).
@@ -37,7 +37,13 @@ jobs:
             webkit2gtk-driver xvfb dbus-x11 gnome-keyring
       - run: npm ci
       - name: Build the app
+        if: runner.os == 'Linux'
         run: npx tauri build --no-bundle
+      - name: Build the app (with the DevTools port the test uses)
+        if: runner.os == 'Windows'
+        run: |
+          node e2e-app/windows-config.mjs
+          npx tauri build --no-bundle --config e2e-app/windows.conf.json
       - name: Install tauri-driver
         if: runner.os == 'Linux'
         run: cargo install tauri-driver --locked

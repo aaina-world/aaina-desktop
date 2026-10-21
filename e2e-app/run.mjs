@@ -11,8 +11,8 @@ const OUT = join(import.meta.dirname, "out");
 mkdirSync(OUT, { recursive: true });
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-// Two ways in: WebDriver through tauri-driver (Linux, WebKitGTK), or the WebView2 DevTools port (Windows), opened by
-// starting the app with WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS. Both offer the same four things: start, run, shot, quit.
+// Two ways in: WebDriver through tauri-driver (Linux, WebKitGTK), or the WebView2 DevTools port (Windows), which the
+// Windows test build opens on 9222 (see e2e-app/windows-config.mjs). Both offer the same four things: start, run, shot, quit.
 const USE_CDP = process.platform === "win32";
 
 async function wd(method, path, body) {
@@ -45,7 +45,7 @@ async function start() {
     session = s.sessionId;
     return;
   }
-  app = spawn(APP, [], { env: { ...process.env, WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS: "--remote-debugging-port=9222" }, stdio: "ignore" });
+  app = spawn(APP, [], { stdio: "ignore" });
   const end = Date.now() + 60_000;
   let page;
   while (!page && Date.now() < end) {
@@ -155,7 +155,7 @@ check("a key OpenAI refuses is refused (the app reaches api.openai.com)", async 
   const t = await text();
   if (!/didn't accept/i.test(t)) throw new Error("OpenAI could not be reached from the app");
   await shot("key-refused");
-  await click("Skip for now");
+  await click("Continue");
 });
 check("the photos folder has a place, and setup finishes", async () => {
   await sees("Where should photos go?");
