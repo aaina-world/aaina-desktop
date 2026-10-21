@@ -39,7 +39,7 @@ jobs:
           ls -la *.png
           mkdir -p logs; cp -r ~/.local/share/world.aaina.desktop/logs/* logs/ 2>/dev/null || true
           find ~/.local/share/world.aaina.desktop ~/.config/world.aaina.desktop -maxdepth 2 2>/dev/null | head -50
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: linux-check
           path: |

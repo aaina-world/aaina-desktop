@@ -31,6 +31,8 @@ export async function checkForUpdate(current: string, fetcher: Fetcher): Promise
   const release = (await response.json()) as { tag_name?: unknown; html_url?: unknown; draft?: unknown; prerelease?: unknown };
   if (typeof release.tag_name !== "string" || typeof release.html_url !== "string" || release.draft || release.prerelease)
     return { kind: "latest" };
+  // Only ever send people to this project's own release pages.
+  if (!/^https:\/\/github\.com\/aaina-world\/aaina-desktop\/releases\/tag\/v?[\w.-]+$/.test(release.html_url)) return { kind: "latest" };
   return isNewer(release.tag_name, current)
     ? { kind: "newer", version: release.tag_name.replace(/^v/i, ""), url: release.html_url }
     : { kind: "latest" };

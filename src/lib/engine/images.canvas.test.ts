@@ -5,12 +5,12 @@ import { prepareInput, readingSample, renderForSave, UPLOAD_MAX_BYTES } from "./
 beforeEach(() => installCanvas());
 
 describe("prepareInput", () => {
-  it("sends a small picture as it is", async () => {
+  it("draws a small picture again at its own size, so nothing hidden in the file (location, camera) is sent", async () => {
     const png = fakePng(800, 600);
     const out = await prepareInput(png);
     expect(out).toMatchObject({ mime: "image/png", width: 800, height: 600 });
-    expect(out.bytes).toBe(png);
-    expect(canvases).toHaveLength(0);
+    expect(out.bytes).not.toBe(png);
+    expect(canvases[0]).toMatchObject({ width: 800, height: 600 });
   });
   it("scales a big picture down to 1536 on the longest side and sends a JPEG", async () => {
     const out = await prepareInput(fakePng(4000, 3000));

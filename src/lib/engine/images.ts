@@ -146,15 +146,23 @@ async function encode(canvas: Canvas, type: "image/png" | "image/jpeg", quality?
 
 export type Prepared = { bytes: Uint8Array; mime: "image/png" | "image/jpeg" | "image/webp"; width: number; height: number };
 
-/** Prepares a picture to send: as is when small enough, else longest side 1536 as a JPEG (flattened on white). */
+/**
+ * Prepares a picture to send. It is always drawn again, so nothing hidden in the file (location, camera, dates) goes
+ * along: small enough pictures keep their size (JPEG stays JPEG, anything else becomes PNG so transparency survives),
+ * bigger ones become longest side 1536 as a JPEG (flattened on white).
+ */
 export async function prepareInput(bytes: Uint8Array): Promise<Prepared> {
   const mime = mimeOf(bytes);
   if (!mime) throw new Error("That file is not a picture OpenAI can read. Use a JPEG, PNG or WebP photo.");
   const bmp = await decode(bytes, mime);
   const { width: w, height: h } = bmp;
   if (Math.max(w, h) <= UPLOAD_MAX_SIDE && bytes.length <= UPLOAD_MAX_BYTES) {
+    const c = newCanvas(w, h);
+    c.getContext("2d")!.drawImage(bmp, 0, 0);
     bmp.close();
-    return { bytes, mime, width: w, height: h };
+    return mime === "image/jpeg"
+      ? { bytes: await encode(c, "image/jpeg", 0.95), mime: "image/jpeg", width: w, height: h }
+      : { bytes: await encode(c, "image/png"), mime: "image/png", width: w, height: h };
   }
   const size = fitInside(w, h);
   const c = newCanvas(size.width, size.height);

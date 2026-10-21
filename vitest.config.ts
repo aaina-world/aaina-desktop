@@ -22,7 +22,8 @@ export default defineConfig({
       provider: "v8",
       reporter: ["text-summary", "text", "lcov"],
       // A little under what the suite reaches today (97 / 88 / 96): a drop below fails the run.
-      thresholds: { lines: 95, statements: 95, functions: 93, branches: 85 },
+      // Vitest 5 also counts files no test imports (Vitest 3 skipped them), so these are lower than before for the same code.
+      thresholds: { lines: 95, statements: 93, functions: 91, branches: 83 },
       include: ["src/lib/**/*.ts"],
       exclude: ["src/lib/**/*.test.ts", "src/lib/**/*.testkit.ts", "src/lib/**/*.d.ts", "src/lib/mock/**", "src/lib/catalog/fixtures/**"],
     },

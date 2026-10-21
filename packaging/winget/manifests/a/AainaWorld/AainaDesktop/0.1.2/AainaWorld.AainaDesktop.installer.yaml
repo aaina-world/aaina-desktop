@@ -3,7 +3,7 @@ PackageIdentifier: AainaWorld.AainaDesktop
 PackageVersion: 0.1.2
 InstallerLocale: en-US
 MinimumOSVersion: 10.0.17763.0
-ReleaseDate: 2026-10-22
+ReleaseDate: 2026-10-21
 Installers:
   - Architecture: x64
     InstallerType: nullsoft

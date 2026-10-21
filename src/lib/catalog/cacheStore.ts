@@ -17,6 +17,25 @@ export interface CacheStore {
   clear(): Promise<void>;
 }
 
+const TOP = new Set(["lists", "img", "sheets"]);
+const SEGMENT = /^[A-Za-z0-9_-][A-Za-z0-9._-]{0,127}$/;
+
+/**
+ * A name the cache may use: plain segments under lists/, img/ or sheets/, or a file at the top. Nothing that could
+ * reach outside the cache folder (no "..", no leading dot, no absolute path, no drive letter, no backslash).
+ */
+export function isCacheName(name: string): boolean {
+  if (name.length > 200) return false;
+  const parts = name.split("/");
+  if (parts.length > 4 || !parts.every((p) => SEGMENT.test(p))) return false;
+  return parts.length === 1 ? name.endsWith(".json") : TOP.has(parts[0]);
+}
+
+function checked(name: string): string {
+  if (!isCacheName(name)) throw new Error(`Not a catalogue cache name: ${JSON.stringify(name.slice(0, 80))}`);
+  return name;
+}
+
 /** The store in `<app data>/catalog-cache`. Reads the folder once to know what is cached. */
 export async function createDiskStore(root: string): Promise<CacheStore> {
   await mkdir(root, { recursive: true });
@@ -34,7 +53,7 @@ export async function createDiskStore(root: string): Promise<CacheStore> {
   // Only the picture folders are indexed up front; they are the ones asked about by name, often.
   for (const folder of ["img", "sheets", "lists"]) await scan(await join(root, folder), `${folder}/`);
 
-  const path = async (name: string) => join(root, name);
+  const path = async (name: string) => join(root, checked(name));
   async function ensureParent(name: string) {
     const slash = name.lastIndexOf("/");
     if (slash > 0) await mkdir(await join(root, name.slice(0, slash)), { recursive: true });
@@ -46,7 +65,7 @@ export async function createDiskStore(root: string): Promise<CacheStore> {
       return (await exists(full)) ? readTextFile(full) : null;
     },
     async writeText(name, text) {
-      await ensureParent(name);
+      await ensureParent(checked(name));
       await writeTextFile(await path(name), text);
       sizes.set(name, text.length);
     },
@@ -55,13 +74,13 @@ export async function createDiskStore(root: string): Promise<CacheStore> {
       return (await exists(full)) ? readFile(full) : null;
     },
     async writeBytes(name, bytes) {
-      await ensureParent(name);
+      await ensureParent(checked(name));
       await writeFile(await path(name), bytes);
       sizes.set(name, bytes.length);
     },
-    has: (name) => sizes.has(name),
+    has: (name) => isCacheName(name) && sizes.has(name),
     // The root is fixed for the run, so the address can be built without waiting.
-    urlFor: (name) => convertFileSrc(`${root}/${name}`),
+    urlFor: (name) => convertFileSrc(`${root}/${checked(name)}`),
     async size() {
       let total = 0;
       for (const value of sizes.values()) total += value;

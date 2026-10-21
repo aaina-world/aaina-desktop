@@ -20,7 +20,7 @@ export function createEngineStore(data: Pick<DataLayer, "photos" | "shoots" | "p
     async readPhotoFile(photo) {
       if (!photo.path) throw new Error("That photo isn't finished.");
       const root = (await data.photos.rootOf(photo.id)) ?? (await data.settings.photosFolder());
-      return data.files.readAbsolute(await data.files.join(root, photo.path));
+      return data.files.readAbsolute(await data.files.photoPath(root, photo.path));
     },
   };
 }

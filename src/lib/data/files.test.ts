@@ -109,3 +109,12 @@ describe("folders", () => {
     expect(await files.appRoot()).toBe("/data");
   });
 });
+
+describe("stored paths", () => {
+  it("accept plain relative paths and refuse anything that could leave the folder", async () => {
+    const { insideRelative } = await import("./files");
+    expect(insideRelative("Shoot/photo-v1.png")).toBe("Shoot/photo-v1.png");
+    for (const bad of ["", "../x.png", "a/../../x", "/etc/passwd", "C:/Windows/x", "a\\b", "a//b", "./x"])
+      expect(() => insideRelative(bad)).toThrow(/outside Aaina's folders/);
+  });
+});

@@ -23,4 +23,10 @@ describe("Tauri capabilities", () => {
     expect(used.size).toBeGreaterThan(0);
     expect([...used].filter((fn) => !allowed.has(`fs:allow-${kebab(fn)}`))).toEqual([]);
   });
+  it("never give the page the whole home or Pictures folder", () => {
+    const scope = capability.permissions.find((p) => typeof p === "object" && p.identifier === "fs:scope") as { allow: { path: string }[] };
+    const paths = scope.allow.map((a) => a.path);
+    for (const broad of ["$HOME/**", "$HOME", "$PICTURE/**", "$DOCUMENT/**", "$DESKTOP/**", "**"]) expect(paths).not.toContain(broad);
+    expect(paths.every((p) => /^\$(APPDATA|APPCONFIG|APPLOCALDATA|DOWNLOAD)|Aaina|\/Downloads/.test(p))).toBe(true);
+  });
 });

@@ -20,8 +20,17 @@ describe("checkForUpdate", () => {
     expect(await checkForUpdate("0.1.0", answer(404))).toEqual({ kind: "latest" });
   });
   it("offers a newer release with its page", async () => {
-    const r = await checkForUpdate("0.1.0", answer(200, { tag_name: "v0.2.0", html_url: "https://github.com/x/y/releases/tag/v0.2.0" }));
-    expect(r).toEqual({ kind: "newer", version: "0.2.0", url: "https://github.com/x/y/releases/tag/v0.2.0" });
+    const page = "https://github.com/aaina-world/aaina-desktop/releases/tag/v0.2.0";
+    const r = await checkForUpdate("0.1.0", answer(200, { tag_name: "v0.2.0", html_url: page }));
+    expect(r).toEqual({ kind: "newer", version: "0.2.0", url: page });
+  });
+  it("never sends people anywhere but this project's release pages", async () => {
+    for (const html_url of [
+      "https://github.com/x/y/releases/tag/v0.2.0",
+      "https://evil.example/aaina-world/aaina-desktop/releases/tag/v0.2.0",
+      "javascript:alert(1)",
+    ])
+      expect(await checkForUpdate("0.1.0", answer(200, { tag_name: "v0.2.0", html_url }))).toEqual({ kind: "latest" });
   });
   it("ignores the same version, drafts and pre-releases", async () => {
     expect(await checkForUpdate("0.2.0", answer(200, { tag_name: "v0.2.0", html_url: "u" }))).toEqual({ kind: "latest" });

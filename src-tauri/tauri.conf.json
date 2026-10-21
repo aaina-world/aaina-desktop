@@ -33,10 +33,10 @@
         "enable": true,
         "scope": [
           "$APPDATA/**",
-          "$PICTURE/**",
-          "$HOME/**",
+          "$APPLOCALDATA/**",
           "$APPCONFIG/**",
-          "$APPLOCALDATA/**"
+          "$PICTURE/Aaina/**",
+          "$HOME/Pictures/Aaina/**"
         ]
       }
     }

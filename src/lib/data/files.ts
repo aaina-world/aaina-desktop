@@ -12,12 +12,25 @@ export type ImportedPhoto = { path: string; width: number; height: number };
 
 export type Files = ReturnType<typeof createFiles>;
 
+/**
+ * A path stored relative to one of the app's folders (in the database, or in a backup): plain names only, so it can
+ * never point outside that folder. Throws for an absolute path, a drive letter, a backslash or a ".." part.
+ */
+export function insideRelative(relative: string): string {
+  const parts = relative.split("/");
+  if (!relative || /^[a-zA-Z]:/.test(relative) || relative.includes("\\") || parts.some((p) => p === "" || p === "." || p === ".."))
+    throw new Error("A stored file path points outside Aaina's folders.");
+  return relative;
+}
+
 export function createFiles() {
   let root: string | null = null;
   const appRoot = async () => (root ??= await appDataDir());
 
   /** Absolute path of a file stored relative to the app data folder. */
-  const appPath = async (relative: string) => join(await appRoot(), relative);
+  const appPath = async (relative: string) => join(await appRoot(), insideRelative(relative));
+  /** Absolute path of a finished photo, stored relative to its photos folder. */
+  const photoPath = async (photosFolder: string, relative: string) => join(photosFolder, insideRelative(relative));
 
   async function ensureFolders(): Promise<void> {
     for (const folder of APP_FOLDERS) await mkdir(await appPath(folder), { recursive: true });
@@ -99,7 +112,7 @@ export function createFiles() {
     if (await exists(absolutePath)) await remove(absolutePath, { recursive: true });
   }
   const removeApp = async (relative: string) => removeIfExists(await appPath(relative));
-  const removePhotoFile = async (photosFolder: string, relative: string) => removeIfExists(await join(photosFolder, relative));
+  const removePhotoFile = async (photosFolder: string, relative: string) => removeIfExists(await photoPath(photosFolder, relative));
 
   const reveal = (absolutePath: string) => revealItemInDir(absolutePath);
 
@@ -114,26 +127,38 @@ export function createFiles() {
     return total;
   }
 
-  /** Copies a folder tree (backup and restore). */
+  /**
+   * Copies a folder tree (backup and restore). Never overwrites a file that is already there, and skips links and any
+   * name that isn't a plain file name, so a folder from elsewhere can't reach outside `to`.
+   */
   async function copyTree(from: string, to: string): Promise<void> {
     if (!(await exists(from))) return;
     await mkdir(to, { recursive: true });
     for (const entry of await readDir(from)) {
+      if (entry.isSymlink || !entry.name || entry.name === "." || entry.name === ".." || /[\\/]/.test(entry.name)) continue;
       const source = await join(from, entry.name);
       const target = await join(to, entry.name);
       if (entry.isDirectory) await copyTree(source, target);
-      else await copyFile(source, target);
+      else if (!(await exists(target))) await copyFile(source, target);
     }
   }
 
   const ensureDir = (absolute: string) => mkdir(absolute, { recursive: true });
+  /** Whether the app may use this folder (false when it is outside the folders it was given). A missing folder is fine. */
+  const reachable = (absolute: string) =>
+    exists(absolute).then(
+      () => true,
+      () => false,
+    );
   const copyOne = (from: string, to: string) => copyFile(from, to);
 
   return {
     ensureDir,
+    reachable,
     copyOne,
     appRoot,
     appPath,
+    photoPath,
     appUrl,
     urlFor,
     ensureFolders,

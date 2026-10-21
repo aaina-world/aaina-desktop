@@ -229,7 +229,9 @@ check("after quitting and opening again, setup is remembered", async () => {
 
 if (KEY)
   check("a real photo is made (one standard photo, about $0.06)", async () => {
-    const product = join(homedir(), "aaina-e2e-dress.webp");
+    // In Pictures/Aaina: the app may only read its own folders and what a person picks or drops.
+    mkdirSync(join(homedir(), "Pictures", "Aaina"), { recursive: true });
+    const product = join(homedir(), "Pictures", "Aaina", "aaina-e2e-dress.webp");
     copyFileSync(new URL("../src/lib/mock/img/demo-dress-product.webp", import.meta.url), product);
     // A test can't use the system's file window, so the photo arrives the way a photo dropped on the window does: the
     // app opens a new shoot with the dropped paths (useStartShoot), here through the router's own history state.

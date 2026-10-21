@@ -555,7 +555,7 @@ export function SettingsScreen() {
       {restoring && (
         <ConfirmDialog
           title="Restore this backup?"
-          description={`Your shoots, products, models and photos are replaced with the ones in “${restoring.split(/[\\/]/).pop()}”, and the app restarts. Back up first if you might want what is here now.`}
+          description={`Your shoots, products and models are replaced with the ones in “${restoring.split(/[\\/]/).pop()}”, and the app restarts. Its photos are copied into your photos folder${settings?.photosFolder ? ` (${settings.photosFolder})` : ""}, and files already there are never overwritten. Back up first if you might want what is here now.`}
           confirmLabel="Restore and restart"
           onClose={() => setRestoring(null)}
           onConfirm={() => restore(restoring)}

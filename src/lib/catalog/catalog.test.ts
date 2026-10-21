@@ -107,6 +107,29 @@ describe("catalogue", () => {
     expect(await catalog.models()).toEqual([]);
   });
 
+  it("refuses list names from the catalogue that could reach outside the cache, and writes nothing", async () => {
+    for (const bad of ["../../review-marker.json", "lists/../../x.json", "/etc/x.json", "C:/x.json", "lists/models.json"]) {
+      const net = network();
+      const evil = { ...current, lists: { ...current.lists, models: bad } };
+      const get: HttpGet = async (url) =>
+        url === `${B}current.json`
+          ? net.get(`${B}${current.lists.models}`).then((r) => ({ ...r, text: async () => JSON.stringify(evil) }))
+          : net.get(url);
+      const store = memoryStore();
+      const catalog = createCatalogCore({ store, get, offlineWanted: async () => false });
+      expect((await catalog.refresh()).state).toBe("never-loaded");
+      expect([...store.files.keys()].filter((k) => k !== "meta.json")).toEqual([]);
+      expect(net.hits.some((h) => h.includes(".."))).toBe(false);
+    }
+  });
+
+  it("ignores a cached pointer that names a list outside the cache", async () => {
+    const store = memoryStore();
+    store.files.set("current.json", JSON.stringify({ ...current, lists: { ...current.lists, models: "../../x.json" } }));
+    const catalog = make(store, network({ down: true }));
+    expect((await catalog.refresh()).state).toBe("never-loaded");
+  });
+
   it("pictureBytes fetches a pose picture at 1080 once and caches it", async () => {
     const store = memoryStore();
     const net = network();

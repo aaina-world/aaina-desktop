@@ -1,7 +1,7 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
-  "description": "Capability for the main window",
+  "description": "Capability for the main window. Files: only the app's own folders, Pictures/Aaina and Downloads, plus files and folders chosen in a file window or dropped on the window.",
   "windows": [
     "main"
   ],
@@ -24,19 +24,46 @@
       "identifier": "fs:scope",
       "allow": [
         {
+          "path": "$APPDATA"
+        },
+        {
           "path": "$APPDATA/**"
         },
         {
-          "path": "$PICTURE/**"
-        },
-        {
-          "path": "$HOME/**"
+          "path": "$APPCONFIG"
         },
         {
           "path": "$APPCONFIG/**"
         },
         {
+          "path": "$APPLOCALDATA"
+        },
+        {
           "path": "$APPLOCALDATA/**"
+        },
+        {
+          "path": "$PICTURE/Aaina"
+        },
+        {
+          "path": "$PICTURE/Aaina/**"
+        },
+        {
+          "path": "$HOME/Pictures/Aaina"
+        },
+        {
+          "path": "$HOME/Pictures/Aaina/**"
+        },
+        {
+          "path": "$DOWNLOAD"
+        },
+        {
+          "path": "$DOWNLOAD/**"
+        },
+        {
+          "path": "$HOME/Downloads"
+        },
+        {
+          "path": "$HOME/Downloads/**"
         }
       ]
     },

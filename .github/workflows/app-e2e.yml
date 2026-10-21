@@ -13,9 +13,9 @@ on:
   workflow_dispatch:
 
 # With the OPENAI_API_KEY secret, releases and manual runs also make one real photo per system (about $0.06 each).
-# Everyday pushes never get the key.
-env:
-  OPENAI_API_KEY: ${{ (github.event_name != 'push' || startsWith(github.ref, 'refs/tags/')) && secrets.OPENAI_API_KEY || '' }}
+# Everyday pushes never get the key, and it is given only to the step that drives the app, never to installs or builds.
+permissions:
+  contents: read
 
 jobs:
   e2e:
@@ -25,13 +25,15 @@ jobs:
         platform: [windows-latest, ubuntu-22.04]
     runs-on: ${{ matrix.platform }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22
           cache: npm
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: swatinem/rust-cache@v2
+      - uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable
+        with:
+          toolchain: stable
+      - uses: swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
         with:
           workspaces: src-tauri
       - name: Install Linux packages
@@ -53,13 +55,21 @@ jobs:
         if: runner.os == 'Linux'
         run: cargo install tauri-driver --locked
 
-      - name: Keychain and app (Linux)
+      - name: Keychain (Linux)
         if: runner.os == 'Linux'
+        run: |
+          dbus-run-session -- bash -c '
+            set -e
+            printf e2e | gnome-keyring-daemon --unlock --components=secrets --daemonize > /dev/null
+            cargo test --manifest-path src-tauri/Cargo.toml -- --ignored'
+      - name: App (Linux)
+        if: runner.os == 'Linux'
+        env:
+          OPENAI_API_KEY: ${{ (github.event_name != 'push' || startsWith(github.ref, 'refs/tags/')) && secrets.OPENAI_API_KEY || '' }}
         run: |
           xvfb-run -a -s "-screen 0 1440x900x24" dbus-run-session -- bash -c '
             set -e
             printf e2e | gnome-keyring-daemon --unlock --components=secrets --daemonize > /dev/null
-            cargo test --manifest-path src-tauri/Cargo.toml -- --ignored
             tauri-driver > e2e-app/driver.log 2>&1 &
             sleep 3
             node e2e-app/run.mjs "$PWD/src-tauri/target/release/aaina-desktop"'
@@ -69,12 +79,14 @@ jobs:
         run: cargo test --manifest-path src-tauri/Cargo.toml -- --ignored
       - name: App (Windows)
         if: runner.os == 'Windows'
+        env:
+          OPENAI_API_KEY: ${{ (github.event_name != 'push' || startsWith(github.ref, 'refs/tags/')) && secrets.OPENAI_API_KEY || '' }}
         run: node e2e-app/run.mjs "$PWD\src-tauri\target\release\aaina-desktop.exe"
         shell: pwsh
 
       - name: Keep the screenshots
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: e2e-${{ matrix.platform }}
           path: |
@@ -87,13 +99,15 @@ jobs:
   mac:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22
           cache: npm
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: swatinem/rust-cache@v2
+      - uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable
+        with:
+          toolchain: stable
+      - uses: swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
         with:
           workspaces: src-tauri
       - run: npm ci
@@ -112,7 +126,7 @@ jobs:
           kill $app
       - name: Keep the screenshot
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: e2e-macos
           path: e2e-app/out/

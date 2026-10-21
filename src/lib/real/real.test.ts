@@ -629,10 +629,10 @@ describe("settings, backup and starting over", () => {
     putFile("/Backups/.keep", "");
     const folder = await api.backup("/Backups");
     expect(folder).toMatch(/^\/Backups\/Aaina backup /);
-    putFile(`${folder}/aaina.db`, "restored-db");
+    putFile(`${folder}/aaina.db`, "SQLite format 3\u0000restored-db");
     await api.restore(folder);
     expect(h.relaunch).toHaveBeenCalled();
-    expect(new TextDecoder().decode(vfs.get("/data/aaina.db")!)).toBe("restored-db");
+    expect(new TextDecoder().decode(vfs.get("/data/aaina.db")!)).toBe("SQLite format 3\u0000restored-db");
     await expect(api.restore("/not-a-backup")).rejects.toThrow(/not an Aaina backup/);
   });
   it("deleting everything forgets rows, folders and keychain entries but leaves finished photo files", async () => {

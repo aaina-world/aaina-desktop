@@ -42,7 +42,7 @@ export function createFilesApi({
       await writeImage(await readPhotoFile(photo));
     },
     async showInFolder(path) {
-      await data.files.reveal(isAbsolute(path) ? path : await data.files.join(await data.settings.photosFolder(), path));
+      await data.files.reveal(isAbsolute(path) ? path : await data.files.photoPath(await data.settings.photosFolder(), path));
     },
     async openUrl(url) {
       if (!/^https?:\/\//i.test(url)) throw new Error("Only web links can be opened.");

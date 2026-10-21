@@ -13,7 +13,7 @@ jobs:
   flathub:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - name: Install Flatpak tools
         run: |
           sudo apt-get update
@@ -41,7 +41,7 @@ jobs:
             import -window root out/flathub.png
             flatpak ps | grep -q world.aaina.AainaDesktop || { cat out/app.log; echo "The app closed on its own"; exit 1; }
             flatpak kill world.aaina.AainaDesktop'
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always()
         with:
           name: store-flathub
@@ -51,7 +51,7 @@ jobs:
   winget:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - name: Make sure winget is here
         shell: pwsh
         run: |
@@ -88,7 +88,7 @@ jobs:
           $bmp.Save("out/winget.png")
           if ($app.HasExited) { throw "The app closed on its own" }
           Stop-Process -Id $app.Id
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always()
         with:
           name: store-winget
@@ -98,7 +98,7 @@ jobs:
   homebrew:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - name: Put the cask in a local tap
         run: |
           brew tap-new --no-git aaina-world/test
@@ -117,7 +117,7 @@ jobs:
           osascript -e 'quit app "Aaina Desktop"' || true
       - name: Uninstall cleanly
         run: brew uninstall --cask --zap aaina-world/test/aaina-desktop
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always()
         with:
           name: store-homebrew

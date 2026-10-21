@@ -1,6 +1,6 @@
 import type { CatalogModel, CatalogPose, CatalogScene, CatalogStatus, ModelRef, ProductReading } from "../contract";
 import { logWarning } from "../log";
-import type { CacheStore } from "./cacheStore";
+import { isCacheName, type CacheStore } from "./cacheStore";
 import { mapModels, mapPoses, mapScenes } from "./map";
 import { CDN_BASE, type RawModels, type RawPointer, type RawPoses, type RawScenes, type RawSheets, type RawSheetsPointer } from "./raw";
 import { suggestModelsFor, type SuggestOptions } from "./suggestFor";
@@ -23,6 +23,8 @@ const POINTER = "current.json";
 const SHEETS_POINTER = "sheets/current.json";
 const META = "meta.json";
 const PICTURE_CONCURRENCY = 3;
+/** `lists/models.78cafe3db8a62998.json`, `lists/poses-pool-044f….58a9….json`, `sheets/sheets.489e….json` */
+const LIST_NAME = /^(lists|sheets)\/[a-z0-9-]{1,80}\.[0-9a-f]{8,64}\.json$/;
 
 export type Catalog = ReturnType<typeof createCatalogCore>;
 
@@ -80,6 +82,7 @@ export function createCatalogCore(deps: CatalogDeps) {
 
   // ---- lists ----
   async function readCachedJson<T>(name: string): Promise<T | null> {
+    if (typeof name !== "string" || !isCacheName(name)) return null;
     const text = await store.readText(name);
     if (!text) return null;
     try {
@@ -89,8 +92,9 @@ export function createCatalogCore(deps: CatalogDeps) {
     }
   }
 
-  /** Lists are immutable by name: cached, else downloaded once. */
+  /** Lists are immutable by name: cached, else downloaded once. Only names in the CDN's own format are accepted. */
   async function list<T>(relative: string): Promise<T> {
+    if (!LIST_NAME.test(relative)) throw new Error(`Not a catalogue list: ${JSON.stringify(String(relative).slice(0, 80))}`);
     const cached = await readCachedJson<T>(relative);
     if (cached) return cached;
     const response = await get(cdnUrl(relative));
