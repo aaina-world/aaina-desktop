@@ -59,7 +59,7 @@ describe("sign-in failures say what happened", () => {
     const reply = json({ access_token: "at", id_token: jwt({ aud: "c", exp: 9_999_999_999 }), scope: "openid", expires_in: 60 });
     const s = await signInWith("code=a&state=STATE&client_id=c", reply);
     await expect(s.run()).rejects.toThrow(/plan can't be used/);
-    expect(s.k.store.size).toBe(0);
+    expect(s.k.store.has("chatgpt_tokens")).toBe(false); // only the host id is kept
   });
   it("a sign-in answer for another app, an old one, or one with another nonce is refused", async () => {
     const bad = (claims: object) => json({ access_token: "at", id_token: jwt(claims), scope: "chatgpt.tokens.use.direct" });

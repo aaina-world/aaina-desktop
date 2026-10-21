@@ -36,6 +36,9 @@ const b64url = (bytes: Uint8Array) =>
     .replace(/\//g, "_")
     .replace(/=+$/, "");
 export const randomToken = (bytes = 32) => b64url(crypto.getRandomValues(new Uint8Array(bytes)));
+/** OpenAI wants the host id as a URN: `urn:uuid:<uuid>`, chosen once per computer and kept. */
+export const isHostId = (value: unknown): value is string => typeof value === "string" && /^urn:uuid:[0-9a-f-]{36}$/i.test(value);
+export const newHostId = () => `urn:uuid:${crypto.randomUUID()}`;
 export async function pkceChallenge(verifier: string): Promise<string> {
   return b64url(new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(verifier))));
 }
@@ -122,8 +125,8 @@ export function firstJsonObject(text: string): unknown {
 
 // ---------- the client ----------
 type SecretsLike = {
-  get(name: "chatgpt_tokens"): Promise<string | null>;
-  set(name: "chatgpt_tokens", value: string): Promise<void>;
+  get(name: "chatgpt_tokens" | "chatgpt_account"): Promise<string | null>;
+  set(name: "chatgpt_tokens" | "chatgpt_account", value: string): Promise<void>;
   delete(name: "chatgpt_tokens"): Promise<void>;
 };
 type Fetcher = (url: string, init?: RequestInit) => Promise<Response>;
@@ -208,10 +211,21 @@ export function createChatGPT(deps: ChatGPTDeps) {
     };
   }
 
+  /** This computer's host id: saved before the first sign-in and reused for every later one. */
+  async function hostIdFor(previous: StoredTokens | null): Promise<string> {
+    const kept = previous?.hostId;
+    if (isHostId(kept)) return kept;
+    const saved = await deps.secrets.get("chatgpt_account");
+    if (isHostId(saved)) return saved;
+    const id = newHostId();
+    await deps.secrets.set("chatgpt_account", id);
+    return id;
+  }
+
   /** Opens the browser, waits for the loopback callback and keeps the tokens in the keychain. */
   async function signIn(): Promise<{ email: string | null; plan: string | null }> {
     const previous = await load();
-    const hostId = previous?.hostId ?? crypto.randomUUID();
+    const hostId = await hostIdFor(previous);
     let port: number;
     try {
       port = Number(await invoke("oauth_loopback_start", { path: CALLBACK_PATH }));

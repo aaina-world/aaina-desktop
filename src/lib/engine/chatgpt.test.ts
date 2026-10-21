@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { authorizeUrl, createChatGPT, firstJsonObject, jwtClaims, pkceChallenge, textFromStream } from "./chatgpt";
+import { authorizeUrl, createChatGPT, firstJsonObject, isHostId, jwtClaims, newHostId, pkceChallenge, textFromStream } from "./chatgpt";
 
 const jwt = (claims: object) => `x.${btoa(JSON.stringify(claims)).replace(/=+$/, "")}.y`;
 
@@ -8,7 +8,7 @@ describe("ChatGPT sign-in helpers", () => {
     const url = new URL(
       authorizeUrl({
         clientId: null,
-        hostId: "h1",
+        hostId: "urn:uuid:00000000-0000-4000-8000-000000000001",
         redirectUri: "http://127.0.0.1:1455/auth/callback",
         state: "s",
         nonce: "n",
@@ -21,7 +21,16 @@ describe("ChatGPT sign-in helpers", () => {
     expect(url.searchParams.get("scope")).toBe("openid profile email offline_access resource.invoke chatgpt.tokens.use.direct");
     expect(url.searchParams.get("resource")).toBe("https://api.openai.com/v1");
     expect(url.searchParams.get("code_challenge_method")).toBe("S256");
-    const again = new URL(authorizeUrl({ clientId: "oaiapp_1", hostId: "h1", redirectUri: "r", state: "s", nonce: "n", challenge: "c" }));
+    const again = new URL(
+      authorizeUrl({
+        clientId: "oaiapp_1",
+        hostId: "urn:uuid:00000000-0000-4000-8000-000000000001",
+        redirectUri: "r",
+        state: "s",
+        nonce: "n",
+        challenge: "c",
+      }),
+    );
     expect(again.searchParams.get("client_id")).toBe("oaiapp_1");
     expect(again.searchParams.has("agent_name_hint")).toBe(false);
   });
@@ -86,6 +95,15 @@ describe("ChatGPT sign-in helpers", () => {
     expect(exchanged[0]).not.toContain("client_secret");
     expect((await c.status()).signedIn).toBe(true);
     await c.signOut();
-    expect(store.size).toBe(0);
+    expect(store.has("chatgpt_tokens")).toBe(false); // only the host id is kept
+  });
+});
+
+describe("host id", () => {
+  it("is a urn:uuid OpenAI accepts, and bare or malformed ids are not", () => {
+    expect(isHostId(newHostId())).toBe(true);
+    expect(isHostId("1e29403f-7201-4668-8f57-ebab9935e543")).toBe(false);
+    expect(isHostId("urn:uuid:nope")).toBe(false);
+    expect(isHostId(undefined)).toBe(false);
   });
 });
