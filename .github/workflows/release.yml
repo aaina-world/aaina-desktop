@@ -55,7 +55,7 @@ jobs:
           prerelease: false
           args: ${{ matrix.args }}
 
-      # Smoke test: install what was just built on this fresh machine, open it, check it keeps running, and keep a
+      # Smoke test: install what was just built on this fresh machine (the Mac one from its .dmg), open it, check it keeps running, and keep a
       # screenshot (Actions run page, Artifacts) so Windows and Linux can be checked without owning either.
       - name: Smoke test (Linux)
         if: matrix.platform == 'ubuntu-22.04'
@@ -83,8 +83,22 @@ jobs:
           [System.Drawing.Graphics]::FromImage($bmp).CopyFromScreen($b.Location, [System.Drawing.Point]::Empty, $b.Size)
           $bmp.Save("smoke-windows.png")
           if ($app.HasExited) { throw "The app closed on its own" }
+      - name: Smoke test (Mac)
+        if: matrix.platform == 'macos-latest'
+        run: |
+          dmg=$(ls src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg | head -1)
+          hdiutil attach "$dmg" -mountpoint /tmp/aaina-dmg -nobrowse
+          cp -R "/tmp/aaina-dmg/Aaina Desktop.app" /Applications/
+          hdiutil detach /tmp/aaina-dmg
+          xattr -dr com.apple.quarantine "/Applications/Aaina Desktop.app" || true
+          "/Applications/Aaina Desktop.app/Contents/MacOS/aaina-desktop" > app.log 2>&1 &
+          app=$!
+          sleep 25
+          screencapture -x smoke-mac.png || true
+          kill -0 $app || { cat app.log; echo "The app closed on its own"; exit 1; }
+          kill $app
       - name: Keep the smoke test screenshot
-        if: always() && matrix.platform != 'macos-latest'
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: smoke-${{ matrix.platform }}

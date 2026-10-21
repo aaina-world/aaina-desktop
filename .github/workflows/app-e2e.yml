@@ -81,3 +81,39 @@ jobs:
             e2e-app/out/
             e2e-app/driver.log
           if-no-files-found: ignore
+
+  # The Mac has no WebDriver for its web view, so here the real keychain is tested with a long value and the built app
+  # is opened, checked to keep running and photographed. (The release opens the .dmg the same way.)
+  mac:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+      - run: npm ci
+      - name: Keychain (Mac)
+        run: cargo test --manifest-path src-tauri/Cargo.toml -- --ignored
+      - name: Build the app
+        run: npx tauri build --no-bundle
+      - name: Open the app
+        run: |
+          mkdir -p e2e-app/out
+          src-tauri/target/release/aaina-desktop > e2e-app/out/app.log 2>&1 &
+          app=$!
+          sleep 25
+          screencapture -x e2e-app/out/mac.png || true
+          kill -0 $app || { cat e2e-app/out/app.log; echo "The app closed on its own"; exit 1; }
+          kill $app
+      - name: Keep the screenshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-macos
+          path: e2e-app/out/
+          if-no-files-found: ignore
