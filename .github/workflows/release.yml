@@ -3,8 +3,7 @@ name: Release
 # Push a tag like v0.1.0 to build installers for Mac, Windows and Linux.
 # A draft GitHub release is created; publish it by hand when you have tried the files.
 #
-# Signing secrets below are optional. Without them the builds still work, but
-# the system warns the first time someone opens the app.
+# Builds are unsigned for now: the system warns the first time someone opens the app.
 
 on:
   push:
@@ -46,14 +45,8 @@ jobs:
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
-          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
-          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
-          APPLE_ID: ${{ secrets.APPLE_ID }}
-          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
-          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+          # To sign the Mac app later, add these secrets and lines (an empty one makes the build try to sign and fail):
+          # APPLE_CERTIFICATE, APPLE_CERTIFICATE_PASSWORD, APPLE_SIGNING_IDENTITY, APPLE_ID, APPLE_PASSWORD, APPLE_TEAM_ID
         with:
           tagName: ${{ github.ref_name }}
           releaseName: "Aaina Desktop ${{ github.ref_name }}"
@@ -61,3 +54,39 @@ jobs:
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
+
+      # Smoke test: install what was just built on this fresh machine, open it, check it keeps running, and keep a
+      # screenshot (Actions run page, Artifacts) so Windows and Linux can be checked without owning either.
+      - name: Smoke test (Linux)
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          sudo apt-get install -y xvfb imagemagick dbus-x11 gnome-keyring
+          sudo apt-get install -y ./src-tauri/target/release/bundle/deb/*.deb
+          export DISPLAY=:99
+          Xvfb :99 -screen 0 1440x900x24 &
+          sleep 2
+          dbus-run-session -- sh -c 'aaina-desktop & echo $! > /tmp/app.pid; sleep 25; import -window root smoke-linux.png; kill -0 $(cat /tmp/app.pid)'
+      - name: Smoke test (Windows)
+        if: matrix.platform == 'windows-latest'
+        shell: pwsh
+        run: |
+          $setup = Get-ChildItem src-tauri/target/release/bundle/nsis/*-setup.exe | Select-Object -First 1
+          Start-Process $setup.FullName -ArgumentList "/S" -Wait
+          $exe = Get-ChildItem "$env:LOCALAPPDATA" -Recurse -Filter "*.exe" -ErrorAction SilentlyContinue |
+            Where-Object { $_.Name -match "aaina" -and $_.Name -notmatch "uninstall" } | Select-Object -First 1
+          if (-not $exe) { throw "The installed app was not found" }
+          $app = Start-Process $exe.FullName -PassThru
+          Start-Sleep -Seconds 25
+          Add-Type -AssemblyName System.Windows.Forms, System.Drawing
+          $b = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds
+          $bmp = New-Object System.Drawing.Bitmap $b.Width, $b.Height
+          [System.Drawing.Graphics]::FromImage($bmp).CopyFromScreen($b.Location, [System.Drawing.Point]::Empty, $b.Size)
+          $bmp.Save("smoke-windows.png")
+          if ($app.HasExited) { throw "The app closed on its own" }
+      - name: Keep the smoke test screenshot
+        if: always() && matrix.platform != 'macos-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-${{ matrix.platform }}
+          path: smoke-*.png
+          if-no-files-found: ignore
