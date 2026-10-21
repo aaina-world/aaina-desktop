@@ -1,0 +1,77 @@
+/* Tutorials page. One column edge for every block (the .wrap), photos as the colour, hairlines first. */
+.t-hero{padding:48px 0 40px;display:grid;gap:28px;align-items:end}
+@media(min-width:960px){.t-hero{grid-template-columns:1fr auto;padding:80px 0 48px;gap:48px}}
+.t-hero h1{font-size:clamp(40px,6.4vw,76px);max-width:14ch}
+.t-hero .lead{margin-top:20px}
+.t-hero .cta{margin-top:0}
+.t-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px;font:500 13px/1 var(--mono);color:var(--subtle)}
+.t-meta span{display:inline-flex;align-items:center;height:26px;padding:0 10px;border:1px solid var(--line);border-radius:999px;background:var(--raised)}
+
+/* An app window around the video and every screenshot */
+.win{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--raised);box-shadow:0 1px 0 rgba(0,0,0,.02),0 24px 48px -28px rgba(22,22,21,.28)}
+.win-bar{display:flex;align-items:center;gap:7px;height:34px;padding:0 14px;border-bottom:1px solid var(--line);background:var(--bg)}
+.win-bar i{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.win-bar b{margin-left:10px;font:500 12px/1 var(--sans);color:var(--subtle)}
+.win img,.win video{display:block;width:100%;height:auto;aspect-ratio:16/10;object-fit:cover;object-position:top;background:#f7f7f5}
+.t-video{padding-bottom:72px}
+.t-video .cap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 24px;margin-top:14px;font-size:14px;color:var(--subtle)}
+
+/* Chapter index: a gallery of eight */
+.t-index{padding:72px 0}
+.t-head{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:12px 32px;margin-bottom:28px}
+.t-head p{margin:0;color:var(--muted);max-width:52ch}
+.chapters{list-style:none;padding:0;margin:0;display:grid;gap:14px;grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(min-width:760px){.chapters{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.chapters a{display:flex;flex-direction:column;height:100%;text-decoration:none;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--bg);transition:border-color .2s,transform .2s}
+.chapters a:hover{border-color:var(--subtle);transform:translateY(-2px)}
+.chapters img{width:100%;aspect-ratio:4/5;object-fit:cover;background:var(--sunken)}
+.chapters .c{padding:14px 16px 16px}
+.chapters .n{font:500 12px/1 var(--mono);color:var(--subtle)}
+.chapters h3{font:600 16px/1.3 var(--sans);margin:8px 0 4px}
+.chapters p{margin:0;font-size:14px;line-height:1.45;color:var(--muted)}
+
+/* Why it's free */
+.t-why{padding:80px 0}
+.t-why blockquote{margin:0;font:400 clamp(28px,3.6vw,44px)/1.18 var(--display);letter-spacing:-.01em;max-width:24ch}
+.t-why blockquote em{font-style:italic}
+.t-why .two{align-items:start}
+.t-why .prose p{margin:0 0 14px}
+.t-facts{display:grid;gap:10px;margin-top:22px}
+@media(min-width:560px){.t-facts{grid-template-columns:repeat(3,1fr)}}
+.t-facts div{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:var(--raised)}
+.t-facts b{display:block;font:500 13px/1 var(--mono);color:var(--ink);margin-bottom:6px}
+.t-facts span{font-size:14px;line-height:1.45;color:var(--muted)}
+
+/* A chapter: the words on the left stay in view while the screens scroll past */
+.chap{padding:88px 0;border-top:1px solid var(--line)}
+.chap-grid{display:grid;gap:32px}
+@media(min-width:1000px){.chap-grid{grid-template-columns:minmax(0,4fr) minmax(0,7fr);gap:64px}.chap-text{position:sticky;top:32px;align-self:start}}
+.chap .n{font:500 12px/1 var(--mono);color:var(--subtle);letter-spacing:.04em}
+.chap h2{margin:14px 0 16px}
+.chap-text>p{color:var(--muted);margin:0 0 18px;max-width:46ch}
+.chap-text a{color:var(--ink)}
+.steps-list{list-style:none;padding:0;margin:0;display:grid;gap:0;border-top:1px solid var(--line)}
+.steps-list li{display:grid;grid-template-columns:28px 1fr;gap:12px;padding:14px 0;border-bottom:1px solid var(--line);font-size:15px;color:var(--muted)}
+.steps-list li b{color:var(--ink);font-weight:600}
+.steps-list li::before{counter-increment:s;content:counter(s,decimal-leading-zero);font:500 12px/1.9 var(--mono);color:var(--subtle)}
+.steps-list{counter-reset:s}
+.shots{display:grid;gap:28px}
+.shots figure{margin:0}
+.shots figcaption{margin-top:10px;font-size:14px;color:var(--subtle)}
+.pair{display:grid;gap:12px}
+@media(min-width:640px) and (max-width:999px){.pair{grid-template-columns:1fr 1fr}}
+.pair div{border:1px solid var(--line);border-radius:12px;padding:16px 18px;background:var(--raised)}
+.pair h3{font:600 15px/1.3 var(--sans);margin:0 0 6px}
+.pair p{margin:0;font-size:14px;line-height:1.5;color:var(--muted)}
+.pair .tag{display:inline-block;font:500 11px/1 var(--mono);color:var(--subtle);margin-bottom:10px}
+
+/* Costs */
+.price-card{border:1px solid var(--line);border-radius:14px;background:var(--raised);overflow:hidden}
+.price-card div{display:flex;justify-content:space-between;gap:16px;padding:14px 18px;border-bottom:1px solid var(--line);font-size:15px;color:var(--muted)}
+.price-card div:last-child{border-bottom:0}
+.price-card .mono{color:var(--ink);white-space:nowrap}
+
+.t-end{text-align:center;padding:88px 0}
+.t-end h2{max-width:20ch;margin:0 auto}
+.t-end .cta{justify-content:center}
+:target{scroll-margin-top:16px}

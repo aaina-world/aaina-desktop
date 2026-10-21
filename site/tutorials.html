@@ -4,167 +4,270 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Aaina Desktop tutorials</title>
-<meta name="description" content="How to use Aaina Desktop: connect OpenAI, get a key, make your first shoot, edit and save photos, ghost mannequin, flat-lay, your own models, poses and scenes, and settings.">
+<meta name="description" content="Learn Aaina Desktop: connect OpenAI, get a key, make your first shoot, edit and save photos, ghost mannequin, flat-lay, your own models, poses and scenes, and settings.">
 <meta name="color-scheme" content="light dark">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="site.css?v=2">
+<link rel="stylesheet" href="tutorials.css?v=2">
 </head>
-<body class="tut">
+<body>
 <div class="wrap">
   <header class="top">
     <a class="brand" href="/"><img src="favicon.svg" alt="" width="28" height="28">Aaina Desktop</a>
     <nav><a href="/">Home</a><a href="https://github.com/aaina-world/aaina-desktop">GitHub</a></nav>
   </header>
 
-  <div class="tut-hero">
-    <span class="eyebrow"><i></i>Tutorials</span>
-    <h1>Everything in Aaina Desktop, in <em>a few minutes</em>.</h1>
-    <p class="lead">From connecting OpenAI to your first finished photos, your own models, poses and scenes, and keeping your work safe.</p>
-    <nav class="toc" aria-label="On this page">
-      <a href="#video">Demo video</a>
-      <a href="#why">Why it's free</a>
-      <a href="#start">Getting started</a>
-      <a href="#key">Get an OpenAI key</a>
-      <a href="#shoot">Your first shoot</a>
-      <a href="#edit">Edit and save</a>
-      <a href="#ghost">Ghost and flat-lay</a>
-      <a href="#models">Your own models</a>
-      <a href="#poses">Your poses and scenes</a>
-      <a href="#library">Shoots and Library</a>
-      <a href="#settings">Settings and privacy</a>
-      <a href="#costs">Costs</a>
-    </nav>
+  <div class="t-hero">
+    <div>
+      <span class="eyebrow"><i></i>Tutorials</span>
+      <h1>Learn Aaina Desktop in <em>three</em> minutes.</h1>
+      <p class="lead">Watch the demo, then read any chapter when you need it: setup, your first shoot, edits, your own models, poses and scenes.</p>
+      <div class="t-meta"><span>8 chapters</span><span>3 min video</span><span>Mac, Windows, Linux</span></div>
+    </div>
+    <div class="cta">
+      <a class="btn primary" href="#start">Start with setup</a>
+      <a class="btn" href="https://github.com/aaina-world/aaina-desktop/tree/main/docs/tutorials">Guides on GitHub</a>
+    </div>
   </div>
 
-  <section id="video" class="tut-video">
-    <video controls preload="metadata" playsinline poster="video/aaina-desktop-demo.jpg" width="1920" height="1200">
-      <source src="video/aaina-desktop-demo.mp4" type="video/mp4">
-    </video>
-    <p class="small">The whole app in about three minutes, with sound. Every photo in it was made with Aaina Desktop.</p>
+  <section id="video" class="t-video" aria-label="Demo video">
+    <div class="win">
+      <div class="win-bar" aria-hidden="true"><i></i><i></i><i></i><b>Aaina Desktop</b></div>
+      <video controls preload="metadata" playsinline poster="video/aaina-desktop-demo.jpg" width="1600" height="1000">
+        <source src="video/aaina-desktop-demo.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="cap"><span>The whole app, with sound: setup, a shoot, edits, saving, your own models, poses and scenes.</span><span>Every photo in it was made with Aaina Desktop.</span></div>
   </section>
 </div>
 
-<section id="why" class="alt">
+<section class="alt t-index" aria-labelledby="chapters">
+  <div class="wrap">
+    <div class="t-head">
+      <h2 id="chapters">Eight short <em>chapters</em></h2>
+      <p>Each takes a few minutes. Start at the top, or jump to what you need.</p>
+    </div>
+    <ol class="chapters">
+      <li><a href="#start"><img src="img/g/start.webp" alt="" loading="lazy" width="640" height="800"><div class="c"><span class="n">01</span><h3>Getting started</h3><p>Install, connect OpenAI and get a key.</p></div></a></li>
+      <li><a href="#shoot"><img src="img/g/shoot.webp" alt="" loading="lazy" width="640" height="800"><div class="c"><span class="n">02</span><h3>Your first shoot</h3><p>Product, model, poses, scene, made.</p></div></a></li>
+      <li><a href="#edit"><img src="img/g/edit.webp" alt="" loading="lazy" width="640" height="800"><div class="c"><span class="n">03</span><h3>Edit and save</h3><p>Fix, recolour and save for each shop.</p></div></a></li>
+      <li><a href="#ghost"><img src="img/g/ghost.webp" alt="" loading="lazy" width="640" height="800"><div class="c"><span class="n">04</span><h3>Ghost and flat-lay</h3><p>The product on its own, no model.</p></div></a></li>
+      <li><a href="#models"><img src="img/g/models.webp" alt="" loading="lazy" width="640" height="800"><div class="c"><span class="n">05</span><h3>Your own models</h3><p>From a description or a real adult.</p></div></a></li>
+      <li><a href="#poses"><img src="img/g/poses.webp" alt="" loading="lazy" width="640" height="800"><div class="c"><span class="n">06</span><h3>Poses and scenes</h3><p>Describe them, or show a photo.</p></div></a></li>
+      <li><a href="#library"><img src="img/g/library.webp" alt="" loading="lazy" width="640" height="800"><div class="c"><span class="n">07</span><h3>Shoots and Library</h3><p>Find and reuse what you made.</p></div></a></li>
+      <li><a href="#settings"><img src="img/g/settings.webp" alt="" loading="lazy" width="640" height="800"><div class="c"><span class="n">08</span><h3>Settings and privacy</h3><p>Backups, and what goes where.</p></div></a></li>
+    </ol>
+  </div>
+</section>
+
+<section class="t-why" aria-labelledby="why">
   <div class="wrap two">
     <div>
-      <h2>Why it's <em>free</em></h2>
+      <span class="eyebrow"><i></i>Why it's free</span>
+      <blockquote id="why">Studio photos for everyone <em>starting out</em>.</blockquote>
     </div>
     <div class="prose">
       <p>Good product photos sell, but a photoshoot with a model, a studio and a photographer is out of reach for most people starting out. <a href="https://aaina.world">Aaina</a> is a studio that makes those photos with AI.</p>
       <p>We used AI to build Aaina Desktop: a part of Aaina's features, rebuilt as a free, open-source app, so anyone starting a business, or anyone without money for photoshoots or subscriptions, can have studio-quality photos of what they sell from day one.</p>
-      <p>There is nothing to buy from us. You use your own OpenAI account and pay OpenAI only for the photos you make, a few cents each. Everything you make stays on your computer.</p>
+      <div class="t-facts">
+        <div><b>$0</b><span>for the app. No subscription.</span></div>
+        <div><b>~$0.05</b><span>a photo, paid to OpenAI with your own key.</span></div>
+        <div><b>100%</b><span>of your work stays on your computer.</span></div>
+      </div>
     </div>
   </div>
 </section>
 
-<div class="wrap tut-body">
-  <article id="start">
-    <h2>1. Getting started</h2>
-    <p>Download the app for Mac, Windows or Linux from the <a href="/">home page</a>. There is no account to make. The first builds are not signed yet: on a Mac, open the app once, then choose Open Anyway in System Settings, Privacy and Security; on Windows, choose More info, then Run anyway.</p>
-    <p>Photos are made by OpenAI's image model with <b>your own OpenAI key</b>, so you pay OpenAI directly, at their price, with nothing added. You can connect in two ways, and use both:</p>
-    <ul>
-      <li><b>Sign in with ChatGPT</b> (optional). Before it makes a photo, the app reads your product: what it is, its colour, fabric and details, and who it is for. Signed in, every reading uses your ChatGPT plan, at no cost to your key. If ChatGPT can't answer, the key reads instead.</li>
-      <li><b>Your OpenAI key</b> makes the photos, poses, scenes and models. Without ChatGPT it also does the readings, for a fraction of a cent each. It is kept in your computer's keychain and only sent to OpenAI.</li>
-    </ul>
-    <p>ChatGPT plans can't make pictures in other apps yet, so photos need the key. The app will switch photos over when OpenAI allows it.</p>
-    <figure><img src="img/t/03-connected.webp" alt="Connect OpenAI: signed in with ChatGPT, and an OpenAI key that works" loading="lazy" width="1600" height="1000"></figure>
-  </article>
+<div class="wrap">
+  <section id="start" class="chap" aria-labelledby="h-start">
+    <div class="chap-grid">
+      <div class="chap-text">
+        <span class="n">CHAPTER 01</span>
+        <h2 id="h-start">Getting started</h2>
+        <p>Download the app from the <a href="/">home page</a>. There is no account to make. The first builds aren't signed yet: on a Mac, open it once, then choose Open Anyway in System Settings, Privacy and Security; on Windows, choose More info, then Run anyway.</p>
+        <p>Photos are made by OpenAI with your own account, so you pay OpenAI directly, at their price, with nothing added. That is what keeps the app free.</p>
+        <div class="pair">
+          <div><span class="tag">OPTIONAL</span><h3>Sign in with ChatGPT</h3><p>Every reading, like what your product is, uses your ChatGPT plan at no cost to your key.</p></div>
+          <div><span class="tag">NEEDED FOR PHOTOS</span><h3>Your OpenAI key</h3><p>Makes the photos, poses, scenes and models. Kept in your keychain, sent only to OpenAI.</p></div>
+        </div>
+      </div>
+      <div class="shots">
+        <figure>
+          <div class="win"><div class="win-bar" aria-hidden="true"><i></i><i></i><i></i><b>Connect OpenAI</b></div><img src="img/tut/03-connected.webp" alt="Connect OpenAI, signed in with ChatGPT and with a key that works" loading="lazy" width="1600" height="1000"></div>
+          <figcaption>ChatGPT plans can't make pictures in other apps yet, so photos need the key. The app will switch them over when OpenAI allows it.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
 
-  <article id="key">
-    <h2>Get an OpenAI key</h2>
-    <ol>
-      <li>Go to <a href="https://platform.openai.com">platform.openai.com</a> and sign up or sign in. It is OpenAI's developer site, a separate account from a ChatGPT subscription, though you can use the same email.</li>
-      <li>Open Settings, Billing, and add a little credit. $5 is plenty to start: about 100 standard photos.</li>
-      <li>Open <a href="https://platform.openai.com/api-keys">API keys</a>, choose Create new secret key, name it "Aaina Desktop", and copy it. OpenAI shows it only once.</li>
-      <li>In Aaina Desktop, paste it into API key and press Check key. "Key works" means you are ready.</li>
-    </ol>
-    <p>OpenAI may ask a new account to verify the organisation before it makes pictures; the app shows the link if so. You can set a monthly spending limit in OpenAI's billing settings, and delete a key any time.</p>
-  </article>
+  <section id="key" class="chap" aria-labelledby="h-key">
+    <div class="chap-grid">
+      <div class="chap-text">
+        <span class="n">CHAPTER 01 · CONTINUED</span>
+        <h2 id="h-key">Get an OpenAI key</h2>
+        <p>It takes about two minutes, on OpenAI's developer site. It is a separate account from a ChatGPT subscription, though you can use the same email.</p>
+      </div>
+      <div>
+        <ol class="steps-list">
+          <li><span>Go to <a href="https://platform.openai.com"><b>platform.openai.com</b></a> and sign up or sign in.</span></li>
+          <li><span>Open <b>Settings, Billing</b> and add a little credit. $5 is plenty to start: about 100 standard photos.</span></li>
+          <li><span>Open <a href="https://platform.openai.com/api-keys"><b>API keys</b></a>, choose <b>Create new secret key</b>, name it "Aaina Desktop" and copy it. OpenAI shows it only once.</span></li>
+          <li><span>In Aaina Desktop, paste it into <b>API key</b> and press <b>Check key</b>. "Key works" means you're ready.</span></li>
+        </ol>
+        <p class="small">OpenAI may ask a new account to verify its organisation before it makes pictures; the app shows the link if so. You can set a monthly limit in OpenAI's billing settings, and delete a key any time.</p>
+      </div>
+    </div>
+  </section>
 
-  <article id="shoot">
-    <h2>2. Your first shoot</h2>
-    <p>A shoot is one product on one model, in one scene, in up to six poses; each pose is one photo. Start with New shoot, or drop a product photo on Home.</p>
-    <h3>Add your product</h3>
-    <p>One clear photo is enough: the whole product, even light, a plain background. A back photo and a close-up make the result more faithful. The app reads it and shows <b>What we see</b>; correct anything that is wrong.</p>
-    <figure><img src="img/t/11-product.webp" alt="Add your product, with what the app read from the photo" loading="lazy" width="1600" height="1000"></figure>
-    <h3>Pick a model</h3>
-    <p>The best fits for your product come first. Search in plain words or filter by gender, age, look, body and collections.</p>
-    <figure><img src="img/t/12-models.webp" alt="Choose a model, suggested for a slip dress" loading="lazy" width="1600" height="1000"></figure>
-    <h3>Choose poses</h3>
-    <p>Poses made for your kind of product come first. Filter by framing or style, or search. Pick up to six.</p>
-    <figure><img src="img/t/15-poses-picked.webp" alt="Three poses picked" loading="lazy" width="1600" height="1000"></figure>
-    <h3>Pick a scene</h3>
-    <p>A studio or a place from the catalogue, a plain colour (free), or a scene you made. White studio is the safest for marketplaces.</p>
-    <figure><img src="img/t/17-scene-picked.webp" alt="A warm studio scene picked" loading="lazy" width="1600" height="1000"></figure>
-    <h3>Review and make</h3>
-    <p>Set the frame and expression for each pose, choose Standard or High quality, and see the total before anything is sent. Photos arrive in about a minute each.</p>
-    <figure><img src="img/t/20-review.webp" alt="Review with the price before anything is sent" loading="lazy" width="1600" height="1000"></figure>
-    <figure><img src="img/t/22-shoot-done.webp" alt="A finished shoot with three photos" loading="lazy" width="1600" height="1000"></figure>
-  </article>
+  <section id="shoot" class="chap" aria-labelledby="h-shoot">
+    <div class="chap-grid">
+      <div class="chap-text">
+        <span class="n">CHAPTER 02</span>
+        <h2 id="h-shoot">Your first shoot</h2>
+        <p>A shoot is one product on one model, in one scene, in up to six poses. Each pose becomes one photo.</p>
+        <ol class="steps-list">
+          <li><span><b>Add your product.</b> One clear photo; a back and a close-up help. Check what the app read.</span></li>
+          <li><span><b>Pick a model.</b> The best fits for your product come first; search or filter hundreds more.</span></li>
+          <li><span><b>Choose poses.</b> Up to six, made for your kind of product first.</span></li>
+          <li><span><b>Pick a scene.</b> A studio, a place, a plain colour, or one you made.</span></li>
+          <li><span><b>Review and make.</b> Frame and expression per pose; the price is shown before anything is sent.</span></li>
+        </ol>
+      </div>
+      <div class="shots">
+        <figure><div class="win"><div class="win-bar" aria-hidden="true"><i></i><i></i><i></i><b>Add your product</b></div><img src="img/tut/11-product.webp" alt="Add your product, with what the app read from the photo" loading="lazy" width="1600" height="1000"></div></figure>
+        <figure><div class="win"><div class="win-bar" aria-hidden="true"><i></i><i></i><i></i><b>Choose a model</b></div><img src="img/tut/12-models.webp" alt="Models suggested for a slip dress" loading="lazy" width="1600" height="1000"></div></figure>
+        <figure><div class="win"><div class="win-bar" aria-hidden="true"><i></i><i></i><i></i><b>Pick a scene</b></div><img src="img/tut/17-scene-picked.webp" alt="A warm studio scene picked" loading="lazy" width="1600" height="1000"></div></figure>
+        <figure><div class="win"><div class="win-bar" aria-hidden="true"><i></i><i></i><i></i><b>Emerald slip dress</b></div><img src="img/tut/22-shoot-done.webp" alt="A finished shoot with three photos" loading="lazy" width="1600" height="1000"></div><figcaption>Photos arrive in about a minute each. You can leave the page; it keeps going.</figcaption></figure>
+      </div>
+    </div>
+  </section>
 
-  <article id="edit">
-    <h2>3. Edit and save photos</h2>
-    <p>Open a photo to check it. Compare slides it against your product photo. Every change makes a new version and keeps the earlier ones:</p>
-    <ul>
-      <li><b>Make again:</b> a new version from the same choices.</li>
-      <li><b>Fix something:</b> one small change in plain words, the rest stays.</li>
-      <li><b>Other colours:</b> the same photo with the product in up to six other colours.</li>
-      <li><b>Frame and expression:</b> crop closer or change the smile.</li>
-    </ul>
-    <figure><img src="img/t/24-fix.webp" alt="Fix something in the photo viewer" loading="lazy" width="1600" height="1000"></figure>
-    <p><b>Save photo</b> as a high-quality JPEG or an original PNG, square, portrait, tall or in a marketplace's own shape. Every saved photo is marked as AI-made inside the file; the picture is not changed. A photo OpenAI refuses is not charged.</p>
-    <figure><img src="img/t/26-save.webp" alt="Save a photo: file type, shape and folder" loading="lazy" width="1600" height="1000"></figure>
-  </article>
+  <section id="edit" class="chap" aria-labelledby="h-edit">
+    <div class="chap-grid">
+      <div class="chap-text">
+        <span class="n">CHAPTER 03</span>
+        <h2 id="h-edit">Edit and save</h2>
+        <p>Open a photo to check it; Compare slides it against your product photo. Every change is a new version, and earlier ones are kept.</p>
+        <ol class="steps-list">
+          <li><span><b>Make again</b> for a fresh version of the same photo.</span></li>
+          <li><span><b>Fix something</b>: one small change in plain words.</span></li>
+          <li><span><b>Other colours</b>: the product in up to six more colours.</span></li>
+          <li><span><b>Save photo</b> as JPEG or PNG, in each marketplace's shape. Every photo is marked as AI-made inside the file.</span></li>
+        </ol>
+      </div>
+      <div class="shots">
+        <figure><div class="win"><div class="win-bar" aria-hidden="true"><i></i><i></i><i></i><b>Fix something</b></div><img src="img/tut/24-fix.webp" alt="Fix something in the photo viewer" loading="lazy" width="1600" height="1000"></div></figure>
+        <figure><div class="win"><div class="win-bar" aria-hidden="true"><i></i><i></i><i></i><b>Save photo</b></div><img src="img/tut/26-save.webp" alt="Save a photo: file type, shape and folder" loading="lazy" width="1600" height="1000"></div><figcaption>A photo OpenAI refuses is never charged.</figcaption></figure>
+      </div>
+    </div>
+  </section>
 
-  <article id="ghost">
-    <h2>4. Ghost mannequin and flat-lay</h2>
-    <p><b>Ghost mannequin:</b> the garment alone in its worn 3D shape, from the front, three-quarter, side and back (a back photo makes the back exact). <b>Flat-lay:</b> laid flat and shot from above, clean, neatly folded or styled. Start them like any shoot.</p>
-    <figure><img src="img/t/31-ghost-angles.webp" alt="Ghost mannequin angles" loading="lazy" width="1600" height="1000"></figure>
-  </article>
+  <section id="ghost" class="chap" aria-labelledby="h-ghost">
+    <div class="chap-grid">
+      <div class="chap-text">
+        <span class="n">CHAPTER 04</span>
+        <h2 id="h-ghost">Ghost mannequin and flat-lay</h2>
+        <p><b>Ghost mannequin</b>: the garment alone in its worn 3D shape, from the front, three-quarter, side and back. A back photo makes the back exact.</p>
+        <p><b>Flat-lay</b>: laid flat and shot from above, clean, neatly folded or styled. Both start like any shoot.</p>
+      </div>
+      <div class="shots">
+        <figure><div class="win"><div class="win-bar" aria-hidden="true"><i></i><i></i><i></i><b>Choose angles</b></div><img src="img/tut/31-ghost-angles.webp" alt="Ghost mannequin angles" loading="lazy" width="1600" height="1000"></div></figure>
+        <figure><div class="win"><div class="win-bar" aria-hidden="true"><i></i><i></i><i></i><b>Choose styles</b></div><img src="img/tut/32-flatlay-styles.webp" alt="Flat-lay styles" loading="lazy" width="1600" height="1000"></div></figure>
+      </div>
+    </div>
+  </section>
 
-  <article id="models">
-    <h2>5. Your own models</h2>
-    <p>Make a model only you can use: describe a person and pick one of three faces, or use 1 to 3 photos of a real adult who has agreed to be your model. The app makes a <b>reference sheet</b>, six photos of the same person, that keeps the face and body the same in every photo.</p>
-    <figure><img src="img/t/43-model-pick-face.webp" alt="Pick one of three faces" loading="lazy" width="1600" height="1000"></figure>
-    <figure><img src="img/t/45-model-ready.webp" alt="The finished reference sheet" loading="lazy" width="1600" height="1000"></figure>
-  </article>
+  <section id="models" class="chap" aria-labelledby="h-models">
+    <div class="chap-grid">
+      <div class="chap-text">
+        <span class="n">CHAPTER 05</span>
+        <h2 id="h-models">Your own models</h2>
+        <p>A model only you can use. Describe a person and pick one of three faces, or add 1 to 3 photos of a real adult who has agreed to be your model.</p>
+        <p>The app makes a <b>reference sheet</b>: six photos of the same person that keep the face and body the same in every photo. About $0.35 in all.</p>
+      </div>
+      <div class="shots">
+        <figure><div class="win"><div class="win-bar" aria-hidden="true"><i></i><i></i><i></i><b>Pick a face</b></div><img src="img/tut/43-model-pick-face.webp" alt="Pick one of three faces" loading="lazy" width="1600" height="1000"></div></figure>
+        <figure><div class="win"><div class="win-bar" aria-hidden="true"><i></i><i></i><i></i><b>Meet your model</b></div><img src="img/tut/45-model-ready.webp" alt="The finished reference sheet" loading="lazy" width="1600" height="1000"></div></figure>
+      </div>
+    </div>
+  </section>
 
-  <article id="poses">
-    <h2>6. Your own poses and scenes</h2>
-    <p>Describe a pose in words, or show one in a photo (only read, never kept). Describe a place for a scene, optionally with a reference photo. Scenes never have people in them. Each is about $0.04, and is kept in your Library for every shoot.</p>
-    <figure><img src="img/t/46-make-pose.webp" alt="Make a pose from words" loading="lazy" width="1600" height="1000"></figure>
-    <figure><img src="img/t/49-scenes-made.webp" alt="A scene you made, in your Library" loading="lazy" width="1600" height="1000"></figure>
-  </article>
+  <section id="poses" class="chap" aria-labelledby="h-poses">
+    <div class="chap-grid">
+      <div class="chap-text">
+        <span class="n">CHAPTER 06</span>
+        <h2 id="h-poses">Your own poses and scenes</h2>
+        <p>Describe a pose in words, or show one in a photo (only read, never kept). Describe a place for a scene, with a reference photo if you like; scenes never have people in them.</p>
+        <p>About $0.04 each, kept in your Library for every shoot. Plain colour scenes are free.</p>
+      </div>
+      <div class="shots">
+        <figure><div class="win"><div class="win-bar" aria-hidden="true"><i></i><i></i><i></i><b>Make a pose</b></div><img src="img/tut/46-make-pose.webp" alt="Make a pose from words" loading="lazy" width="1600" height="1000"></div></figure>
+        <figure><div class="win"><div class="win-bar" aria-hidden="true"><i></i><i></i><i></i><b>Your scenes</b></div><img src="img/tut/49-scenes-made.webp" alt="A scene you made, in your Library" loading="lazy" width="1600" height="1000"></div></figure>
+      </div>
+    </div>
+  </section>
 
-  <article id="library">
-    <h2>7. Shoots and Library</h2>
-    <p><b>Shoots</b> lists everything you made: filter, search, save or delete several at once, and open each shoot's folder. <b>Library</b> keeps your products, models, poses and scenes ready for any shoot.</p>
-    <figure><img src="img/t/50-shoots.webp" alt="Shoots" loading="lazy" width="1600" height="1000"></figure>
-  </article>
+  <section id="library" class="chap" aria-labelledby="h-library">
+    <div class="chap-grid">
+      <div class="chap-text">
+        <span class="n">CHAPTER 07</span>
+        <h2 id="h-library">Shoots and Library</h2>
+        <p><b>Shoots</b> lists everything you made: filter, search, save or delete several at once, and open each shoot's folder.</p>
+        <p><b>Library</b> keeps your products, models, poses and scenes ready for any shoot.</p>
+      </div>
+      <div class="shots">
+        <figure><div class="win"><div class="win-bar" aria-hidden="true"><i></i><i></i><i></i><b>Shoots</b></div><img src="img/tut/50-shoots.webp" alt="Shoots" loading="lazy" width="1600" height="1000"></div></figure>
+      </div>
+    </div>
+  </section>
 
-  <article id="settings">
-    <h2>8. Settings, backup and privacy</h2>
-    <p>Change your connection, default quality, how many photos are made at once, the photos folder and theme; keep the catalogue for offline use; check for updates. <b>Back up everything</b> to one file and restore it on any computer.</p>
-    <figure><img src="img/t/51-settings-data.webp" alt="Back up, restore and delete in Settings" loading="lazy" width="1600" height="1000"></figure>
-    <p><b>Stays on your computer:</b> products, shoots, photos, own models, settings and your key. <b>Sent to OpenAI:</b> your product photos, plus the model, pose and scene for each photo you make. <b>Sent to Aaina:</b> nothing; the app only downloads the public catalogue. No account, no tracking, no ads.</p>
-  </article>
+  <section id="settings" class="chap" aria-labelledby="h-settings">
+    <div class="chap-grid">
+      <div class="chap-text">
+        <span class="n">CHAPTER 08</span>
+        <h2 id="h-settings">Settings, backup and privacy</h2>
+        <p>Change your connection, quality, how many photos are made at once, the photos folder and theme. Keep the catalogue for offline use. <b>Back up everything</b> and restore it on any computer.</p>
+        <ol class="steps-list">
+          <li><span><b>Stays on your computer:</b> products, shoots, photos, own models, settings, your key.</span></li>
+          <li><span><b>Sent to OpenAI:</b> your product photos, plus the model, pose and scene for each photo.</span></li>
+          <li><span><b>Sent to Aaina:</b> nothing. No account, no tracking, no ads.</span></li>
+        </ol>
+      </div>
+      <div class="shots">
+        <figure><div class="win"><div class="win-bar" aria-hidden="true"><i></i><i></i><i></i><b>Settings</b></div><img src="img/tut/51-settings-data.webp" alt="Back up, restore and delete in Settings" loading="lazy" width="1600" height="1000"></div></figure>
+      </div>
+    </div>
+  </section>
 
-  <article id="costs">
-    <h2>Costs</h2>
-    <table>
-      <tr><td>A photo, standard quality</td><td class="mono">about $0.05</td></tr>
-      <tr><td>A photo, high quality</td><td class="mono">about $0.20</td></tr>
-      <tr><td>Fix something, or each other colour</td><td class="mono">about $0.05</td></tr>
-      <tr><td>A ghost mannequin angle or flat-lay style</td><td class="mono">about $0.05</td></tr>
-      <tr><td>Your own pose or scene</td><td class="mono">about $0.04</td></tr>
-      <tr><td>Your own model (3 faces, then the sheet)</td><td class="mono">about $0.15 + $0.20</td></tr>
-      <tr><td>Reading a product</td><td class="mono">free with ChatGPT</td></tr>
-    </table>
-    <p class="small">Billed by OpenAI to your own account. Aaina Desktop is free. The longer guides are on <a href="https://github.com/aaina-world/aaina-desktop/tree/main/docs/tutorials">GitHub</a>.</p>
-  </article>
+  <section id="costs" class="chap" aria-labelledby="h-costs">
+    <div class="chap-grid">
+      <div class="chap-text">
+        <span class="n">GOOD TO KNOW</span>
+        <h2 id="h-costs">What it costs</h2>
+        <p>The app is free. Pictures are billed by OpenAI to your own account, and every button shows the rough cost before anything is sent.</p>
+      </div>
+      <div class="price-card">
+        <div><span>A photo, standard quality</span><span class="mono">about $0.05</span></div>
+        <div><span>A photo, high quality</span><span class="mono">about $0.20</span></div>
+        <div><span>Fix something, or each other colour</span><span class="mono">about $0.05</span></div>
+        <div><span>A ghost mannequin angle or flat-lay style</span><span class="mono">about $0.05</span></div>
+        <div><span>Your own pose or scene</span><span class="mono">about $0.04</span></div>
+        <div><span>Your own model, faces and sheet</span><span class="mono">about $0.35</span></div>
+        <div><span>Reading a product</span><span class="mono">free with ChatGPT</span></div>
+      </div>
+    </div>
+  </section>
 </div>
+
+<section class="alt t-end">
+  <div class="wrap">
+    <h2>Make your first photos <em>today</em>.</h2>
+    <p class="section-lead">Free and open source, for Mac, Windows and Linux.</p>
+    <div class="cta"><a class="btn primary" href="/">Get Aaina Desktop</a><a class="btn" href="https://buymeacoffee.com/aaina.world">Buy me a coffee</a></div>
+  </div>
+</section>
 
 <footer>
   <div class="wrap">

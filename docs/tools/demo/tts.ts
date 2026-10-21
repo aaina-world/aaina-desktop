@@ -7,17 +7,31 @@ import { NARRATION } from "./narration";
 const OUT = join(import.meta.dirname, "out", "voice");
 mkdirSync(OUT, { recursive: true });
 const only = process.argv.slice(2);
+const VOICE = "shimmer";
 const INSTRUCTIONS =
-  "A warm, friendly, unhurried product walkthrough. Clear and natural, like explaining something useful to a friend who is starting a small business. No hype.";
+  "Soft, gentle and warm, with a pleasant, smiling tone. Calm and unhurried, a little quieter than usual, like a kind guide showing a friend something useful for their new business. Natural pauses, no hype.";
+
+/** One line, asked again (up to 3 times) when OpenAI is slow to answer. */
+async function speak(input: string): Promise<Uint8Array> {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      const r = await fetch("https://api.openai.com/v1/audio/speech", {
+        method: "POST",
+        signal: AbortSignal.timeout(120_000),
+        headers: { Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ model: "gpt-4o-mini-tts", voice: VOICE, input, instructions: INSTRUCTIONS, response_format: "mp3" }),
+      });
+      if (!r.ok) throw new Error(`${r.status} ${await r.text()}`);
+      return new Uint8Array(await r.arrayBuffer());
+    } catch (e) {
+      if (attempt >= 3) throw e;
+      console.log(`asking again (${(e as Error).message})`);
+    }
+  }
+}
 
 for (const n of NARRATION) {
   if (only.length ? !only.includes(n.id) : existsSync(join(OUT, `${n.id}.mp3`))) continue;
-  const r = await fetch("https://api.openai.com/v1/audio/speech", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ model: "gpt-4o-mini-tts", voice: "coral", input: n.say, instructions: INSTRUCTIONS, response_format: "mp3" }),
-  });
-  if (!r.ok) throw new Error(`${n.id}: ${r.status} ${await r.text()}`);
-  writeFileSync(join(OUT, `${n.id}.mp3`), new Uint8Array(await r.arrayBuffer()));
+  writeFileSync(join(OUT, `${n.id}.mp3`), await speak(n.say));
   console.log("spoke", n.id);
 }

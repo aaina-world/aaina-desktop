@@ -1,4 +1,4 @@
-// The demo video: the real screens in demo mode, a visible cursor, captions, and the spoken narration (docs/tools/demo/out/voice,
+// The demo video: the real screens in demo mode, a visible cursor, captions, soft music and the spoken narration (docs/tools/demo/out/voice,
 // made by tts.ts). Frames come from Chromium's screencast, so text stays sharp. Run from the repo root:
 //   npx playwright test -c docs/tools/demo video
 // It writes docs/tools/demo/out/aaina-desktop-demo.mp4.
@@ -300,13 +300,21 @@ test("demo video", async ({ page }) => {
   const offset = frames[0].t - t0; // when the first frame was taken, against the narration clock
   const voices = starts.flatMap((s) => ["-i", join(VOICE, `${s.id}.mp3`)]);
   const delays = starts.map((s, i) => `[${i + 1}:a]adelay=${Math.max(0, Math.round((s.at - offset) * 1000 + 300))}:all=1[a${i}]`);
-  const mix = `${delays.join(";")};${starts.map((_, i) => `[a${i}]`).join("")}amix=inputs=${starts.length}:normalize=0[voice]`;
+  // Soft background music (music.sh), lowered further whenever the voice speaks, then the whole mix brought to a normal loudness.
+  const music = join(OUT, "music.wav");
+  execFileSync("sh", [join(import.meta.dirname, "music.sh"), String(Math.ceil(end - frames[0].t) + 2), music]);
+  const m = starts.length + 1;
+  const mix =
+    `${delays.join(";")};${starts.map((_, i) => `[a${i}]`).join("")}amix=inputs=${starts.length}:normalize=0,asplit[voice][key];` +
+    `[${m}:a]volume=0.7[bed];[bed][key]sidechaincompress=threshold=0.015:ratio=5:attack=40:release=900[ducked];` +
+    `[voice][ducked]amix=inputs=2:normalize=0,loudnorm=I=-16:TP=-1.5:LRA=11[aout]`;
   execFileSync("ffmpeg", [
     "-y",
     "-f", "concat", "-safe", "0", "-i", join(OUT, "frames.txt"),
     ...voices,
+    "-i", music,
     "-filter_complex", `[0:v]fps=30,scale=1920:1200:flags=lanczos,format=yuv420p[v];${mix}`,
-    "-map", "[v]", "-map", "[voice]",
+    "-map", "[v]", "-map", "[aout]",
     "-c:v", "libx264", "-preset", "slow", "-crf", "20", "-c:a", "aac", "-b:a", "160k", "-movflags", "+faststart", "-shortest",
     join(OUT, "aaina-desktop-demo.mp4"),
   ], { stdio: "inherit" });
