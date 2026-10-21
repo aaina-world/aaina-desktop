@@ -1,5 +1,14 @@
 // Sample pictures for the mock Api (bundled by Vite). Copied from design/assets/img.
 import auditShirt from "./img/audit-shirt.webp";
+import demoDressProduct from "./img/demo-dress-product.webp";
+import demoCoatProduct from "./img/demo-coat-product.webp";
+import demoChloeDressWalk from "./img/demo-chloe-dress-walk.webp";
+import demoChloeDressFront from "./img/demo-chloe-dress-front.webp";
+import demoChloeDressTurn from "./img/demo-chloe-dress-turn.webp";
+import demoLucaCoatPockets from "./img/demo-luca-coat-pockets.webp";
+import demoLucaCoatWalk from "./img/demo-luca-coat-walk.webp";
+import demoDressFlatlay from "./img/demo-dress-flatlay.webp";
+import demoCoatGhost from "./img/demo-coat-ghost.webp";
 import flatlayClean from "./img/flatlay-clean.webp";
 import flatlayFolded from "./img/flatlay-folded.webp";
 import flatlayOutfit from "./img/flatlay-outfit.webp";
@@ -65,6 +74,15 @@ import startPhotoshoot from "./img/start-photoshoot.webp";
 import startPicture from "./img/start-picture.webp";
 
 export const IMG = {
+  demoDressProduct,
+  demoCoatProduct,
+  demoChloeDressWalk,
+  demoChloeDressFront,
+  demoChloeDressTurn,
+  demoLucaCoatPockets,
+  demoLucaCoatWalk,
+  demoDressFlatlay,
+  demoCoatGhost,
   auditShirt,
   flatlayClean,
   flatlayFolded,

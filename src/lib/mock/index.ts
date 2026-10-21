@@ -20,7 +20,8 @@ import {
   type ShotPlan,
 } from "../contract";
 import { IMG } from "./images";
-import { FACE_OPTIONS, FLAT_RESULTS, GHOST_RESULTS, MODELS, MODEL_RESULTS, SCENES, posesOf } from "./data";
+import { DEMO_READINGS, DEMO_RESULTS, FACE_OPTIONS, FLAT_RESULTS, GHOST_RESULTS, MODELS, MODEL_RESULTS, SCENES, posesOf } from "./data";
+import type { LiveCatalog } from "./liveCatalog";
 
 type Listener = Parameters<Api["subscribe"]>[0];
 const now = () => new Date().toISOString();
@@ -89,6 +90,13 @@ export async function createMockApi(): Promise<Api> {
   const ownScenes = new Map<string, OwnScene>();
 
   // ---------- helpers ----------
+  // Loaded on demand: the catalogue code imports the log, which imports the Api, which imports this file.
+  const wantsLive = typeof location !== "undefined" && location.search.includes("catalog=live");
+  const liveReady: Promise<LiveCatalog> | null = wantsLive ? import("./liveCatalog").then((m) => m.createLiveCatalog()) : null;
+  let live: LiveCatalog | null = null;
+  void liveReady?.then((l) => (live = l));
+  // `?demo`: the tutorials' and the demo video's sample data (two garments on Chloe and Luca) instead of the test samples.
+  const demo = typeof location !== "undefined" && /[?&]demo\b/.test(location.search);
   const posesAll = () => MODELS.flatMap((x) => posesOf(x.id)).slice(0, 16);
   const poseTitle = (s: ShotPlan): string => {
     if (s.kind === "flat-lay")
@@ -99,7 +107,9 @@ export async function createMockApi(): Promise<Api> {
       ];
     if (s.pose.source === "words") return s.pose.words.slice(0, 40);
     const found =
-      posesAll().find((p) => p.id === (s.pose as { id: string }).id) ?? (s.pose.source === "own" ? ownPoses.get(s.pose.id) : undefined);
+      posesAll().find((p) => p.id === (s.pose as { id: string }).id) ??
+      live?.seenPose((s.pose as { id: string }).id) ??
+      (s.pose.source === "own" ? ownPoses.get(s.pose.id) : undefined);
     return found?.name ?? "Pose";
   };
   const shotKeyOf = (s: ShotPlan) =>
@@ -108,8 +118,18 @@ export async function createMockApi(): Promise<Api> {
       : s.kind === "flat-lay"
         ? `flat:${s.style}:${s.side}`
         : `ghost:${s.angle}`;
-  const resultFor = (kind: ShootKind, n: number) => {
-    const l = kind === "model" ? MODEL_RESULTS : kind === "ghost" ? GHOST_RESULTS : FLAT_RESULTS;
+  const resultFor = (shoot: Shoot, n: number) => {
+    const l = demo
+      ? shoot.kind === "model"
+        ? (DEMO_RESULTS[shoot.model?.id ?? ""] ?? [...DEMO_RESULTS.chloe, ...DEMO_RESULTS.luca])
+        : shoot.kind === "ghost"
+          ? [IMG.demoCoatGhost]
+          : [IMG.demoDressFlatlay]
+      : shoot.kind === "model"
+        ? MODEL_RESULTS
+        : shoot.kind === "ghost"
+          ? GHOST_RESULTS
+          : FLAT_RESULTS;
     return l[n % l.length];
   };
   let resultCounter = 0;
@@ -140,7 +160,8 @@ export async function createMockApi(): Promise<Api> {
     return p;
   }
   function finishedFields(shoot: Shoot, title: string, at: string) {
-    const url = resultFor(shoot.kind, resultCounter++);
+    // The demo's photos follow their pose (walking, front, three-quarter), so a title always matches its photo.
+    const url = resultFor(shoot, demo ? (/walk/i.test(title) ? 0 : /three|turn|side|pocket/i.test(title) ? 2 : 1) : resultCounter++);
     return { status: "done" as const, url, path: `${shoot.name}/${title}.png`, width: 1536, height: 1536, finishedAt: at, startedAt: at };
   }
   function refreshShoot(id: string) {
@@ -248,15 +269,24 @@ export async function createMockApi(): Promise<Api> {
       done: number;
       extra?: "making" | "failed" | "draft" | "interrupted";
       versions?: number;
+      reading?: Partial<ProductReading>;
+      product?: Product;
     },
   ) {
-    const product = seedProduct(name, img, kind === "model" ? {} : { label: "Garment" }, opts.ageMs);
+    const product = opts.product ?? seedProduct(name, img, opts.reading ?? (kind === "model" ? {} : { label: "Garment" }), opts.ageMs);
     const created = ago(opts.ageMs);
     const modelRef: ModelRef | null = kind === "model" ? { source: "studio", id: opts.model ?? "tara" } : null;
     const total = opts.done + (opts.extra && opts.extra !== "draft" ? (opts.extra === "making" ? 2 : 1) : 0);
     const plan: ShotPlan[] = Array.from({ length: Math.max(total, 1) }, (_, i) =>
       kind === "model"
-        ? { kind: "model", pose: { source: "studio", id: posesAll()[i % 16].id }, frame: "as-posed", expression: "as-posed" }
+        ? {
+            kind: "model",
+            pose: demo
+              ? { source: "words", words: (["Walking", "Front view", "Three-quarter turn"] as const)[i % 3] }
+              : { source: "studio", id: posesAll()[i % 16].id },
+            frame: "as-posed",
+            expression: "as-posed",
+          }
         : kind === "ghost"
           ? { kind: "ghost", angle: (["front", "three-quarter", "side", "back-three-quarter", "back"] as const)[i % 5] }
           : { kind: "flat-lay", style: (["clean", "folded", "styled"] as const)[i % 3], side: i > 2 ? "back" : "front" },
@@ -317,53 +347,84 @@ export async function createMockApi(): Promise<Api> {
     return shoots.get(shoot.id)!;
   }
 
-  seedShoot("Cobalt T-shirt", "model", IMG.realGhost, { ageMs: 6 * MIN, done: 3, extra: "making", versions: 1 });
-  seedShoot("Camel coat", "model", IMG.startChloe, { ageMs: 5 * HOUR, done: 4, model: "chloe", scene: "limewash-hall" });
-  seedShoot("Sage linen blazer", "ghost", IMG.ghostFront, { ageMs: DAY, done: 3 });
-  seedShoot("Linen shirt", "model", IMG.sampleGarment, { ageMs: DAY + 2 * HOUR, done: 0, extra: "draft" });
-  seedShoot("Denim jacket", "model", IMG.realAaina, { ageMs: 2 * DAY, done: 2, model: "aaina", extra: "failed" });
-  seedShoot("Summer kurta", "flat-lay", IMG.flatlayClean, { ageMs: 2 * DAY + HOUR, done: 4 });
-  seedShoot("Cream kurta set", "model", IMG.startPhotoshoot, { ageMs: 4 * DAY, done: 6, model: "nia", scene: "bali-villa" });
-  seedShoot("Wool blazer", "ghost", IMG.realGhost, { ageMs: 7 * DAY, done: 5 });
-  seedShoot("Sage block-print kurta", "model", IMG.startPicture, { ageMs: 9 * DAY, done: 6, model: "kabir", scene: "accra-courtyard" });
-  seedShoot("Linen shirt set", "flat-lay", IMG.flatlayStyled, { ageMs: 12 * DAY, done: 3 });
-  seedShoot("Rust wrap dress", "model", IMG.realPoster, { ageMs: 13 * DAY, done: 3, extra: "interrupted", model: "camille" });
+  // In the demo, a first run (`?firstrun`) starts empty, like a new install.
+  if (!demo) seedSamples();
+  else if (!location.search.includes("firstrun")) seedDemo();
+  function seedDemo() {
+    const coat = seedProduct("Camel overcoat", IMG.demoCoatProduct, DEMO_READINGS.coat, 2 * DAY);
+    const dress = seedProduct("Emerald slip dress", IMG.demoDressProduct, DEMO_READINGS.dress, DAY + HOUR);
+    seedShoot(coat.name, "ghost", IMG.demoCoatProduct, { ageMs: 2 * DAY, done: 1, product: coat });
+    seedShoot(dress.name, "flat-lay", IMG.demoDressProduct, { ageMs: DAY + HOUR, done: 1, product: dress });
+    seedShoot(coat.name, "model", IMG.demoCoatProduct, {
+      ageMs: DAY,
+      done: 2,
+      model: "luca",
+      scene: wantsLive ? "loc_charcoal_premium_studio" : undefined,
+      product: coat,
+    });
+    seedShoot(dress.name, "model", IMG.demoDressProduct, {
+      ageMs: 3 * HOUR,
+      done: 3,
+      model: "chloe",
+      scene: wantsLive ? "loc_warm_arch_studio" : undefined,
+      product: dress,
+    });
+  }
+  function seedSamples() {
+    seedShoot("Cobalt T-shirt", "model", IMG.realGhost, { ageMs: 6 * MIN, done: 3, extra: "making", versions: 1 });
+    seedShoot("Camel coat", "model", IMG.startChloe, { ageMs: 5 * HOUR, done: 4, model: "chloe", scene: "limewash-hall" });
+    seedShoot("Sage linen blazer", "ghost", IMG.ghostFront, { ageMs: DAY, done: 3 });
+    seedShoot("Linen shirt", "model", IMG.sampleGarment, { ageMs: DAY + 2 * HOUR, done: 0, extra: "draft" });
+    seedShoot("Denim jacket", "model", IMG.realAaina, { ageMs: 2 * DAY, done: 2, model: "aaina", extra: "failed" });
+    seedShoot("Summer kurta", "flat-lay", IMG.flatlayClean, { ageMs: 2 * DAY + HOUR, done: 4 });
+    seedShoot("Cream kurta set", "model", IMG.startPhotoshoot, { ageMs: 4 * DAY, done: 6, model: "nia", scene: "bali-villa" });
+    seedShoot("Wool blazer", "ghost", IMG.realGhost, { ageMs: 7 * DAY, done: 5 });
+    seedShoot("Sage block-print kurta", "model", IMG.startPicture, { ageMs: 9 * DAY, done: 6, model: "kabir", scene: "accra-courtyard" });
+    seedShoot("Linen shirt set", "flat-lay", IMG.flatlayStyled, { ageMs: 12 * DAY, done: 3 });
+    seedShoot("Rust wrap dress", "model", IMG.realPoster, { ageMs: 13 * DAY, done: 3, extra: "interrupted", model: "camille" });
+  }
   setTimeout(pump, 100);
 
-  ownModels.set("own-1", {
-    id: "own-1",
-    name: "Priya",
-    gender: "woman",
-    age: 28,
-    look: "South Asian",
-    body: "average",
-    appearance: "woman, age 28, warm brown skin, long dark wavy hair",
-    madeFrom: "description",
-    status: "ready",
-    faceOptions: [],
-    sheetUrl: IMG.sheetSample,
-    sheetPath: "models/priya/sheet.png",
-    cardUrl: null,
-    cardPath: null,
-    createdAt: ago(5 * DAY),
-  });
-  ownPoses.set("op-1", {
-    id: "op-1",
-    name: "Hands on hips, looking left",
-    words: "Hands on hips, looking left",
-    imageUrl: IMG.pose3,
-    modelRef: { source: "studio", id: "tara" },
-    createdAt: ago(3 * DAY),
-    status: "ready",
-  });
-  ownScenes.set("os-1", {
-    id: "os-1",
-    name: "Sunlit terrace",
-    words: "A sunlit terrace with white walls and terracotta pots",
-    imageUrl: IMG.sceneBaliVilla,
-    createdAt: ago(3 * DAY),
-    status: "ready",
-  });
+  /** The file name behind each picked picture's blob address, as the app has it from the path. */
+  const fileNames = new Map<string, string>();
+
+  // The demo starts with nothing of your own, so the tutorials can show making them.
+  if (!demo) {
+    ownModels.set("own-1", {
+      id: "own-1",
+      name: "Priya",
+      gender: "woman",
+      age: 28,
+      look: "South Asian",
+      body: "average",
+      appearance: "woman, age 28, warm brown skin, long dark wavy hair",
+      madeFrom: "description",
+      status: "ready",
+      faceOptions: [],
+      sheetUrl: IMG.sheetSample,
+      sheetPath: "models/priya/sheet.png",
+      cardUrl: null,
+      cardPath: null,
+      createdAt: ago(5 * DAY),
+    });
+    ownPoses.set("op-1", {
+      id: "op-1",
+      name: "Hands on hips, looking left",
+      words: "Hands on hips, looking left",
+      imageUrl: IMG.pose3,
+      modelRef: { source: "studio", id: "tara" },
+      createdAt: ago(3 * DAY),
+      status: "ready",
+    });
+    ownScenes.set("os-1", {
+      id: "os-1",
+      name: "Sunlit terrace",
+      words: "A sunlit terrace with white walls and terracotta pots",
+      imageUrl: IMG.sceneBaliVilla,
+      createdAt: ago(3 * DAY),
+      status: "ready",
+    });
+  }
 
   // ---------- the Api ----------
   const saveSettings = () => store.set("aaina-mock-settings", settings);
@@ -382,6 +443,11 @@ export async function createMockApi(): Promise<Api> {
   const api: Api = {
     // Catalogue
     async catalogStatus() {
+      const live = await liveReady;
+      if (live) {
+        await live.models();
+        return live.status();
+      }
       await wait(120);
       return catalog;
     },
@@ -394,18 +460,31 @@ export async function createMockApi(): Promise<Api> {
       return catalog;
     },
     async models() {
+      const live = await liveReady;
+      if (live) return live.models();
       await wait(200);
       return MODELS;
     },
     async posesFor(model) {
+      const live = await liveReady;
+      if (live) {
+        if (model.source === "studio") return live.posesFor(model);
+        const gender = ownModels.get(model.id)?.gender ?? "woman";
+        const lead = (await live.models()).find((m) => m.gender === gender && m.poolKey && !m.minor);
+        return lead ? live.posesFor({ source: "studio", id: lead.id }) : [];
+      }
       await wait(150);
       return posesOf(model.source === "studio" ? model.id : MODELS[0].id);
     },
     async scenes() {
+      const live = await liveReady;
+      if (live) return live.scenes();
       await wait(150);
       return SCENES;
     },
     async suggestModels(productId) {
+      const live = await liveReady;
+      if (live) return live.suggestModels(productId ? (products.get(productId)?.reading ?? null) : null);
       await wait(150);
       const aud = productId ? products.get(productId)?.reading?.audience : null;
       const want = (x: CatalogModel) =>
@@ -424,7 +503,7 @@ export async function createMockApi(): Promise<Api> {
     },
     async createProduct(files, name) {
       const id = uid();
-      const first = files[0]?.path ?? "Product";
+      const first = (files[0] && (fileNames.get(files[0].path) ?? files[0].path)) ?? "Product";
       const base = first
         .split(/[\\/]/)
         .pop()!
@@ -493,6 +572,9 @@ export async function createMockApi(): Promise<Api> {
       const p = need(products.get(id), "Product");
       if (!conn.chatgpt.signedIn && !conn.key.present) throw new Error("Connect ChatGPT or add an OpenAI key to read products.");
       await wait(1200);
+      const demoReading = demo
+        ? DEMO_READINGS[p.photos.some((f) => /coat/i.test(fileNames.get(f.path) ?? f.path)) ? "coat" : "dress"]
+        : null;
       const reading: ProductReading = {
         productType: "crewneck_tshirts",
         label: "T-shirt",
@@ -501,6 +583,7 @@ export async function createMockApi(): Promise<Api> {
         material: "cotton jersey",
         details: "crew neck, short sleeves",
         reach: "upper",
+        ...demoReading,
         readBy: conn.chatgpt.signedIn ? "chatgpt" : "key",
         readAt: now(),
       };
@@ -738,8 +821,17 @@ export async function createMockApi(): Promise<Api> {
       const next = { ...m, status: "making-sheet" as const, faceOptions: m.faceOptions.filter((f) => f.id === faceId) };
       ownModels.set(id, next);
       emit("own", id);
+      // The demo's three faces are Nia, Tara and Chloe: the sheet shown is the picked one's real studio sheet.
+      const live = demo ? await liveReady : null;
+      const picked = live && (await live.models()).find((x) => x.id === ["nia", "tara", "chloe"][Number(faceId.slice(1))]);
       setTimeout(() => {
-        ownModels.set(id, { ...next, status: "ready", sheetUrl: IMG.sheetSample, sheetPath: `models/${id}/sheet.png` });
+        ownModels.set(id, {
+          ...next,
+          status: "ready",
+          sheetUrl: picked ? picked.sheetUrl : IMG.sheetSample,
+          cardUrl: picked ? picked.cardUrl : next.cardUrl,
+          sheetPath: `models/${id}/sheet.png`,
+        });
         emit("own", id);
       }, 4000);
       return next;
@@ -771,11 +863,14 @@ export async function createMockApi(): Promise<Api> {
       return [...ownPoses.values()].filter((p) => !model || (p.modelRef.source === model.source && p.modelRef.id === model.id));
     },
     async makePose(input) {
+      // The demo shows a real studio pose of the chosen model as the made pose.
+      const live = demo ? await liveReady : null;
+      const livePose = live && input.model.source === "studio" ? (await live.posesFor(input.model))[5] : undefined;
       const p: OwnPose = {
         id: uid(),
         name: (input.words ?? "Pose from a photo").slice(0, 40),
         words: input.words ?? null,
-        imageUrl: IMG.pose5,
+        imageUrl: livePose?.imageUrl ?? IMG.pose5,
         modelRef: input.model,
         createdAt: now(),
         status: "making",
@@ -793,11 +888,14 @@ export async function createMockApi(): Promise<Api> {
       return [...ownScenes.values()];
     },
     async makeScene(input) {
+      // The demo shows a real studio scene as the made scene.
+      const live = demo ? await liveReady : null;
+      const liveScene = live ? (await live.scenes()).find((x) => x.id === "loc_sheer_drape_studio") : undefined;
       const s: OwnScene = {
         id: uid(),
         name: input.words.slice(0, 40),
         words: input.words,
-        imageUrl: IMG.sceneAustralianBeachHouse,
+        imageUrl: liveScene?.imageUrl ?? IMG.sceneAustralianBeachHouse,
         createdAt: now(),
         status: "making",
       };
@@ -835,7 +933,14 @@ export async function createMockApi(): Promise<Api> {
         input.type = "file";
         input.accept = "image/jpeg,image/png,image/webp";
         input.multiple = multiple;
-        input.onchange = () => resolve(Array.from(input.files ?? []).map((f) => URL.createObjectURL(f)));
+        input.onchange = () =>
+          resolve(
+            Array.from(input.files ?? []).map((f) => {
+              const url = URL.createObjectURL(f);
+              fileNames.set(url, f.name);
+              return url;
+            }),
+          );
         input.oncancel = () => resolve([]);
         input.click();
       });
@@ -890,7 +995,7 @@ export async function createMockApi(): Promise<Api> {
       return settings;
     },
     async appVersion() {
-      return "1.0.0";
+      return "0.1.0";
     },
     async backup(folder) {
       await wait(900);

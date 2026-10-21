@@ -1,5 +1,5 @@
 import { IMG } from "./images";
-import type { CatalogModel, CatalogPose, CatalogScene, Gender } from "../contract";
+import type { CatalogModel, CatalogPose, CatalogScene, Gender, ProductReading } from "../contract";
 
 const m = (
   id: string,
@@ -149,3 +149,31 @@ export const GHOST_RESULTS = [IMG.ghostFront, IMG.ghostSide, IMG.ghostBack, IMG.
 export const FLAT_RESULTS = [IMG.flatlayClean, IMG.flatlayFolded, IMG.flatlayStyled, IMG.realFlatlay];
 export const POSE_TITLES = POSE_NAMES;
 export const FACE_OPTIONS = [IMG.modelNiaP, IMG.modelTaraP, IMG.modelChloeP];
+
+/** `?demo`: each model's photos of the demo garments: walking, front, three-quarter. */
+export const DEMO_RESULTS: Record<string, string[]> = {
+  chloe: [IMG.demoChloeDressWalk, IMG.demoChloeDressFront, IMG.demoChloeDressTurn],
+  luca: [IMG.demoLucaCoatWalk, IMG.demoLucaCoatPockets, IMG.demoLucaCoatPockets],
+};
+
+/** `?demo`: what reading the demo garments gives. */
+export const DEMO_READINGS = {
+  dress: {
+    productType: "midi_dresses",
+    label: "Slip dress",
+    audience: "women",
+    colour: "emerald green",
+    material: "silk satin",
+    details: "cowl neckline, thin adjustable straps, bias-cut midi skirt",
+    reach: "full",
+  },
+  coat: {
+    productType: "long_coats",
+    label: "Overcoat",
+    audience: "men",
+    colour: "camel",
+    material: "wool",
+    details: "double-breasted, peak lapels, six horn buttons, flap pockets, knee length",
+    reach: "upper",
+  },
+} satisfies Record<string, Partial<ProductReading>>;
