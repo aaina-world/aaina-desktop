@@ -11,7 +11,7 @@ Short guides to everything in the app, in the order you will meet it. Each one t
 7. [Shoots and Library](07-shoots-and-library.md): find, reuse and tidy what you made.
 8. [Settings, backup and privacy](08-settings.md): quality, folders, the offline catalogue, backups, and what is sent where.
 
-There is also a [demo video](https://desktop.aaina.world/tutorials.html#video) that shows all of this in a few minutes.
+There is also a [demo video](https://desktop.aaina.world/tutorials#video) that shows all of this in a few minutes.
 
 ## Costs at a glance
 

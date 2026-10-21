@@ -6,7 +6,7 @@
 
 Add a photo of what you sell, pick a studio model, choose poses and a scene, and get photos you can use in your shop. There is no account to make. Your shoots, photos and models stay on your computer.
 
-**New here?** The [tutorials](docs/tutorials/README.md) walk through everything in a few minutes each, and there is a short [demo video](https://desktop.aaina.world/tutorials.html#video).
+**New here?** The [tutorials](docs/tutorials/README.md) walk through everything in a few minutes each, and there is a short [demo video](https://desktop.aaina.world/tutorials#video).
 
 ## Why this exists
 
