@@ -231,17 +231,16 @@ if (KEY)
   check("a real photo is made (one standard photo, about $0.06)", async () => {
     const product = join(homedir(), "aaina-e2e-dress.webp");
     copyFileSync(new URL("../src/lib/mock/img/demo-dress-product.webp", import.meta.url), product);
-    // The system's file window can't be clicked by a test, so its answer is given directly.
+    // A test can't use the system's file window, so the photo arrives the way a photo dropped on the window does: the
+    // app opens a new shoot with the dropped paths (useStartShoot), here through the router's own history state.
     await run(
-      `const i = window.__TAURI_INTERNALS__;
-       if (!i.__e2e) { const invoke = i.invoke.bind(i); i.invoke = (cmd, args, o) => cmd === "plugin:dialog|open" ? Promise.resolve([window.__e2eFile]) : invoke(cmd, args, o); i.__e2e = true; }
-       window.__e2eFile = arguments[0];`,
+      `const idx = (history.state && history.state.idx) || 0;
+       history.pushState({ usr: { paths: [arguments[0]] }, key: "e2e", idx: idx + 1 }, "", "#/create/new");
+       window.dispatchEvent(new PopStateEvent("popstate", { state: history.state }));`,
       product,
     );
-    await click("New shoot");
     await sees("Add your product");
-    await click("Choose photos");
-    await until("the product reading", (t) => /Next: model/.test(t) && !/Reading your product/i.test(t), 90_000);
+    await until("the product reading", (t) => /\b1 photo\b/.test(t) && !/Reading your product/i.test(t), 120_000);
     await shot("product-read");
     await click("Next: model");
     await sees("Choose a model");
