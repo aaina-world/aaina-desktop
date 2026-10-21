@@ -27,6 +27,13 @@ describe("app folders", () => {
     expect(await files.appUrl("poses/a.png")).toBe("asset://localhost/data/poses/a.png");
     expect(await files.defaultPhotosFolder()).toBe("/Pictures/Aaina");
   });
+  it("falls back to folders in the home folder when the system has no Pictures or Downloads folder", async () => {
+    const path = (await import("@tauri-apps/api/path")) as unknown as Record<string, ReturnType<typeof vi.fn>>;
+    path.pictureDir.mockRejectedValueOnce(new Error("unknown path"));
+    path.downloadDir.mockRejectedValueOnce(new Error("unknown path"));
+    expect(await files.defaultPhotosFolder()).toBe("/home/me/Pictures/Aaina");
+    expect(await files.defaultSaveFolder()).toBe("/home/me/Downloads");
+  });
   it("writes, reads and checks an app file, creating its folders", async () => {
     await files.writeAppFile("own-models/m1/sheet.png", new Uint8Array([1, 2]));
     expect(await files.appFileExists("own-models/m1/sheet.png")).toBe(true);

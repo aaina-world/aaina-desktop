@@ -1,5 +1,5 @@
 import { convertFileSrc } from "@tauri-apps/api/core";
-import { appConfigDir, appDataDir, downloadDir, join, pictureDir } from "@tauri-apps/api/path";
+import { appConfigDir, appDataDir, downloadDir, homeDir, join, pictureDir } from "@tauri-apps/api/path";
 import { copyFile, exists, mkdir, readDir, readFile, remove, stat, writeFile } from "@tauri-apps/plugin-fs";
 import { revealItemInDir } from "@tauri-apps/plugin-opener";
 import { baseNameOf, extensionOf, photoFileBase, safeName, uniqueName } from "./names";
@@ -23,8 +23,17 @@ export function createFiles() {
     for (const folder of APP_FOLDERS) await mkdir(await appPath(folder), { recursive: true });
   }
 
-  const defaultPhotosFolder = async () => join(await pictureDir(), "Aaina");
-  const defaultSaveFolder = async () => downloadDir();
+  // Linux can have no Pictures or Downloads folder set up (the lookup then fails, and the app would never start):
+  // use the folder of that name in the home folder instead.
+  const systemFolder = async (lookup: () => Promise<string>, name: string) => {
+    try {
+      return await lookup();
+    } catch {
+      return join(await homeDir(), name);
+    }
+  };
+  const defaultPhotosFolder = async () => join(await systemFolder(pictureDir, "Pictures"), "Aaina");
+  const defaultSaveFolder = async () => systemFolder(downloadDir, "Downloads");
 
   /** A picture that can be shown in the page (asset: URL). */
   const urlFor = (absolutePath: string) => convertFileSrc(absolutePath);

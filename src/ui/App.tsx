@@ -5,7 +5,8 @@ import { AppFrame } from "./components/AppFrame";
 import { BareFrame } from "./components/BareFrame";
 import { ShortcutsDialog } from "./components/dialogs";
 import { ToastHost } from "./components/Toast";
-import { applyOs, applyTheme, isMod, useSettings, useStartShoot, useUpdateCheckOnStart } from "./hooks";
+import { applyOs, applyTheme, isMod, useSettings, useStartProblem, useStartShoot, useUpdateCheckOnStart } from "./hooks";
+import { Notice } from "./components/Notice";
 import { AboutScreen } from "./screens/about";
 import { ConnectScreen } from "./screens/connect";
 import { CreateScreen } from "./screens/create";
@@ -26,11 +27,29 @@ applyOs();
 
 const FIRST_RUN = ["/welcome", "/connect", "/setup"];
 
+/** Shown instead of an empty window when the app could not start. */
+function StartProblem({ problem, retry }: { problem: string; retry: () => void }) {
+  return (
+    <div className="app-boot start-problem">
+      <div className="start-problem-box">
+        <h1 className="t-page">Aaina Desktop couldn't start</h1>
+        <Notice tone="danger" action={{ label: "Try again", onClick: retry }}>
+          {problem}
+        </Notice>
+        <p className="t-small muted">
+          Nothing you made is lost. If this keeps happening, open an issue at github.com/aaina-world/aaina-desktop with this message.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 /** Everything that belongs to the window rather than a screen: theme, shortcuts, drag and drop, first run. */
 function Root() {
   const navigate = useNavigate();
   const loc = useLocation().pathname;
   const { settings } = useSettings();
+  const { problem, retry } = useStartProblem();
   const start = useStartShoot();
   const [dragging, setDragging] = useState(false);
   const [shortcuts, setShortcuts] = useState(false);
@@ -107,6 +126,7 @@ function Root() {
     void api();
   }, []);
 
+  if (!settings && problem) return <StartProblem problem={problem} retry={retry} />;
   if (!settings) return <div className="app-boot" />;
   return (
     <>

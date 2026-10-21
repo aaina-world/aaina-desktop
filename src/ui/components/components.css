@@ -75,5 +75,7 @@ body:has(.viewer) .toast-host { bottom: 96px; }
 body.dragging { cursor: copy; }
 .drag-strip { position: fixed; top: 0; left: 0; right: 0; height: 28px; z-index: 200; }
 .app-boot { min-height: 100vh; background: var(--bg); }
+.start-problem { display: flex; align-items: center; justify-content: center; padding: 32px; }
+.start-problem-box { display: flex; flex-direction: column; gap: 16px; max-width: 560px; }
 /* Windows and Linux use the system title bar: no drawn chrome, so no space for it. */
 html[data-os] { --chrome-h: 0px !important; }
