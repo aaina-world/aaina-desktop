@@ -475,6 +475,8 @@ describe("saving and sharing", () => {
     expect(await api.pickFiles({ multiple: true })).toEqual(["/a.png", "/b.png"]);
     h.openDialog.mockResolvedValueOnce("/Folder").mockResolvedValueOnce(null);
     expect(await api.pickFolder()).toBe("/Folder");
+    // Recursive, so the app may write inside the folder (a backup's sub-folders on a USB drive, for one).
+    expect(h.openDialog).toHaveBeenLastCalledWith(expect.objectContaining({ directory: true, recursive: true }));
     expect(await api.pickFolder()).toBeNull();
   });
 });
@@ -491,8 +493,9 @@ describe("your own models, poses and scenes", () => {
   it("makes three faces, then the sheet from the chosen face, and checks it", async () => {
     await connect();
     openai = (url) => (url.endsWith("/images/generations") ? ok({ data: [{ b64_json: PICTURE }] }) : new Response("{}", { status: 500 }));
-    const m = await api.createOwnModelFromWords(traits);
+    const m = await api.createOwnModelFromWords({ ...traits, look: "South Asian", hair: "Long and loose" });
     expect(m).toMatchObject({ name: "My model", status: "draft", madeFrom: "description" });
+    expect(m.appearance).toBe("South Asian, woman aged 30, long and loose hair");
     const choosing = await until(async () => (await api.ownModel(m.id))?.status === "choosing-face" && (await api.ownModel(m.id)));
     expect(choosing.faceOptions).toHaveLength(3);
     expect(openaiCalls.filter((c) => c === "/images/generations")).toHaveLength(3);
@@ -632,10 +635,15 @@ describe("settings, backup and starting over", () => {
     openai = () => ok({ data: [{ b64_json: PICTURE }] });
     await api.makeShoot(shoot.id);
     const done = await until(async () => (await photosOf(shoot.id)).find((p) => p.status === "done"));
+    const settingsBefore = await api.settings();
+    const secretsBefore = keychain.size;
     await api.deleteEverything();
     expect(await api.products()).toEqual([]);
     expect(await api.shoots()).toEqual([]);
-    expect(keychain.size).toBe(0);
+    // Settings and the connection stay, as the screen says.
+    expect(await api.settings()).toEqual(settingsBefore);
+    expect(keychain.size).toBe(secretsBefore);
+    expect(secretsBefore).toBeGreaterThan(0);
     expect(vfs.has(`/Pictures/Aaina/${done.path}`)).toBe(true);
     expect(vfs.get("/data/products")).toBeNull(); // folders are recreated empty
   });

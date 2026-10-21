@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import { checkForUpdate } from "../../../lib/updates";
 import { logWarning } from "../../../lib/log";
 import { useLocation } from "react-router";
-import { api, inApp } from "../../../lib/api";
+import { api } from "../../../lib/api";
 import { ESTIMATE_USD } from "../../../lib/contract";
 import {
   ConfirmDialog,
@@ -18,7 +17,7 @@ import {
   formatUsd,
   type IconName,
 } from "../../components";
-import { useLoad, useOs, useSettings } from "../../hooks";
+import { announceUpdate, latestRelease, useLoad, useOs, useSettings } from "../../hooks";
 import { ConnectCards } from "../connect";
 
 const SECTIONS: { id: string; label: string; icon: IconName }[] = [
@@ -97,15 +96,8 @@ export function SettingsScreen() {
     setChecking(true);
     try {
       const a = await api();
-      const current = await a.appVersion();
-      const fetcher = inApp ? (await import("@tauri-apps/plugin-http")).fetch : window.fetch.bind(window);
-      const result = await checkForUpdate(current, fetcher);
-      if (result.kind === "newer")
-        toast(`Version ${result.version} is ready`, {
-          icon: "refresh",
-          ms: 12000,
-          action: { label: "Get it", onClick: () => void a.openUrl(result.url) },
-        });
+      const result = await latestRelease(a);
+      if (result.kind === "newer") announceUpdate(a, result);
       else toast("You're on the latest version");
     } catch (error) {
       void logWarning("Update check failed", error);
@@ -121,19 +113,24 @@ export function SettingsScreen() {
     try {
       const path = await a.backup(folder);
       toast("Backup saved", { action: { label: showInFolder, onClick: () => a.showInFolder(path) } });
-    } catch {
+    } catch (error) {
+      void logWarning("Backup failed", error);
       toast("We couldn't make the backup. Check the folder and try again.", { icon: "alert" });
     }
   }
-  async function restore() {
-    const a = await api();
-    const [file] = await a.pickFiles({ multiple: false });
-    if (!file) return;
+  // A backup is a folder ("Aaina backup <date>"); restoring replaces what is on this computer and restarts the app.
+  const [restoring, setRestoring] = useState<string | null>(null);
+  async function pickBackup() {
+    const folder = await (await api()).pickFolder();
+    if (folder) setRestoring(folder);
+  }
+  async function restore(folder: string) {
     try {
-      await a.restore(file);
-      toast("Restored. Your shoots are back.");
-    } catch {
-      toast("We couldn't read that backup. Pick a .zip made by Aaina Desktop.", { icon: "alert" });
+      await (await api()).restore(folder);
+    } catch (error) {
+      void logWarning("Restore failed", error);
+      setRestoring(null);
+      toast("We couldn't read that backup. Pick a folder made by Back up everything.", { icon: "alert" });
     }
   }
 
@@ -402,10 +399,14 @@ export function SettingsScreen() {
                 </div>
                 <div className="card-row">
                   <div className="grow">
-                    <div className="k">Update automatically</div>
-                    <div className="v">Install new versions when you quit the app.</div>
+                    <div className="k">Check for updates when the app opens</div>
+                    <div className="v">Tells you when a new version is out. Nothing is installed without you.</div>
                   </div>
-                  <Switch label="Update automatically" checked={s?.autoUpdate ?? true} onChange={(v) => update({ autoUpdate: v })} />
+                  <Switch
+                    label="Check for updates when the app opens"
+                    checked={s?.autoUpdate ?? true}
+                    onChange={(v) => update({ autoUpdate: v })}
+                  />
                 </div>
               </div>
             </section>
@@ -451,9 +452,9 @@ export function SettingsScreen() {
                 <div className="card-row">
                   <div className="grow">
                     <div className="k">Restore from backup</div>
-                    <div className="v">Choose a .zip made by Aaina Desktop.</div>
+                    <div className="v">Choose a folder made by Back up everything.</div>
                   </div>
-                  <button className="btn btn-secondary btn-sm" onClick={restore}>
+                  <button className="btn btn-secondary btn-sm" onClick={() => void pickBackup()}>
                     <Icon name="upload" size="sm" />
                     Restore
                   </button>
@@ -461,7 +462,7 @@ export function SettingsScreen() {
                 <div className="card-row">
                   <div className="grow">
                     <div className="k">Delete all shoots and photos</div>
-                    <div className="v">Removes them from this computer for good. Your settings stay.</div>
+                    <div className="v">Clears shoots, products and your own models from the app. Saved photo files and settings stay.</div>
                   </div>
                   <button className="btn btn-danger-ghost btn-sm" onClick={() => setDlg("delete")}>
                     Delete all
@@ -533,11 +534,20 @@ export function SettingsScreen() {
       </div>
 
       {dlg === "coffee" && <CoffeeDialog onClose={() => setDlg(null)} />}
+      {restoring && (
+        <ConfirmDialog
+          title="Restore this backup?"
+          description={`Your shoots, products, models and photos are replaced with the ones in “${restoring.split(/[\\/]/).pop()}”, and the app restarts. Back up first if you might want what is here now.`}
+          confirmLabel="Restore and restart"
+          onClose={() => setRestoring(null)}
+          onConfirm={() => restore(restoring)}
+        />
+      )}
       {dlg === "delete" && (
         <ConfirmDialog
           danger
           title="Delete all shoots and photos?"
-          description="This removes every shoot and photo from this computer. It cannot be undone. Back up first if you might want them."
+          description="Every shoot, product and model of your own is removed from Aaina Desktop. This cannot be undone, so back up first if you might want them. Photo files already in your photos folder, your settings and your connection stay."
           confirmLabel="Delete all"
           onClose={() => setDlg(null)}
           onConfirm={async () => {

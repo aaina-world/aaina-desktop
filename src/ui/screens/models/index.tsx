@@ -59,17 +59,16 @@ function SheetBox({ url, name }: { url: string | null; name?: string }) {
 }
 
 /** Fills slowly towards 90% so a minute of waiting feels like progress, never claims to be done. */
-function useFakeProgress(active: boolean, since: string | null) {
+function useFakeProgress(active: boolean, stage: string) {
   const [p, setP] = useState(12);
   useEffect(() => {
     if (!active) return;
-    const t0 = since ? Math.max(0, Date.now() - new Date(since).getTime()) : 0;
-    const tick = () => setP(Math.round(12 + 78 * (1 - Math.exp(-(t0 + (Date.now() - start)) / 40000))));
     const start = Date.now();
+    const tick = () => setP(Math.round(12 + 78 * (1 - Math.exp(-(Date.now() - start) / 40000))));
     tick();
     const id = setInterval(tick, 1500);
     return () => clearInterval(id);
-  }, [active, since]);
+  }, [active, stage]);
   return p;
 }
 
@@ -123,7 +122,8 @@ export function ModelCreateScreen() {
         : view === "making" || view === "failed"
           ? 3
           : 4;
-  const progress = useFakeProgress(view === "making" || view === "making-faces", m?.createdAt ?? null);
+  // Each stage starts its own bar (the faces and the sheet are separate calls), counted from when this page saw it start.
+  const progress = useFakeProgress(view === "making" || view === "making-faces", view);
 
   // Escape leaves the form, like Cancel.
   useEffect(() => {
@@ -1076,14 +1076,6 @@ export function ModelScreen() {
                   <div className="list-item">
                     <span className="k">Appearance</span>
                     <span className="v">{m.appearance}</span>
-                  </div>
-                )}
-                {m.sheetPath && (
-                  <div className="list-item">
-                    <span className="k">Kept in</span>
-                    <span className="v grow t-mono" style={{ fontSize: "var(--text-xs)", wordBreak: "break-all" }}>
-                      {m.sheetPath}
-                    </span>
                   </div>
                 )}
               </div>

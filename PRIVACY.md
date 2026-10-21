@@ -10,7 +10,7 @@ Aaina Desktop is built so that Aaina never sees your work.
 
 **What the app asks Aaina for.** Only downloads of the public catalogue (studio models, poses and scenes) from static.aaina.world. Nothing about you or your work is uploaded. As with any web request, the server sees your IP address when you download.
 
-**Updates.** The app may ask GitHub whether a newer version exists.
+**Updates.** When the app opens (you can turn this off in Settings → Updates), and when you press Check for updates, it asks GitHub whether a newer version exists. Nothing about you is sent, and nothing is installed without you.
 
 **No tracking in the app.** No analytics, no crash reports, no accounts, no ads.
 

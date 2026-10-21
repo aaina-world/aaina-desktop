@@ -144,7 +144,10 @@ export function createOwnApi({
         hair: input.hair ?? null,
         extra: input.words?.trim() || null,
       };
-      const appearance = [input.look?.replace(/_/g, " "), `${gender} aged ${age}`, input.hair].filter(Boolean).join(", ");
+      const hair = input.hair?.trim().toLowerCase();
+      const appearance = [input.look?.replace(/_/g, " "), `${gender} aged ${age}`, hair && (/\bhair\b/.test(hair) ? hair : `${hair} hair`)]
+        .filter(Boolean)
+        .join(", ");
       const model = await data.own.createModel({
         name: nameOrDefault(input.name),
         gender,

@@ -4,7 +4,7 @@ import { openDb } from "./db";
 import { createOwnRepo } from "./own";
 import { createPhotosRepo } from "./photos";
 import { createProductsRepo } from "./products";
-import { secrets, type SecretName } from "./secrets";
+import { secrets } from "./secrets";
 import { createSettingsRepo, defaultSettings } from "./settings";
 import { createShootsRepo } from "./shoots";
 import type { Urls } from "./urls";
@@ -39,13 +39,15 @@ export async function createDataLayer() {
   /** Restore from such a folder, then the app must relaunch. */
   const restore = (folder: string) => restoreFrom(db, files, folder);
 
-  /** Forgets everything: rows, app folders and keychain entries. Finished photo files in the photos folder are left alone. */
+  /**
+   * Forgets every shoot, product and own model, pose and scene: their rows and the app's copies of their pictures.
+   * Settings and the connection (keychain) stay, and finished photo files already in the photos folder are left alone.
+   */
   async function deleteEverything(): Promise<void> {
-    for (const table of ["photos", "shoots", "product_photos", "products", "own_poses", "own_scenes", "own_models", "settings"])
+    for (const table of ["photos", "shoots", "product_photos", "products", "own_poses", "own_scenes", "own_models"])
       await db.execute(`DELETE FROM ${table}`);
-    for (const folder of APP_FOLDERS) await files.removeApp(folder);
+    for (const folder of APP_FOLDERS.filter((name) => name !== "catalog-cache")) await files.removeApp(folder);
     await files.ensureFolders();
-    for (const name of ["openai_api_key", "chatgpt_tokens", "chatgpt_account"] as SecretName[]) await secrets.delete(name);
   }
 
   return { db, files, secrets, settings, products, shoots, photos, own, interrupted, backup, restore, deleteEverything };

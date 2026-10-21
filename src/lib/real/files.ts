@@ -53,7 +53,8 @@ export function createFilesApi({
       return picked === null ? [] : Array.isArray(picked) ? picked : [picked];
     },
     async pickFolder() {
-      const picked = await openDialog({ directory: true, multiple: false });
+      // `recursive`: the app may then write inside the chosen folder too (a backup's sub-folders, a shoot's folder).
+      const picked = await openDialog({ directory: true, multiple: false, recursive: true });
       return typeof picked === "string" ? picked : null;
     },
   };

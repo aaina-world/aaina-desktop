@@ -5,7 +5,7 @@ import { AppFrame } from "./components/AppFrame";
 import { BareFrame } from "./components/BareFrame";
 import { ShortcutsDialog } from "./components/dialogs";
 import { ToastHost } from "./components/Toast";
-import { applyOs, applyTheme, isMod, useSettings, useStartShoot } from "./hooks";
+import { applyOs, applyTheme, isMod, useSettings, useStartShoot, useUpdateCheckOnStart } from "./hooks";
 import { AboutScreen } from "./screens/about";
 import { ConnectScreen } from "./screens/connect";
 import { CreateScreen } from "./screens/create";
@@ -37,6 +37,7 @@ function Root() {
   const onboarded = settings?.onboarded;
 
   useEffect(() => applyTheme(settings?.theme), [settings?.theme]);
+  useUpdateCheckOnStart(inApp && !!onboarded && !!settings?.autoUpdate);
 
   // First run: until onboarding is finished, every address leads to the welcome screen.
   useEffect(() => {

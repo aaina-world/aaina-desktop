@@ -4,3 +4,4 @@ export * from "./useTheme";
 export * from "./useStartShoot";
 export * from "./useSettings";
 export * from "./useOnline";
+export * from "./useUpdates";
