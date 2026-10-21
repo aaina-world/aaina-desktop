@@ -1,0 +1,37 @@
+name: Linux check
+
+# Opens a release's Linux build on a fresh Ubuntu machine with different WebKit settings and keeps a screenshot of each.
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag
+        default: v0.1.0
+
+jobs:
+  check:
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+    steps:
+      - name: Download the .deb from the release (drafts too)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release download "${{ inputs.tag }}" -R "${{ github.repository }}" -p "*.deb"
+      - name: Install
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb imagemagick dbus-x11 ./*.deb
+      - name: Open it three ways
+        run: |
+          Xvfb :99 -screen 0 1440x900x24 & sleep 2
+          export DISPLAY=:99
+          for v in plain WEBKIT_DISABLE_DMABUF_RENDERER WEBKIT_DISABLE_COMPOSITING_MODE; do
+            if [ "$v" = plain ]; then dbus-run-session -- sh -c 'aaina-desktop & sleep 25; import -window root plain.png; pkill -f aaina-desktop || true'
+            else dbus-run-session -- env "$v=1" sh -c "aaina-desktop & sleep 25; import -window root $v.png; pkill -f aaina-desktop || true"; fi
+            sleep 2
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux-check
+          path: "*.png"
