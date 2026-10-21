@@ -37,7 +37,8 @@ export function createCatalogCore(deps: CatalogDeps) {
   let sheets = new Map<string, RawSheets["items"][number]>();
   const poseLists = new Map<string, RawPoses>();
   let checkedAt: string | null = null;
-  let state: CatalogStatus["state"] = "never-loaded";
+  // "loading" until the first try is over: "never-loaded" means a try failed with nothing cached, and is shown as an error.
+  let state: CatalogStatus["state"] = "loading";
   let progress: CatalogStatus["progress"];
   let cacheLoaded: Promise<void> | null = null;
   let loaded: Promise<void> | null = null;
@@ -131,7 +132,7 @@ export function createCatalogCore(deps: CatalogDeps) {
     rawModels = await readCachedJson<RawModels>(pointer.lists.models);
     rawScenes = await readCachedJson<RawScenes>(pointer.lists.scenes);
     await loadSheets(false);
-    state = rawModels && rawScenes ? "offline" : "never-loaded";
+    if (rawModels && rawScenes) state = "offline";
   }
 
   const readCache = () => (cacheLoaded ??= loadFromCache());
@@ -145,8 +146,11 @@ export function createCatalogCore(deps: CatalogDeps) {
 
   async function doRefresh(): Promise<CatalogStatus> {
     await readCache();
-    state = "loading";
-    changed();
+    // With a catalogue cached, a newer one is fetched quietly: the screens keep working and show no download.
+    if (!rawModels) {
+      state = "loading";
+      changed();
+    }
     try {
       const response = await get(cdnUrl(POINTER));
       if (!response.ok) throw new Error(`Catalogue answered ${response.status}`);

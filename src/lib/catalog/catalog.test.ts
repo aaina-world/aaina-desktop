@@ -88,6 +88,19 @@ describe("catalogue", () => {
     expect(hana.sheetUrl).toMatch(/^https:\/\/static\.aaina\.world\/catalog\/img\//);
   });
 
+  it("never reports a failure before it has tried, and refreshes quietly when a catalogue is cached", async () => {
+    const store = memoryStore();
+    const first = make(store, network());
+    expect((await first.status()).state).toBe("loading");
+    await first.refresh();
+    const next = make(store, network());
+    const seen: string[] = [];
+    next.subscribe(() => void next.status().then((s) => seen.push(s.state)));
+    expect((await next.refresh()).state).toBe("ready");
+    expect(seen).not.toContain("loading");
+    expect(seen).not.toContain("never-loaded");
+  });
+
   it("is never-loaded when the first download fails", async () => {
     const catalog = make(memoryStore(), network({ down: true }));
     expect((await catalog.refresh()).state).toBe("never-loaded");

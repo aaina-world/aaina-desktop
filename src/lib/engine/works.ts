@@ -1,4 +1,5 @@
 // Single paid works that are not queued photos: product reading, own poses and scenes, own models (faces, sheet, checks).
+import { logWarning } from "../log";
 import type { ProductReading } from "../contract";
 import { engineError, isEngineError } from "./errors";
 import { prepareInput, readingSample } from "./images";
@@ -55,9 +56,11 @@ export function createWorks(
       try {
         raw = await viaChatGPT({ prompt, images, schemaName: "aaina_product_reading", schema });
         by = "chatgpt";
-      } catch {
+      } catch (error) {
+        // Fall back to the key when there is one; the reason is kept in the log (never a token).
+        void logWarning("ChatGPT reading failed, reading with the key", error);
         raw = undefined;
-      } // fall back to the key when there is one
+      }
     }
     if (raw === undefined) {
       if (!(await options.keyPresent())) throw engineError("NOT_CONNECTED");

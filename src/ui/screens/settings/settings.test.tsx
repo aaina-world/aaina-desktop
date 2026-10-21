@@ -44,3 +44,14 @@ describe("Settings → Updates", () => {
     expect(screen.queryByText(/Install new versions/)).toBeNull();
   });
 });
+
+describe("Settings → menu", () => {
+  it("keeps the section picked from the menu lit", async () => {
+    const user = userEvent.setup();
+    open();
+    const yourData = await screen.findByRole("link", { name: "Your data" });
+    await user.click(yourData);
+    window.dispatchEvent(new Event("scroll"));
+    expect(yourData).toHaveAttribute("aria-current", "true");
+  });
+});

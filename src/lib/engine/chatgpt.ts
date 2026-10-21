@@ -354,7 +354,10 @@ export function createChatGPT(deps: ChatGPTDeps) {
       body: JSON.stringify({ model, input: [{ role: "user", content }], store: false, stream: true }),
       signal: AbortSignal.timeout(120_000),
     });
-    if (!r.ok) throw new Error(`ChatGPT answered ${r.status}`);
+    if (!r.ok) {
+      const detail = (await r.text().catch(() => "")).replace(/\s+/g, " ").slice(0, 200);
+      throw new Error(`ChatGPT answered ${r.status}${detail ? `: ${detail}` : ""}`);
+    }
     return firstJsonObject(textFromStream(await r.text())) as T;
   }
 

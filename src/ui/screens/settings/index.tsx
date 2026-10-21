@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { logWarning } from "../../../lib/log";
 import { useLocation } from "react-router";
 import { api } from "../../../lib/api";
@@ -50,20 +50,38 @@ export function SettingsScreen() {
     const id = loc.hash.replace("#", "");
     if (id) document.getElementById(id)?.scrollIntoView({ block: "start" });
   }, [loc.hash]);
+  // The menu follows the scroll. A section picked from the menu stays lit while the page glides to it, and at the bottom
+  // of the page (where the last short sections can't reach the top) until the person scrolls themselves.
+  const picked = useRef<string | null>(null);
   useEffect(() => {
     const on = () => {
+      const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
+      if (picked.current) {
+        setActive(picked.current);
+        return;
+      }
       let cur = SECTIONS[0].id;
       for (const s of SECTIONS) if ((document.getElementById(s.id)?.getBoundingClientRect().top ?? 1e9) < 140) cur = s.id;
-      setActive(cur);
+      setActive(atBottom ? SECTIONS[SECTIONS.length - 1].id : cur);
+    };
+    const own = () => {
+      picked.current = null;
     };
     on();
     window.addEventListener("scroll", on, { passive: true });
-    return () => window.removeEventListener("scroll", on);
+    window.addEventListener("wheel", own, { passive: true });
+    window.addEventListener("keydown", own);
+    return () => {
+      window.removeEventListener("scroll", on);
+      window.removeEventListener("wheel", own);
+      window.removeEventListener("keydown", own);
+    };
   }, []);
 
   const c = conn.data;
   const s = settings;
   const jump = (id: string) => {
+    picked.current = id;
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
     setActive(id);
   };
