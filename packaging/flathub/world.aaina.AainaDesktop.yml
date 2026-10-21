@@ -1,0 +1,42 @@
+# Flathub manifest. It repackages the release's .deb (built from this repository by GitHub Actions).
+# The ID is not world.aaina.desktop because Flathub's ID rules don't allow one that ends in ".desktop".
+id: world.aaina.AainaDesktop
+runtime: org.gnome.Platform
+runtime-version: "48"
+sdk: org.gnome.Sdk
+command: aaina-desktop
+finish-args:
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --device=dri
+  - --share=ipc
+  # OpenAI, ChatGPT sign-in and the studio catalogue (static.aaina.world)
+  - --share=network
+  # The OpenAI key and ChatGPT sign-in are kept in the system keyring
+  - --talk-name=org.freedesktop.secrets
+  # "Tell me when photos are ready"
+  - --talk-name=org.freedesktop.Notifications
+  # The default photos folder (Pictures/Aaina) and saving to Downloads; other folders go through the file chooser
+  - --filesystem=xdg-pictures
+  - --filesystem=xdg-download
+modules:
+  - name: aaina-desktop
+    buildsystem: simple
+    sources:
+      - type: file
+        url: https://github.com/aaina-world/aaina-desktop/releases/download/v0.1.2/Aaina.Desktop_0.1.2_amd64.deb
+        sha256: ed80a99493d56cf05c2c4186a8cc6ba7c178fc4c1f7a945bbf347e1e8f8546a1
+        dest-filename: aaina-desktop.deb
+        only-arches: [x86_64]
+      - type: file
+        path: world.aaina.AainaDesktop.metainfo.xml
+    build-commands:
+      - ar -x aaina-desktop.deb
+      - tar -xf data.tar.gz
+      - install -Dm755 usr/bin/aaina-desktop /app/bin/aaina-desktop
+      - install -Dm644 "usr/share/applications/Aaina Desktop.desktop" /app/share/applications/world.aaina.AainaDesktop.desktop
+      - desktop-file-edit --set-icon=world.aaina.AainaDesktop /app/share/applications/world.aaina.AainaDesktop.desktop
+      - install -Dm644 usr/share/icons/hicolor/32x32/apps/aaina-desktop.png /app/share/icons/hicolor/32x32/apps/world.aaina.AainaDesktop.png
+      - install -Dm644 usr/share/icons/hicolor/128x128/apps/aaina-desktop.png /app/share/icons/hicolor/128x128/apps/world.aaina.AainaDesktop.png
+      - install -Dm644 usr/share/icons/hicolor/256x256@2/apps/aaina-desktop.png /app/share/icons/hicolor/256x256/apps/world.aaina.AainaDesktop.png
+      - install -Dm644 world.aaina.AainaDesktop.metainfo.xml /app/share/metainfo/world.aaina.AainaDesktop.metainfo.xml

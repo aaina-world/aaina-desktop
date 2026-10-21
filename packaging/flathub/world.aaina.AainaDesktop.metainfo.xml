@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>world.aaina.AainaDesktop</id>
+  <name>Aaina Desktop</name>
+  <summary>Model photos of your products, made on your computer</summary>
+  <developer id="world.aaina">
+    <name>Aaina</name>
+  </developer>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+  <launchable type="desktop-id">world.aaina.AainaDesktop.desktop</launchable>
+  <description>
+    <p>Add a photo of what you sell, pick a studio model, poses and a scene, and get model photos for your shop. Aaina Desktop is free and open source, and everything you make is kept on your computer.</p>
+    <p>Photos are made with your own OpenAI account, about $0.05 a photo, billed by OpenAI. There is no account with Aaina and no subscription. The app shows the rough cost before anything is sent.</p>
+    <ul>
+      <li>Photos on a model, in up to six poses and the scene you choose</li>
+      <li>Ghost mannequin and flat-lay photos</li>
+      <li>Make again, Fix something and Other colours</li>
+      <li>Your own models, poses and scenes</li>
+      <li>Saves JPEG or PNG in marketplace shapes, marked as AI-made inside the file</li>
+    </ul>
+    <p>Only what a photo needs is sent to OpenAI. The app has no account, no ads and no tracking.</p>
+  </description>
+  <url type="homepage">https://desktop.aaina.world</url>
+  <url type="help">https://desktop.aaina.world/tutorials</url>
+  <url type="bugtracker">https://github.com/aaina-world/aaina-desktop/issues</url>
+  <url type="vcs-browser">https://github.com/aaina-world/aaina-desktop</url>
+  <url type="donation">https://buymeacoffee.com/aaina.world</url>
+  <categories>
+    <category>Graphics</category>
+    <category>Photography</category>
+  </categories>
+  <keywords>
+    <keyword>product photos</keyword>
+    <keyword>model</keyword>
+    <keyword>ecommerce</keyword>
+    <keyword>fashion</keyword>
+    <keyword>AI</keyword>
+  </keywords>
+  <screenshots>
+    <screenshot type="default">
+      <caption>Your finished photos, ready to save</caption>
+      <image>https://desktop.aaina.world/img/store/22-shoot-done.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Pick a studio model for your product</caption>
+      <image>https://desktop.aaina.world/img/store/12-models.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Choose a scene</caption>
+      <image>https://desktop.aaina.world/img/store/17-scene-picked.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Ghost mannequin from every angle</caption>
+      <image>https://desktop.aaina.world/img/store/31-ghost-angles.png</image>
+    </screenshot>
+  </screenshots>
+  <branding>
+    <color type="primary" scheme_preference="light">#f7f7f5</color>
+    <color type="primary" scheme_preference="dark">#161615</color>
+  </branding>
+  <content_rating type="oars-1.1"/>
+  <supports>
+    <internet>always</internet>
+  </supports>
+  <requires>
+    <display_length compare="ge">1024</display_length>
+  </requires>
+  <releases>
+    <release version="0.1.2" date="2026-10-22">
+      <description><p>No more sideways scrolling when the window is small on Windows.</p></description>
+    </release>
+    <release version="0.1.1" date="2026-10-22">
+      <description><p>Staying signed in with ChatGPT works on Windows, and a keyring that can't be used is explained in plain words.</p></description>
+    </release>
+    <release version="0.1.0" date="2026-10-22">
+      <description><p>First public version.</p></description>
+    </release>
+  </releases>
+</component>
