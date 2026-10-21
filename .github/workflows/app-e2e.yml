@@ -1,6 +1,7 @@
 name: App end to end
 
-# Builds the real app on fresh Windows and Linux machines and drives it like a person would (tauri-driver, WebDriver):
+# Builds the real app on fresh Windows and Linux machines and drives it like a person would (WebDriver through
+# tauri-driver on Linux, the WebView2 DevTools port on Windows):
 # welcome, connecting OpenAI (a made-up key that OpenAI must refuse, so the app really reaches OpenAI and the key goes
 # through the system keychain), the photos folder, the studio catalogue, models, a new shoot, settings, and opening the
 # app again. Before that, the keychain itself is tested with a long value (Credential Manager, GNOME Keyring).
@@ -38,6 +39,7 @@ jobs:
       - name: Build the app
         run: npx tauri build --no-bundle
       - name: Install tauri-driver
+        if: runner.os == 'Linux'
         run: cargo install tauri-driver --locked
 
       - name: Keychain and app (Linux)
@@ -56,16 +58,8 @@ jobs:
         run: cargo test --manifest-path src-tauri/Cargo.toml -- --ignored
       - name: App (Windows)
         if: runner.os == 'Windows'
+        run: node e2e-app/run.mjs "$PWD\src-tauri\target\release\aaina-desktop.exe"
         shell: pwsh
-        run: |
-          cargo install --git https://github.com/chippers/msedgedriver-tool
-          msedgedriver-tool
-          $driver = Start-Process tauri-driver -ArgumentList "--native-driver", "$PWD\msedgedriver.exe" -PassThru -RedirectStandardError e2e-app\driver.log
-          Start-Sleep -Seconds 3
-          node e2e-app/run.mjs "$PWD\src-tauri\target\release\aaina-desktop.exe"
-          $code = $LASTEXITCODE
-          Stop-Process -Id $driver.Id -ErrorAction SilentlyContinue
-          exit $code
 
       - name: Keep the screenshots
         if: always()
