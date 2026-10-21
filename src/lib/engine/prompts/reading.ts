@@ -49,7 +49,9 @@ export function readingFromAnswer(
 ): ProductReading | null {
   if (!raw || typeof raw !== "object") return null;
   const r = raw as Record<string, unknown>;
-  const label = text(r.label, 60);
+  // Readers differ in case ("jacket", "Jacket"); names shown as a field start with a capital, colours stay as said.
+  const raise = (value: string | null) => (value ? value[0].toUpperCase() + value.slice(1) : value);
+  const label = raise(text(r.label, 60));
   if (!label) return null;
   const type = typeof r.productType === "string" && (!productTypes || productTypes.includes(r.productType)) ? r.productType : null;
   return {
@@ -57,7 +59,7 @@ export function readingFromAnswer(
     label,
     audience: (READING_AUDIENCE as readonly unknown[]).includes(r.audience) ? (r.audience as ProductReading["audience"]) : null,
     colour: text(r.colour, 40),
-    material: text(r.material, 60),
+    material: raise(text(r.material, 60)),
     details: text(r.details, 160),
     reach: (READING_REACH as readonly unknown[]).includes(r.reach) ? (r.reach as ProductReading["reach"]) : null,
     readBy: by,

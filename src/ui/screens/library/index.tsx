@@ -617,8 +617,8 @@ function OwnModelTile({ m }: { m: OwnModel }) {
     .filter(Boolean)
     .join(" · ");
   const face = m.faceOptions[0]?.url ?? null;
-  const img = face ?? m.sheetUrl;
-  const sheet = !face;
+  const img = m.cardUrl ?? face ?? m.sheetUrl;
+  const sheet = !m.cardUrl && !face;
   if (m.status === "ready") {
     return (
       <article className="tile own">

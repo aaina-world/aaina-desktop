@@ -269,3 +269,95 @@ export async function renderForSave(bytes: Uint8Array, shape: SaveShape, format:
   bmp.close();
   return encode(canvas, type, quality);
 }
+
+// ---------- own model card ----------
+// Ported from Aaina (apps/api/src/sheetPortrait.ts). The sheet: three head-and-shoulders tiles on top, then a profile,
+// the full-length front photo and a full-length three-quarter photo. The card is the full-length front photo, widened
+// to 3:4 by continuing its plain studio wall sideways, like every studio model's card. The white divider lines between
+// photos are found in the picture (they drift between generated sheets); the layout's own fractions are the fallback.
+
+const CARD_ASPECT = 3 / 4;
+const INSET = 4;
+const WHITE = 232;
+// A divider blurred by scaling is a light grey that still stands out from the lines a few pixels either side.
+const FAINT = 190;
+const CONTRAST = 35;
+const NEAR = 8;
+
+function dividerLine(means: number[], i: number): boolean {
+  const value = means[i];
+  if (value >= WHITE) return true;
+  if (value < FAINT) return false;
+  const before = means[Math.max(0, i - NEAR)];
+  const after = means[Math.min(means.length - 1, i + NEAR)];
+  return value - (before + after) / 2 >= CONTRAST;
+}
+
+/** The middles of the runs of divider lines inside [from, to). */
+function dividers(means: number[], from: number, to: number): number[] {
+  const found: number[] = [];
+  let start = -1;
+  for (let i = from; i <= to; i++) {
+    const white = i < to && dividerLine(means, i);
+    if (white && start < 0) start = i;
+    if (!white && start >= 0) {
+      found.push(Math.round((start + i - 1) / 2));
+      start = -1;
+    }
+  }
+  return found;
+}
+
+/** Where the card is cut from a sheet, given the sheet in grey (one byte per pixel, row by row). */
+export function sheetCardRegion(grey: ArrayLike<number>, width: number, height: number) {
+  const px = (x: number, y: number) => grey[y * width + x];
+  const rowMeans = Array.from({ length: height }, (_, y) => {
+    let sum = 0;
+    for (let x = 0; x < width; x += 2) sum += px(x, y);
+    return sum / Math.ceil(width / 2);
+  });
+  const rows = dividers(rowMeans, Math.round(height * 0.3), Math.round(height * 0.7));
+  const top = rows.sort((a, b) => Math.abs(a - height / 2) - Math.abs(b - height / 2))[0] ?? Math.round(height * 0.5);
+  const colMeans = Array.from({ length: width }, (_, x) => {
+    let sum = 0;
+    let count = 0;
+    for (let y = top + 12; y < height; y += 2) {
+      sum += px(x, y);
+      count++;
+    }
+    return count ? sum / count : 0;
+  });
+  // The bottom row's panels, whatever their widths: the front full-length photo is the next to last.
+  const cols = dividers(colMeans, Math.round(width * 0.03), Math.round(width * 0.97));
+  const edges = cols.length >= 2 ? [0, ...cols, width] : [0, Math.round(width * 0.5), Math.round(width * 0.75), width];
+  const left = edges[edges.length - 3];
+  const right = edges[edges.length - 2];
+  const panel = {
+    left: left + INSET,
+    top: top + INSET,
+    width: Math.max(1, right - left - 2 * INSET),
+    height: Math.max(1, height - top - 2 * INSET),
+  };
+  const pad = Math.max(0, Math.floor((Math.round(panel.height * CARD_ASPECT) - panel.width) / 2));
+  return { ...panel, pad };
+}
+
+/** The card picture for an own model, as a PNG, from its sheet. */
+export async function sheetCard(sheet: Uint8Array): Promise<Uint8Array> {
+  const bmp = await decode(sheet);
+  const { width, height } = bmp;
+  const rgba = await sample(bmp, width, height);
+  const grey = new Uint8Array(width * height);
+  for (let i = 0; i < grey.length; i++) grey[i] = Math.round(0.299 * rgba[i * 4] + 0.587 * rgba[i * 4 + 1] + 0.114 * rgba[i * 4 + 2]);
+  const r = sheetCardRegion(grey, width, height);
+  const c = newCanvas(r.width + 2 * r.pad, r.height);
+  const g = c.getContext("2d")!;
+  // The wall either side: the photo's own outermost columns, stretched outward.
+  if (r.pad > 0) {
+    g.drawImage(bmp, r.left, r.top, 1, r.height, 0, 0, r.pad, r.height);
+    g.drawImage(bmp, r.left + r.width - 1, r.top, 1, r.height, r.pad + r.width, 0, r.pad, r.height);
+  }
+  g.drawImage(bmp, r.left, r.top, r.width, r.height, r.pad, 0, r.width, r.height);
+  bmp.close();
+  return encode(c, "image/png");
+}

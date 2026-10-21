@@ -169,4 +169,8 @@ describe("reading", () => {
     });
     expect(readingFromAnswer({}, null, "key")).toBeNull();
   });
+  it("starts the product's name and fabric with a capital, whoever read it; colours stay as said", () => {
+    const r = readingFromAnswer({ label: "jacket", colour: "olive brown", material: "matte, sturdy woven fabric" }, null, "chatgpt");
+    expect(r).toMatchObject({ label: "Jacket", colour: "olive brown", material: "Matte, sturdy woven fabric" });
+  });
 });

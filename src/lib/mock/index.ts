@@ -343,6 +343,8 @@ export async function createMockApi(): Promise<Api> {
     faceOptions: [],
     sheetUrl: IMG.sheetSample,
     sheetPath: "models/priya/sheet.png",
+    cardUrl: null,
+    cardPath: null,
     createdAt: ago(5 * DAY),
   });
   ownPoses.set("op-1", {
@@ -693,6 +695,8 @@ export async function createMockApi(): Promise<Api> {
         faceOptions: [],
         sheetUrl: null,
         sheetPath: null,
+        cardUrl: null,
+        cardPath: null,
         createdAt: now(),
       };
       ownModels.set(m.id, m);
@@ -717,6 +721,8 @@ export async function createMockApi(): Promise<Api> {
         faceOptions: [],
         sheetUrl: null,
         sheetPath: null,
+        cardUrl: null,
+        cardPath: null,
         createdAt: now(),
       };
       ownModels.set(m.id, m);

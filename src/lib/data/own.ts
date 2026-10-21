@@ -14,6 +14,7 @@ type ModelRow = {
   status: OwnModel["status"];
   face_options: string;
   sheet_path: string | null;
+  card_path: string | null;
   created_at: string;
 };
 type PoseRow = {
@@ -59,6 +60,8 @@ export function createOwnRepo(db: Sql, urls: Urls) {
       faceOptions: await Promise.all(faces.map(async (face) => ({ id: face.id, url: await urls.app(face.path) }))),
       sheetUrl: row.sheet_path ? await urls.app(row.sheet_path) : null,
       sheetPath: row.sheet_path,
+      cardUrl: row.card_path ? await urls.app(row.card_path) : null,
+      cardPath: row.card_path,
       createdAt: row.created_at,
     };
   }
@@ -101,7 +104,7 @@ export function createOwnRepo(db: Sql, urls: Urls) {
 
   async function updateModel(
     id: string,
-    patch: Partial<{ name: string; status: OwnModel["status"]; faces: StoredFace[]; sheetPath: string | null }>,
+    patch: Partial<{ name: string; status: OwnModel["status"]; faces: StoredFace[]; sheetPath: string | null; cardPath: string | null }>,
   ): Promise<OwnModel> {
     const sets: string[] = [];
     const params: unknown[] = [];
@@ -113,6 +116,7 @@ export function createOwnRepo(db: Sql, urls: Urls) {
     if (patch.status !== undefined) set("status", patch.status);
     if (patch.faces !== undefined) set("face_options", toJson(patch.faces));
     if (patch.sheetPath !== undefined) set("sheet_path", patch.sheetPath);
+    if (patch.cardPath !== undefined) set("card_path", patch.cardPath);
     if (sets.length) {
       params.push(id);
       await db.execute(`UPDATE own_models SET ${sets.join(", ")} WHERE id = $${params.length}`, params);

@@ -128,7 +128,7 @@ export function ShootScreen() {
       ? lookups.data?.models.find((m) => m.id === modelRef.id)
       : lookups.data?.own.find((m) => m.id === modelRef.id)
     : null;
-  const modelImg = model ? ("cardUrl" in model ? model.cardUrl : model.sheetUrl) : null;
+  const modelImg = model ? (model.cardUrl ?? ("sheetUrl" in model ? model.sheetUrl : null)) : null;
   const sc = s.scene;
   const scene =
     sc?.source === "studio"

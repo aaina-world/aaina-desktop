@@ -1,6 +1,7 @@
 import type { Api, Gender, ModelRef, OwnModel } from "../contract";
 import type { DataLayer } from "../data";
-import { mimeOf } from "../engine";
+import { mimeOf, sheetCard } from "../engine";
+import { logWarning } from "../log";
 import type { Works } from "../engine";
 import type { Emit } from "./events";
 import { short } from "./shoots";
@@ -103,10 +104,36 @@ export function createOwnApi({
         const png = await works.makeSheet({ pictures, traits });
         const path = `own-models/${id}/sheet.png`;
         await data.files.writeAppFile(path, png);
-        await data.own.updateModel(id, { sheetPath: path, status: (await sheetPasses(png)) ? "ready" : "failed" });
+        const cardPath = await writeCard(id, png);
+        await data.own.updateModel(id, { sheetPath: path, cardPath, status: (await sheetPasses(png)) ? "ready" : "failed" });
       },
       () => data.own.updateModel(id, { status: "failed" }),
     );
+
+  /** The model's card picture, cut from its sheet; null (the face or sheet is shown instead) when it can't be made. */
+  async function writeCard(id: string, sheet: Uint8Array): Promise<string | null> {
+    try {
+      const path = `own-models/${id}/card.png`;
+      await data.files.writeAppFile(path, await sheetCard(sheet));
+      return path;
+    } catch (error) {
+      void logWarning("Model card picture failed", error);
+      return null;
+    }
+  }
+
+  /** Models made before cards existed get theirs once, quietly, at start. */
+  async function addMissingCards(): Promise<void> {
+    for (const model of await data.own.models()) {
+      if (model.status !== "ready" || !model.sheetPath || model.cardPath) continue;
+      const cardPath = await writeCard(model.id, await data.files.readAppFile(model.sheetPath));
+      if (cardPath) {
+        await data.own.updateModel(model.id, { cardPath });
+        emit({ type: "own", id: model.id });
+      }
+    }
+  }
+  void addMissingCards().catch(() => undefined);
 
   async function existing(id: string): Promise<OwnModel> {
     const model = await data.own.model(id);

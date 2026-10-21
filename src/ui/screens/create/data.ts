@@ -34,10 +34,11 @@ export function modelInfoOwn(m: OwnModel): ModelInfo {
     ref: { source: "own", id: m.id },
     name: m.name,
     sub: `${m.age}`,
-    img: face ?? m.sheetUrl,
+    // The card picture (full length, like the studio models), else the chosen face, else the sheet.
+    img: m.cardUrl ?? face ?? m.sheetUrl,
     age: m.age,
     own: true,
-    sheet: !face && !!m.sheetUrl,
+    sheet: !m.cardUrl && !face && !!m.sheetUrl,
   };
 }
 
@@ -58,7 +59,8 @@ export function useCreateData(shoot: Shoot | null) {
     async (a) => {
       if (!shoot?.model) return { studio: [] as CatalogPose[], own: [] as OwnPose[] };
       const [studio, mine] = await Promise.all([
-        shoot.model.source === "studio" ? a.posesFor(shoot.model) : Promise.resolve([]),
+        // Own models borrow the shared poses of studio models of the same gender ("Shown on …").
+        a.posesFor(shoot.model),
         a.ownPoses(shoot.model),
       ]);
       return { studio, own: mine };

@@ -1,5 +1,5 @@
 import type { Catalog } from "../catalog";
-import type { CatalogPose, Gender } from "../contract";
+import type { CatalogModel, CatalogPose, Gender } from "../contract";
 import type { DataLayer } from "../data";
 import type { CatalogSource, OwnSource } from "../engine";
 
@@ -9,7 +9,11 @@ type Deps = { catalog: Catalog; data: Pick<DataLayer, "own" | "files"> };
 export function createSources({ catalog, data }: Deps) {
   /** Poses an own model can use: the studio poses of the first studio model of the same gender that has any (Aaina's shared pool). */
   async function poolPosesFor(gender: Gender): Promise<CatalogPose[]> {
-    const models = (await catalog.models()).filter((m) => m.gender === gender && !m.minor && m.poolKey);
+    // Everyday adult pools first; maternity, adaptive, modest and plus-size pools only when nothing else has poses.
+    const special = (m: CatalogModel) => m.tags.some((tag) => ["maternity", "adaptive", "modest"].includes(tag)) || m.body === "plus";
+    const models = (await catalog.models())
+      .filter((m) => m.gender === gender && !m.minor && m.poolKey)
+      .sort((a, b) => Number(special(a)) - Number(special(b)) || Number(a.ageGroup !== "adult") - Number(b.ageGroup !== "adult"));
     for (const model of models) {
       const poses = await catalog.posesFor({ source: "studio", id: model.id });
       if (poses.length) return poses;

@@ -224,7 +224,7 @@ export function ViewerScreen() {
       ? lk?.models.find((m) => m.id === modelRef.id)
       : lk?.own.find((m) => m.id === modelRef.id)
     : null;
-  const modelImg = model ? ("cardUrl" in model ? model.cardUrl : model.sheetUrl) : null;
+  const modelImg = model ? (model.cardUrl ?? ("sheetUrl" in model ? model.sheetUrl : null)) : null;
   const sc = shoot?.scene;
   const scene =
     sc?.source === "studio"
