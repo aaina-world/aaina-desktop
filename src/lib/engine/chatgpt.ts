@@ -112,7 +112,8 @@ export function textFromStream(stream: string): string {
     }
   }
   if (completed === null && !deltas) throw new Error("interrupted");
-  return completed ?? deltas;
+  // The closing event may carry an empty output list (nothing is stored); the streamed pieces then hold the answer.
+  return completed || deltas;
 }
 
 /** The first JSON object in some text. */
@@ -358,7 +359,15 @@ export function createChatGPT(deps: ChatGPTDeps) {
       const detail = (await r.text().catch(() => "")).replace(/\s+/g, " ").slice(0, 200);
       throw new Error(`ChatGPT answered ${r.status}${detail ? `: ${detail}` : ""}`);
     }
-    return firstJsonObject(textFromStream(await r.text())) as T;
+    const stream = await r.text();
+    const text = textFromStream(stream);
+    try {
+      return firstJsonObject(text) as T;
+    } catch {
+      // For the log: what came back, never the request or a token.
+      const kinds = [...new Set(stream.match(/"type":"[a-z_.]+"/g) ?? [])].slice(0, 12).join(" ");
+      throw new Error(`no json in a ${text.length}-character answer (${kinds})`);
+    }
   }
 
   return { signIn, signOut, status, readJson, signedIn: async () => (await load()) !== null };

@@ -37,6 +37,10 @@ describe("ChatGPT sign-in helpers", () => {
   it("PKCE S256 matches the RFC 7636 example", async () => {
     expect(await pkceChallenge("dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk")).toBe("E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM");
   });
+  it("uses the streamed pieces when the closing event carries no output (nothing stored)", () => {
+    const s = `data: {"type":"response.output_text.delta","delta":"{\\"type\\":"}\n\ndata: {"type":"response.output_text.delta","delta":"\\"jacket\\"}"}\n\ndata: {"type":"response.completed","response":{"output":[]}}\n\n`;
+    expect(firstJsonObject(textFromStream(s))).toEqual({ type: "jacket" });
+  });
   it("reads the streamed answer", () => {
     const s = `data: {"type":"response.output_text.delta","delta":"{\\"a\\":"}\n\ndata: {"type":"response.output_text.delta","delta":"1}"}\n\ndata: {"type":"response.completed","response":{"output":[{"type":"message","content":[{"type":"output_text","text":"{\\"a\\":1}"}]}]}}\n\n`;
     expect(firstJsonObject(textFromStream(s))).toEqual({ a: 1 });
