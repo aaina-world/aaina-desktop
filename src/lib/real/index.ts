@@ -35,7 +35,12 @@ export async function createApi(): Promise<Api> {
   const works = createWorks(openai, {
     keyPresent: async () => !!(await getKey()),
     chatgptReader: async (): Promise<JsonReader | null> =>
-      (await chatgpt.signedIn()) ? (input) => chatgpt.readJson({ prompt: input.prompt, images: input.images }) : null,
+      (await chatgpt.signedIn())
+        ? (input) =>
+            input.schema === undefined
+              ? chatgpt.readText({ prompt: input.prompt, images: input.images })
+              : chatgpt.readJson({ prompt: input.prompt, images: input.images })
+        : null,
   });
 
   const store = createEngineStore(data);

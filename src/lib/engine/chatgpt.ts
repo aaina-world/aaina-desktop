@@ -3,7 +3,7 @@
 // "Sign in with ChatGPT" for open-source, locally run apps, as OpenAI documents it (developers.openai.com/siwc/token-sharing-open-source/*):
 // OAuth 2.0 authorization code + PKCE (S256) against auth.openai.com, a loopback redirect on 127.0.0.1, no client secret.
 // The access token is accepted by the public Responses API for eligible requests; image generation is NOT supported, so it is used
-// only for product readings (text and photos in, JSON out).
+// for every reading (product, a pose in a photo, sheet and photo checks: text and photos in, JSON or words out), never for pictures.
 import type { Img } from "./openai";
 import { dataUrl } from "./openai";
 
@@ -339,15 +339,15 @@ export function createChatGPT(deps: ChatGPTDeps) {
     return (modelSlug = slug);
   }
 
-  /** The reading reader: streamed Responses call on the signed-in plan; returns the first JSON object in the answer. */
-  async function readJson<T>(input: { prompt: string; images?: Img[] }): Promise<T> {
+  /** One streamed Responses call on the signed-in plan; returns the whole text of the answer and the raw stream. */
+  async function ask(prompt: string, images: Img[] = []): Promise<{ text: string; stream: string }> {
     const t = await fresh();
     if (!t) throw new Error("Sign in with ChatGPT again.");
     const model = await pickModel(t.accessToken);
     const f = await getFetch();
     const content: unknown[] = [
-      { type: "input_text", text: `${input.prompt}\nAnswer with only one JSON object and nothing else.` },
-      ...(input.images ?? []).map((im) => ({ type: "input_image", image_url: dataUrl(im) })),
+      { type: "input_text", text: prompt },
+      ...images.map((im) => ({ type: "input_image", image_url: dataUrl(im) })),
     ];
     const r = await f(`${RESOURCE}/responses`, {
       method: "POST",
@@ -360,7 +360,12 @@ export function createChatGPT(deps: ChatGPTDeps) {
       throw new Error(`ChatGPT answered ${r.status}${detail ? `: ${detail}` : ""}`);
     }
     const stream = await r.text();
-    const text = textFromStream(stream);
+    return { text: textFromStream(stream), stream };
+  }
+
+  /** A reading that answers with JSON: the first JSON object in the answer. */
+  async function readJson<T>(input: { prompt: string; images?: Img[] }): Promise<T> {
+    const { text, stream } = await ask(`${input.prompt}\nAnswer with only one JSON object and nothing else.`, input.images);
     try {
       return firstJsonObject(text) as T;
     } catch {
@@ -370,6 +375,13 @@ export function createChatGPT(deps: ChatGPTDeps) {
     }
   }
 
-  return { signIn, signOut, status, readJson, signedIn: async () => (await load()) !== null };
+  /** A reading that answers in words (the pose in a photo). */
+  async function readText(input: { prompt: string; images?: Img[] }): Promise<string> {
+    const { text } = await ask(input.prompt, input.images);
+    if (!text.trim()) throw new Error("empty answer");
+    return text.trim();
+  }
+
+  return { signIn, signOut, status, readJson, readText, signedIn: async () => (await load()) !== null };
 }
 export type ChatGPT = ReturnType<typeof createChatGPT>;

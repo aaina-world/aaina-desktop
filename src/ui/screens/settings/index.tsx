@@ -232,8 +232,8 @@ export function SettingsScreen() {
                 </div>
               )}
               <p className="t-caption" style={{ marginTop: "var(--s-3)" }}>
-                Your ChatGPT plan pays for product readings. Your OpenAI key pays for photos, billed by OpenAI. Both stay in your system
-                keychain.
+                Signed in to ChatGPT, your plan reads products and photos; your OpenAI key makes the photos, billed by OpenAI. Without
+                ChatGPT, the key does both. Both stay in your system keychain.
               </p>
             </section>
 

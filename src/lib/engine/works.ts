@@ -1,5 +1,5 @@
 // Single paid works that are not queued photos: product reading, own poses and scenes, own models (faces, sheet, checks).
-import { logWarning } from "../log";
+import { logInfo, logWarning } from "../log";
 import type { ProductReading } from "../contract";
 import { engineError, isEngineError } from "./errors";
 import { prepareInput, readingSample } from "./images";
@@ -26,8 +26,13 @@ import {
   type Traits,
 } from "./prompts";
 
-/** A reader that can turn photos and words into JSON: the key (strict schema) or a signed-in ChatGPT plan. */
-export type JsonReader = (input: { prompt: string; images: Img[]; schemaName: string; schema: unknown }) => Promise<unknown>;
+/**
+ * A signed-in ChatGPT plan reading photos and words: a JSON object (`schema` given) or plain text. Every reading in the app
+ * (product, a pose in a photo, the sheet check, a real person's photo check) goes to ChatGPT first when signed in, and to
+ * the OpenAI key when not signed in or when ChatGPT can't answer. Making pictures always needs the key.
+ */
+export type JsonReader = (input: { prompt: string; images: Img[]; schemaName?: string; schema?: unknown }) => Promise<unknown>;
+export type ReadBy = "chatgpt" | "key";
 
 export function createWorks(
   openai: OpenAI,
@@ -37,8 +42,29 @@ export function createWorks(
     const s = await readingSample(bytes, side);
     return { bytes: s.bytes, mime: s.mime };
   };
-  const keyReader: JsonReader = (i) =>
-    openai.respondJson({ prompt: i.prompt, images: i.images, schemaName: i.schemaName, schema: i.schema });
+  /**
+   * One reading, by ChatGPT when signed in and by the key otherwise (or when ChatGPT fails; the reason is logged, never a
+   * token). `key` is how the key reads it: a JSON answer with its own options, or text.
+   */
+  async function read<T>(
+    input: { prompt: string; images: Img[]; schemaName?: string; schema?: unknown; what: string },
+    key: () => Promise<T>,
+  ): Promise<{ raw: T; by: ReadBy }> {
+    const viaChatGPT = await options.chatgptReader?.();
+    if (viaChatGPT) {
+      try {
+        const raw = (await viaChatGPT(input)) as T;
+        void logInfo(`${input.what}: read by ChatGPT`);
+        return { raw, by: "chatgpt" };
+      } catch (error) {
+        void logWarning(`ChatGPT ${input.what} failed, using the OpenAI key`, error);
+      }
+    }
+    if (!(await options.keyPresent())) throw engineError("NOT_CONNECTED");
+    const raw = await key();
+    void logInfo(`${input.what}: read with the OpenAI key`);
+    return { raw, by: "key" };
+  }
 
   /** Reads a product: ChatGPT when signed in (and the key is not needed), else the key. */
   async function readProduct(
@@ -49,23 +75,10 @@ export function createWorks(
     const images = await Promise.all(photos.slice(0, 3).map((b) => sample(b)));
     const prompt = readingPrompt(opts.productTypes, opts.typeNames, opts.productName);
     const schema = readingSchema(opts.productTypes);
-    const viaChatGPT = await options.chatgptReader?.();
-    let by: ProductReading["readBy"] = "key";
-    let raw: unknown;
-    if (viaChatGPT) {
-      try {
-        raw = await viaChatGPT({ prompt, images, schemaName: "aaina_product_reading", schema });
-        by = "chatgpt";
-      } catch (error) {
-        // Fall back to the key when there is one; the reason is kept in the log (never a token).
-        void logWarning("ChatGPT reading failed, reading with the key", error);
-        raw = undefined;
-      }
-    }
-    if (raw === undefined) {
-      if (!(await options.keyPresent())) throw engineError("NOT_CONNECTED");
-      raw = await keyReader({ prompt, images, schemaName: "aaina_product_reading", schema });
-    }
+    const schemaName = "aaina_product_reading";
+    const { raw, by } = await read({ prompt, images, schemaName, schema, what: "product reading" }, () =>
+      openai.respondJson({ prompt, images, schemaName, schema }),
+    );
     const reading = readingFromAnswer(raw, opts.productTypes, by);
     if (!reading) throw engineError("BAD_ANSWER", "maybe");
     return reading;
@@ -74,7 +87,11 @@ export function createWorks(
   // ---- own poses and scenes ----
   /** Describes the pose in a reference photo in words (cheap reading call). Throws a plain message when no person shows. */
   async function readReferencePose(photo: Uint8Array): Promise<string> {
-    const text = await openai.respondText({ prompt: REFERENCE_POSE_INSTRUCTION, images: [await sample(photo, 1024)] });
+    const images = [await sample(photo, 1024)];
+    const { raw } = await read({ prompt: REFERENCE_POSE_INSTRUCTION, images, what: "pose reading" }, () =>
+      openai.respondText({ prompt: REFERENCE_POSE_INSTRUCTION, images }),
+    );
+    const text = String(raw);
     if (text.trim() === NO_PERSON_SENTINEL || text.includes(NO_PERSON_SENTINEL))
       throw engineError("CONTENT_REFUSED", "no", "There is no person in that photo");
     return text.replace(/\s+/g, " ").trim().slice(0, REFERENCE_POSE_MAX);
@@ -151,15 +168,12 @@ export function createWorks(
 
   /** The automatic sheet check (one cheap vision call). Only faults fail a sheet. */
   async function checkSheet(png: Uint8Array): Promise<{ pass: boolean; faults: string[] }> {
-    const img = await sample(png, 1024);
-    const raw = await openai.respondJson<SheetCheck>({
-      prompt: sheetCheckPrompt(),
-      images: [img],
-      schemaName: "aaina_sheet_check",
-      schema: sheetCheckSchema,
-      effort: "medium",
-      maxTokens: 2500,
-    });
+    const images = [await sample(png, 1024)];
+    const prompt = sheetCheckPrompt();
+    const schemaName = "aaina_sheet_check";
+    const { raw } = await read<SheetCheck>({ prompt, images, schemaName, schema: sheetCheckSchema, what: "sheet check" }, () =>
+      openai.respondJson<SheetCheck>({ prompt, images, schemaName, schema: sheetCheckSchema, effort: "medium", maxTokens: 2500 }),
+    );
     const faults = Array.isArray(raw.faults) ? raw.faults.filter((x) => typeof x === "string").slice(0, 6) : [];
     const pass = sheetCheckPasses(raw);
     if (!pass && !faults.length) faults.push("The sheet has a fault (anatomy, people, panels or text).");
@@ -171,16 +185,14 @@ export function createWorks(
     photo: Uint8Array,
     view: "front" | "other",
   ): Promise<{ problem: string | null; gender: "woman" | "man"; age: number }> {
-    const img = await sample(photo, 1280);
+    const images = [await sample(photo, 1280)];
+    const prompt = ownModelPhotoPrompt(view);
+    const schemaName = "aaina_own_model_photo_check";
     let raw: OwnModelPhotoCheck;
     try {
-      raw = await openai.respondJson<OwnModelPhotoCheck>({
-        prompt: ownModelPhotoPrompt(view),
-        images: [img],
-        schemaName: "aaina_own_model_photo_check",
-        schema: ownModelPhotoSchema,
-        maxTokens: 400,
-      });
+      ({ raw } = await read<OwnModelPhotoCheck>({ prompt, images, schemaName, schema: ownModelPhotoSchema, what: "photo check" }, () =>
+        openai.respondJson<OwnModelPhotoCheck>({ prompt, images, schemaName, schema: ownModelPhotoSchema, maxTokens: 400 }),
+      ));
     } catch (e) {
       if (
         isEngineError(e) &&

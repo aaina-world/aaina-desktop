@@ -15,3 +15,14 @@ export async function logWarning(where: string, detail?: unknown): Promise<void>
     console.warn(line);
   }
 }
+
+/** A plain fact worth keeping in the log (which reader answered, …). In a plain browser it goes nowhere. */
+export async function logInfo(line: string): Promise<void> {
+  if (!inApp) return;
+  try {
+    const { info } = await import("@tauri-apps/plugin-log");
+    await info(line);
+  } catch {
+    /* the log is a convenience */
+  }
+}

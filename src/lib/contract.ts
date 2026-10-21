@@ -205,7 +205,7 @@ export type PhotoErrorCode =
 export type Connection = {
   chatgpt: { signedIn: boolean; email: string | null; plan: string | null };
   key: { present: boolean; last4: string | null; status: "unknown" | "works" | "refused" | "verify-organization" | "out-of-credit" };
-  canRead: boolean; // product readings possible (ChatGPT or key)
+  canRead: boolean; // readings possible (ChatGPT first, else the key)
   canMakePhotos: boolean; // photos possible (key, until ChatGPT plans can make images)
 };
 

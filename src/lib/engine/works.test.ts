@@ -153,3 +153,66 @@ describe("checkPersonPhoto", () => {
     await expect(works(refused).checkPersonPhoto(png, "front")).rejects.toMatchObject({ code: "KEY_REFUSED" });
   });
 });
+
+describe("who reads: ChatGPT when signed in, else the OpenAI key", () => {
+  const sheetAnswer = {
+    panels: 6,
+    onePersonEach: true,
+    samePerson: true,
+    extraLimbsOrHands: false,
+    textOrLogos: false,
+    appearsUnder18: false,
+    faults: [],
+  };
+  const photoAnswer = { onePerson: true, faceClear: true, adult: true, publicFigure: false, gender: "woman", ageYears: 31 };
+
+  it("sends every reading to ChatGPT when signed in, and none to the key", async () => {
+    const { openai } = fakeOpenai();
+    const asked: Array<{ schemaName?: string }> = [];
+    const reader = vi.fn(async (i: { schemaName?: string }) => {
+      asked.push(i);
+      if (!i.schemaName) return "walking toward the camera";
+      return i.schemaName === "aaina_sheet_check" ? sheetAnswer : i.schemaName === "aaina_own_model_photo_check" ? photoAnswer : answer;
+    });
+    const w = works(openai, true, async () => reader);
+    expect((await w.readProduct([png], { productTypes: null })).readBy).toBe("chatgpt");
+    expect(await w.readReferencePose(png)).toBe("walking toward the camera");
+    expect((await w.checkSheet(png)).pass).toBe(true);
+    expect((await w.checkPersonPhoto(png, "front")).problem).toBeNull();
+    expect(asked.map((i) => i.schemaName ?? "text")).toEqual([
+      "aaina_product_reading",
+      "text",
+      "aaina_sheet_check",
+      "aaina_own_model_photo_check",
+    ]);
+    expect(openai.respondJson).not.toHaveBeenCalled();
+    expect(openai.respondText).not.toHaveBeenCalled();
+  });
+
+  it("uses the key for every reading when ChatGPT is not signed in, or when it fails", async () => {
+    for (const reader of [undefined, async () => (async () => Promise.reject(new Error("503"))) as never]) {
+      const { openai } = fakeOpenai({
+        respondJson: vi.fn(async (i: { schemaName: string }) =>
+          i.schemaName === "aaina_sheet_check" ? sheetAnswer : i.schemaName === "aaina_own_model_photo_check" ? photoAnswer : answer,
+        ),
+      });
+      const w = works(openai, true, reader);
+      expect((await w.readProduct([png], { productTypes: null })).readBy).toBe("key");
+      await w.readReferencePose(png);
+      await w.checkSheet(png);
+      await w.checkPersonPhoto(png, "front");
+      expect(openai.respondJson).toHaveBeenCalledTimes(3);
+      expect(openai.respondText).toHaveBeenCalledTimes(1);
+    }
+  });
+
+  it("making pictures always uses the key, signed in or not", async () => {
+    const { openai } = fakeOpenai();
+    const reader = vi.fn(async () => "walking");
+    const w = works(openai, true, async () => reader);
+    await w.makeScene({ words: "a beach" });
+    await w.makeFaces({ gender: "woman", age: 30 } as never, 1);
+    expect(openai.generateImage).toHaveBeenCalledTimes(2);
+    expect(reader).not.toHaveBeenCalled();
+  });
+});

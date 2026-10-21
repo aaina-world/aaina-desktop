@@ -84,8 +84,8 @@ export function ConnectCards() {
           <div className="grow">
             <h2>Sign in with ChatGPT</h2>
             <p className="t-small muted mt-1" style={{ maxWidth: "50ch" }}>
-              Uses your ChatGPT plan for product readings. OpenAI doesn't let ChatGPT plans make photos in other apps yet; we'll switch you
-              over when it does.
+              Reads your products and photos with your ChatGPT plan, at no cost to your key. OpenAI doesn't let ChatGPT plans make photos in
+              other apps yet, so photos need the key below; we'll switch them over when it does.
             </p>
           </div>
         </div>
@@ -126,7 +126,7 @@ export function ConnectCards() {
           </span>
           <div className="grow">
             <h2>Your OpenAI key</h2>
-            <p className="t-small muted mt-1">Needed for photos for now.</p>
+            <p className="t-small muted mt-1">Makes the photos. Also reads your products when you're not signed in to ChatGPT.</p>
           </div>
           {c?.key.present && (
             <button

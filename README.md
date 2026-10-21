@@ -40,6 +40,13 @@ More in [PRIVACY.md](PRIVACY.md).
 
 Photos are made with your own OpenAI account, and OpenAI bills you directly. Roughly **$0.05 a photo**. The app shows the rough cost before every paid action. Aaina Desktop itself is free.
 
+## ChatGPT and your OpenAI key
+
+- **Sign in with ChatGPT** (optional): every reading (your product, a pose in a photo, the checks on a model you make) uses your ChatGPT plan, at no cost to your key.
+- **Your OpenAI key**: makes the photos, poses, scenes and models, billed by OpenAI. Without ChatGPT it also does the readings (a fraction of a cent each). If ChatGPT can't answer, the key reads instead.
+
+ChatGPT plans can't make pictures in other apps yet; photos switch over when OpenAI allows it.
+
 ## Getting a key
 
 1. Make or sign in to an account at [platform.openai.com](https://platform.openai.com).
@@ -47,7 +54,7 @@ Photos are made with your own OpenAI account, and OpenAI bills you directly. Rou
 3. Open API keys, make a new key and copy it.
 4. Paste it in Aaina Desktop when it asks.
 
-OpenAI may ask you to verify your organisation before it lets you make photos. That is a step on their side and usually quick. Sign in with ChatGPT is planned, but ChatGPT plans cannot make photos in other apps yet.
+OpenAI may ask you to verify your organisation before it lets you make photos. That is a step on their side and usually quick.
 
 ## Build from source
 
