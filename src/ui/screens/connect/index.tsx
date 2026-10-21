@@ -23,6 +23,8 @@ export function OnboardingTop({ step }: { step: 1 | 2 | 3 }) {
   );
 }
 
+const KEY_REFUSED_TEXT = "OpenAI didn't accept this key. Check it was copied in full.";
+
 /** The two ways to connect OpenAI. Used on this screen and, with the same behaviour, in Settings. */
 export function ConnectCards() {
   const { os } = useOs();
@@ -36,19 +38,22 @@ export function ConnectCards() {
   const [chatError, setChatError] = useState<string | null>(null);
 
   async function check() {
-    if (!key.trim()) {
+    const typed = key.trim();
+    if (!typed && !c?.key.present) {
       setKeyError("Paste your OpenAI key first.");
       return;
     }
     setChecking(true);
     setKeyError(null);
     try {
-      const next = await (await api()).setKey(key.trim());
+      // An empty field with a saved key checks the saved key again.
+      const a = await api();
+      const next = typed ? await a.setKey(typed) : await a.checkKey();
       if (next.key.status === "works") setKey("");
-      else if (next.key.status === "refused") setKeyError("OpenAI didn't accept this key. Check it was copied in full.");
+      else if (next.key.status === "refused") setKeyError(KEY_REFUSED_TEXT);
       conn.reload();
-    } catch {
-      setKeyError("We couldn't reach OpenAI. Check your internet and try again.");
+    } catch (error) {
+      setKeyError(error instanceof Error && error.message ? error.message : "We couldn't reach OpenAI. Check your internet and try again.");
     } finally {
       setChecking(false);
     }

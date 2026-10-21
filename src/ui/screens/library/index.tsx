@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { CatalogUnavailableText } from "../states";
 import { Link, Navigate, useNavigate, useParams } from "react-router";
 import type {
   CatalogModel,
@@ -37,6 +38,7 @@ import {
   useDebounced,
   useLoad,
 } from "../create/kit";
+import { useOnline } from "../../hooks";
 import "../create/create.css";
 import "./library.css";
 
@@ -53,10 +55,12 @@ export function LibraryScreen() {
   const ownModels = useLoad((a) => a.ownModels(), [], ["own"]);
   const ownPoses = useLoad((a) => a.ownPoses(), [], ["own"]);
   const ownScenes = useLoad((a) => a.ownScenes(), [], ["own"]);
+  const online = useOnline();
   if (!param) return <Navigate to="/library/products" replace />;
   if (!(TABS as readonly string[]).includes(param)) return <Navigate to="/library/products" replace />;
   const tab = param as Tab;
-  const offline = status.data?.state === "offline" || status.data?.state === "never-loaded";
+  const offline = !online && (status.data?.state === "offline" || status.data?.state === "never-loaded");
+  const unavailable = status.data?.state === "offline" || status.data?.state === "never-loaded";
   const counts: Record<Tab, number | undefined> = {
     products: products.data?.length,
     models: ownModels.data?.length,
@@ -94,9 +98,9 @@ export function LibraryScreen() {
           ))}
         </div>
         {tab === "products" && <ProductsTab q={dq} setQ={setQ} products={products} />}
-        {tab === "models" && <ModelsTab q={dq} setQ={setQ} own={ownModels} offline={offline} status={status.data} />}
-        {tab === "poses" && <PosesTab q={dq} own={ownPoses} ownModels={ownModels.data ?? []} offline={offline} />}
-        {tab === "scenes" && <ScenesTab q={dq} own={ownScenes} offline={offline} />}
+        {tab === "models" && <ModelsTab q={dq} setQ={setQ} own={ownModels} offline={unavailable} status={status.data} />}
+        {tab === "poses" && <PosesTab q={dq} own={ownPoses} ownModels={ownModels.data ?? []} offline={unavailable} />}
+        {tab === "scenes" && <ScenesTab q={dq} own={ownScenes} offline={unavailable} />}
       </div>
     </>
   );
@@ -434,14 +438,7 @@ function ModelsTab({
         ) : (studio.error && !studio.data) || all.length === 0 ? (
           offline || (all.length === 0 && !studio.error) ? (
             <div className="empty offline">
-              <span className="art">
-                <Icon name="offline" />
-              </span>
-              <h2 className="t-section">Connect to the internet once to load the studio models</h2>
-              <p>
-                The catalogue of models, poses and scenes is downloaded the first time. After that it is kept on this computer and works
-                offline.
-              </p>
+              <CatalogUnavailableText />
               <button
                 className="btn btn-primary"
                 onClick={async () => {

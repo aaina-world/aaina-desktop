@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { checkForUpdate } from "../../../lib/updates";
+import { logWarning } from "../../../lib/log";
 import { useLocation } from "react-router";
 import { api, inApp } from "../../../lib/api";
 import { ESTIMATE_USD } from "../../../lib/contract";
@@ -94,28 +96,19 @@ export function SettingsScreen() {
   async function checkUpdates() {
     setChecking(true);
     try {
-      if (inApp) {
-        const { check } = await import("@tauri-apps/plugin-updater");
-        const u = await check();
-        if (u) {
-          toast(`Version ${u.version} is ready`, {
-            icon: "refresh",
-            ms: 12000,
-            action: {
-              label: "Install and restart",
-              onClick: async () => {
-                await u.downloadAndInstall();
-                const { relaunch } = await import("@tauri-apps/plugin-process");
-                await relaunch();
-              },
-            },
-          });
-        } else toast("You're on the latest version");
-      } else {
-        await new Promise((r) => setTimeout(r, 600));
-        toast("You're on the latest version");
-      }
-    } catch {
+      const a = await api();
+      const current = await a.appVersion();
+      const fetcher = inApp ? (await import("@tauri-apps/plugin-http")).fetch : window.fetch.bind(window);
+      const result = await checkForUpdate(current, fetcher);
+      if (result.kind === "newer")
+        toast(`Version ${result.version} is ready`, {
+          icon: "refresh",
+          ms: 12000,
+          action: { label: "Get it", onClick: () => void a.openUrl(result.url) },
+        });
+      else toast("You're on the latest version");
+    } catch (error) {
+      void logWarning("Update check failed", error);
       toast("We couldn't check for updates. Try again later.", { icon: "alert" });
     } finally {
       setChecking(false);

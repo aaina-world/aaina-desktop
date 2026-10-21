@@ -27,6 +27,16 @@ describe("Connect: the OpenAI key", () => {
     expect(screen.getByText("Paste your OpenAI key first.")).toBeInTheDocument();
   });
 
+  it("with a key already saved, an empty box checks the saved key instead of asking for one", async () => {
+    const user = userEvent.setup();
+    await api.setKey(GOOD_KEY);
+    const spy = vi.spyOn(api, "checkKey");
+    open();
+    await user.click(await screen.findByRole("button", { name: "Check key" }));
+    await waitFor(() => expect(spy).toHaveBeenCalledTimes(1));
+    expect(screen.queryByText("Paste your OpenAI key first.")).not.toBeInTheDocument();
+  });
+
   it("hides the key as it is typed and can show it", async () => {
     const user = userEvent.setup();
     open();

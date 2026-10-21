@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import { Icon } from "../../components";
+import { useOnline } from "../../hooks";
 import { EmptyState } from "../../components";
 import type { CatalogStatus } from "../../../lib/contract";
 
@@ -29,38 +30,40 @@ export function DropOverlay() {
   );
 }
 
-/** First download of the catalogue (only on the first open, or after a long time). */
-export function CatalogDownloadCard({ status }: { status: CatalogStatus }) {
-  if (status.state !== "loading" && status.state !== "never-loaded") return null;
-  const p = status.progress;
-  const pct = p && p.total ? Math.round((p.done / p.total) * 100) : 8;
-  return (
-    <div
-      className="dl"
-      style={{
-        width: "100%",
-        flexDirection: "column",
-        gap: 12,
-        padding: "var(--s-4) var(--s-5)",
-        background: "var(--bg-raised)",
-        border: "1px solid var(--line)",
-        borderRadius: "var(--r-lg)",
-      }}
-    >
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
-        <span className="t-small" style={{ fontWeight: 600 }}>
-          Getting the studio catalogue
-        </span>
-        {p && (
-          <span className="t-mono t-caption">
-            {p.done} of {p.total} models
-          </span>
+/** The studio catalogue saving itself for offline use, in the background. One quiet line; it never blocks a shoot. */
+export function CatalogDownloadCard({ status, onRetry }: { status: CatalogStatus; onRetry?: () => void }) {
+  if (status.state === "never-loaded" && !status.progress)
+    return (
+      <div className="catalog-dl" role="status">
+        <Icon name="alert" />
+        <div className="catalog-dl-body">
+          <span className="catalog-dl-title">We couldn't load the studio catalogue</span>
+          <span className="t-caption">Check your internet connection. Your own models still work.</span>
+        </div>
+        {onRetry && (
+          <button className="btn btn-secondary btn-sm" onClick={onRetry}>
+            Try again
+          </button>
         )}
       </div>
-      <div className="progress">
-        <i style={{ "--p": `${pct}%` } as React.CSSProperties} />
+    );
+  if (status.state !== "loading") return null;
+  const p = status.progress;
+  const pct = p && p.total ? Math.min(100, Math.floor((p.done / p.total) * 100)) : null;
+  const title = status.progress ? "Saving the studio catalogue for offline use" : "Getting the studio catalogue";
+  return (
+    <div className="catalog-dl" role="status" aria-live="polite">
+      <Icon name="download" />
+      <div className="catalog-dl-body">
+        <div className="catalog-dl-row">
+          <span className="catalog-dl-title">{title}</span>
+          <span className="t-mono t-caption">{pct === null ? "Starting…" : `${pct}%`}</span>
+        </div>
+        <div className="progress" aria-hidden="true">
+          <i style={{ "--p": `${pct ?? 0}%` } as React.CSSProperties} />
+        </div>
+        <span className="t-caption">You can start a shoot while this finishes.</span>
       </div>
-      <span className="t-caption">You can start a shoot while this finishes.</span>
     </div>
   );
 }
@@ -80,5 +83,29 @@ export function NotFoundScreen() {
         It may have been deleted, or the link is out of date.
       </EmptyState>
     </div>
+  );
+}
+
+/** Why the studio models aren't showing: offline (they load once you connect) or a failed download. */
+export function CatalogUnavailableText() {
+  const online = useOnline();
+  return online ? (
+    <>
+      <span className="art">
+        <Icon name="alert" />
+      </span>
+      <h2 className="t-section">We couldn't load the studio models</h2>
+      <p>Check your internet connection and try again. Your own models still work.</p>
+    </>
+  ) : (
+    <>
+      <span className="art">
+        <Icon name="offline" />
+      </span>
+      <h2 className="t-section">Connect to the internet once to load the studio models</h2>
+      <p>
+        The catalogue of models, poses and scenes is downloaded the first time. After that it is kept on this computer and works offline.
+      </p>
+    </>
   );
 }

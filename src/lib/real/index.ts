@@ -25,6 +25,8 @@ async function notify(title: string, body: string): Promise<void> {
 export async function createApi(): Promise<Api> {
   const data = await createDataLayer();
   const catalog = await createCatalog(data);
+  // Start loading the studio catalogue as the app opens, so models are ready before anyone asks for them.
+  void catalog.models().catch(() => undefined);
   const events = createEvents();
   const { emit } = events;
 

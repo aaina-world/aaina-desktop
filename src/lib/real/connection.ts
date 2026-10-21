@@ -60,7 +60,7 @@ export function createConnection({ secrets, emit }: Deps) {
     return status();
   }
 
-  const api: Pick<Api, "connection" | "setKey" | "removeKey" | "signInWithChatGPT" | "signOutChatGPT"> = {
+  const api: Pick<Api, "connection" | "setKey" | "checkKey" | "removeKey" | "signInWithChatGPT" | "signOutChatGPT"> = {
     connection: status,
     async setKey(key) {
       const candidate = key.trim();
@@ -68,9 +68,18 @@ export function createConnection({ secrets, emit }: Deps) {
       const result = await raw.checkKey(candidate).catch((e: unknown) => {
         throw new Error(plain(e));
       });
-      if (result === "refused") throw new Error(MESSAGES.KEY_REFUSED);
+      if (result === "refused") throw new Error("OpenAI didn't accept this key. Check it was copied in full.");
       await secrets.set("openai_api_key", candidate);
       keyStatus = result === "works" ? "works" : "unknown";
+      return changed();
+    },
+    async checkKey() {
+      const saved = await getKey();
+      if (!saved) throw new Error(MESSAGES.NOT_CONNECTED);
+      const result = await raw.checkKey(saved).catch((e: unknown) => {
+        throw new Error(plain(e));
+      });
+      keyStatus = result === "works" ? "works" : result === "refused" ? "refused" : "unknown";
       return changed();
     },
     async removeKey() {

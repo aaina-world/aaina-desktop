@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { CatalogUnavailableText } from "../states";
 import { Link } from "react-router";
 import type { CatalogModel, ModelRef } from "../../../lib/contract";
 import { Dialog } from "../../components/Dialog";
@@ -373,14 +374,7 @@ export function ModelStep({ draft, data }: { draft: Draft; data: CreateData }) {
       />
       {empty && offline ? (
         <div className="empty offline">
-          <span className="art">
-            <Icon name="offline" />
-          </span>
-          <h2 className="t-section">Connect to the internet once to load the studio models</h2>
-          <p>
-            The catalogue of models, poses and scenes is downloaded the first time. After that it is kept on this computer and works
-            offline.
-          </p>
+          <CatalogUnavailableText />
           <div className="row wrap" style={{ justifyContent: "center" }}>
             <button
               className="btn btn-primary"

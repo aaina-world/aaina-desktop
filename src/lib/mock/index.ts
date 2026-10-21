@@ -841,6 +841,10 @@ export async function createMockApi(): Promise<Api> {
     async connection() {
       return conn;
     },
+    async checkKey() {
+      await wait(800);
+      return conn;
+    },
     async setKey(key) {
       await wait(1100);
       const trimmed = key.trim();

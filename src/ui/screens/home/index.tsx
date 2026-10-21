@@ -81,7 +81,7 @@ export function HomeScreen() {
       <div className="page">
         {catalog.data && (catalog.data.state === "loading" || catalog.data.state === "never-loaded") && (
           <div style={{ marginBottom: "var(--s-5)" }}>
-            <CatalogDownloadCard status={catalog.data} />
+            <CatalogDownloadCard status={catalog.data} onRetry={() => void api().then((a) => a.refreshCatalog())} />
           </div>
         )}
 

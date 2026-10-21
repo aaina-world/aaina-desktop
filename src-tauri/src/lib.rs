@@ -6,6 +6,18 @@ mod secrets;
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(
+            tauri_plugin_log::Builder::new()
+                .targets([
+                    tauri_plugin_log::Target::new(tauri_plugin_log::TargetKind::Stdout),
+                    tauri_plugin_log::Target::new(tauri_plugin_log::TargetKind::LogDir {
+                        file_name: Some("aaina-desktop".into()),
+                    }),
+                ])
+                .level(log::LevelFilter::Info)
+                .max_file_size(2_000_000)
+                .build(),
+        )
         .manage(oauth::Loopback(std::sync::Mutex::new(None)))
         .plugin(tauri_plugin_window_state::Builder::default().build())
         .plugin(tauri_plugin_opener::init())

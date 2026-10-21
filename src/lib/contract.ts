@@ -317,6 +317,7 @@ export interface Api {
   // Connection and settings
   connection(): Promise<Connection>;
   setKey(key: string): Promise<Connection>; // checks it with a free call first
+  checkKey(): Promise<Connection>; // checks the saved key again (free)
   removeKey(): Promise<Connection>;
   signInWithChatGPT(): Promise<Connection>;
   signOutChatGPT(): Promise<Connection>;

@@ -1,4 +1,5 @@
 import type { CatalogModel, CatalogPose, CatalogScene, CatalogStatus, ModelRef, ProductReading } from "../contract";
+import { logWarning } from "../log";
 import type { CacheStore } from "./cacheStore";
 import { mapModels, mapPoses, mapScenes } from "./map";
 import { CDN_BASE, type RawModels, type RawPointer, type RawPoses, type RawScenes, type RawSheets, type RawSheetsPointer } from "./raw";
@@ -166,7 +167,8 @@ export function createCatalogCore(deps: CatalogDeps) {
         .offlineWanted()
         .then((wanted) => (wanted ? startOfflineDownload() : undefined))
         .catch(() => undefined);
-    } catch {
+    } catch (error) {
+      void logWarning("Catalogue refresh failed", error);
       state = rawModels ? "offline" : "never-loaded";
       changed();
     }
