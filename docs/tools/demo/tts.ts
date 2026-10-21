@@ -9,7 +9,7 @@ mkdirSync(OUT, { recursive: true });
 const only = process.argv.slice(2);
 const VOICE = "shimmer";
 const INSTRUCTIONS =
-  "Soft, gentle and warm, with a pleasant, smiling tone. Calm and unhurried, a little quieter than usual, like a kind guide showing a friend something useful for their new business. Natural pauses, no hype.";
+  "Soft, gentle and warm, with a pleasant, smiling tone. Calm and unhurried, a little quieter than usual, like a kind guide showing a friend something useful for their new business. Natural pauses, no hype. The name 'Ayna' is pronounced EYE-nuh, two syllables, rhyming with 'China'.";
 
 /** One line, asked again (up to 3 times) when OpenAI is slow to answer. */
 async function speak(input: string): Promise<Uint8Array> {

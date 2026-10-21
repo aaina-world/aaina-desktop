@@ -139,7 +139,7 @@ test("demo video", async ({ page }) => {
     await card(
       page,
       `<span class="dot"></span><h1>Studio photos, <em>free</em>, for everyone starting out.</h1>
-       <p>We used AI to rebuild a part of Aaina's studio as a free, open-source app, for anyone starting a business without a photoshoot budget.</p>`,
+       <p>We used AI to rebuild a part of Aaina as a free, open-source app, for anyone starting a business without a photoshoot budget.</p>`,
     );
   });
   await card(page, null);

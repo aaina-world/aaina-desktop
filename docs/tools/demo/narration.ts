@@ -1,14 +1,15 @@
 // The demo video's script: what is said (`say`) and what the caption shows (`text`), one entry per scene.
+// "Aaina" is said like "China" without the "Ch" (EYE-nuh); the speech model gets that right only when it is spelled "Ayna".
 export const NARRATION = [
   {
     id: "intro",
     text: "Aaina Desktop: model photos of what you sell, made on your own computer. Free and open source.",
-    say: "This is Aaina Desktop. A free, open source app that makes model photos of the things you sell, right on your own computer.",
+    say: "This is Ayna Desktop. A free, open source app that makes model photos of the things you sell, right on your own computer.",
   },
   {
     id: "why",
-    text: "We used AI to build a part of Aaina's studio as a free app, for everyone starting a business without a photoshoot budget.",
-    say: "We used A.I. to rebuild a part of the Aaina studio as a free app, so anyone starting a business, even without money for photoshoots, can have studio photos from day one.",
+    text: "We used AI to rebuild a part of Aaina as a free app, for everyone starting a business without a photoshoot budget.",
+    say: "We used A.I. to rebuild a part of Ayna as a free app, so anyone starting a business, even without money for photoshoots, can have studio photos from day one.",
   },
   {
     id: "connect",
@@ -98,7 +99,7 @@ export const NARRATION = [
   {
     id: "end",
     text: "Free and open source. desktop.aaina.world",
-    say: "Aaina Desktop is free and open source. Get it at desktop dot aaina dot world.",
+    say: "Ayna Desktop is free and open source. Get it at desktop dot ayna dot world.",
   },
 ] as const;
 export type SceneId = (typeof NARRATION)[number]["id"];

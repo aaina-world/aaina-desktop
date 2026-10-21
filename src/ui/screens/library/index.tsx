@@ -430,7 +430,7 @@ function ModelsTab({
                 </span>
               )}
             </h2>
-            <p className="t-caption mt-1">From the Aaina studio{updated ? ` · updated ${fmtDate(updated)}` : ""}</p>
+            <p className="t-caption mt-1">From Aaina{updated ? ` · updated ${fmtDate(updated)}` : ""}</p>
           </div>
         </div>
         {studio.loading && !studio.data ? (

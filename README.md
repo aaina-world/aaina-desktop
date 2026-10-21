@@ -10,7 +10,7 @@ Add a photo of what you sell, pick a studio model, choose poses and a scene, and
 
 ## Why this exists
 
-Good product photos sell, but a photoshoot with a model, a studio and a photographer is out of reach for most people starting out. [Aaina](https://aaina.world) is a studio that makes those photos with AI. We used AI to build Aaina Desktop: a subset of Aaina's features, rebuilt as a free, open-source app, so that anyone starting a business, or anyone without the money for photoshoots or subscriptions, can have studio-quality photos of what they sell from day one.
+Good product photos sell, but a photoshoot with a model, a studio and a photographer is out of reach for most people starting out. [Aaina](https://aaina.world) makes those photos with AI. We used AI to build Aaina Desktop: a part of Aaina, rebuilt as a free, open-source app, so that anyone starting a business, or anyone without the money for photoshoots or subscriptions, can have studio-quality photos of what they sell from day one.
 
 There is no subscription and nothing to buy from us. You bring your own OpenAI account and pay OpenAI only for the photos you make, a few cents each. The studio models, poses and scenes come with the app, and everything you make stays on your computer.
 

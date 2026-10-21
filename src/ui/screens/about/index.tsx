@@ -75,7 +75,7 @@ export function AboutScreen() {
           </section>
           <section style={{ display: "flex", flexDirection: "column", gap: "var(--s-4)" }}>
             <p className="t-small muted">
-              Models, poses and scenes from the Aaina studio. Built with open-source libraries;{" "}
+              Models, poses and scenes from Aaina. Built with open-source libraries;{" "}
               <button className="btn-link" onClick={async () => (await api()).openUrl(GITHUB_URL)}>
                 see the full list
               </button>

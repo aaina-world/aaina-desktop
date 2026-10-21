@@ -30,10 +30,12 @@ Writes `docs/tutorials/img/*.webp` at 1600 px wide. The site uses copies in `sit
 
 ```bash
 OPENAI_API_KEY=… npx tsx docs/tools/demo/tts.ts        # the narration in narration.ts, one mp3 per scene (paid, a few cents)
-npx tsx docs/tools/demo/hear.ts intro why               # optional: transcribe lines back to check how they sound
+npx tsx docs/tools/demo/hear.ts intro why               # optional: transcribe lines back to check the words
+npx tsx docs/tools/demo/name-judge.ts docs/tools/demo/out/voice/intro.mp3   # how the name sounds: it must be EYE-nuh
 npx playwright test -c docs/tools/demo video            # records docs/tools/demo/out/aaina-desktop-demo.mp4
 ```
 
-Each scene waits until its line has been spoken, so the voice and the screens stay together. Frames come from Chromium's
+"Aaina" is said like "China" without the "Ch" (EYE-nuh). The speech model gets it right only when the spoken script spells
+it "Ayna"; captions keep "Aaina". Each scene waits until its line has been spoken, so the voice and the screens stay together. Frames come from Chromium's
 screencast and are joined with ffmpeg, which must be installed. For the site, the video is scaled to 1600 × 1000
 (`site/video`).
