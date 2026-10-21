@@ -620,7 +620,7 @@ export function ModelCreateScreen() {
                 <span>OpenAI bills about {usd0(ESTIMATE_USD.sheet)} for the sheet. If it can't be made, you aren't billed.</span>
               </div>
             </section>
-            <div className="ready">
+            <div className="ready-page">
               <div className="sheet busy">
                 {Array.from({ length: 6 }, (_, i) => (
                   <div className="cellb" key={i}>
@@ -658,7 +658,7 @@ export function ModelCreateScreen() {
 
         {view === "ready" && m && (
           <div className="mcol" style={{ maxWidth: 1000 }}>
-            <div className="ready">
+            <div className="ready-page">
               <SheetBox url={m.sheetUrl} />
               <div className="info">
                 <div>
@@ -901,7 +901,7 @@ export function ModelScreen() {
         </header>
         <div className="page">
           <Skeleton height={44} width={260} />
-          <div className="own">
+          <div className="own-page">
             <Skeleton height={480} />
             <Skeleton height={320} />
           </div>
@@ -1047,7 +1047,7 @@ export function ModelScreen() {
           </Note>
         )}
 
-        <div className="own">
+        <div className="own-page">
           <SheetBox url={m.sheetUrl} name={m.name} />
           <div className="side">
             <div className="stack" style={{ ["--gap" as string]: "8px" }}>

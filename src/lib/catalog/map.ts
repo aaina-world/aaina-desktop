@@ -19,8 +19,9 @@ export function mapModel(raw: RawModel, pools: RawModels["pools"], sheet: RawShe
   const photos = (raw.photos ?? []).filter((photo) => photo.available !== false && photo.status !== "rejected");
   const sheetPhoto = photos.find((photo) => photo.angle === "sheet");
   const poolKey = raw.poolKey ?? null;
-  // A sheet model's preview is already its card: the sheet's full-length front photo, cut to 3:4 by Aaina.
-  const card = raw.previewImageUrl ?? photos.find((photo) => photo.angle !== "sheet")?.imageUrl ?? sheetPhoto?.imageUrl ?? null;
+  // Cards show the model's face (the owner's choice, as on Aaina); the full-length preview when there is no face picture.
+  const card =
+    raw.faceImageUrl ?? raw.previewImageUrl ?? photos.find((photo) => photo.angle !== "sheet")?.imageUrl ?? sheetPhoto?.imageUrl ?? null;
   const sheetPath = sheet?.url ?? null;
   return {
     id: raw.id,

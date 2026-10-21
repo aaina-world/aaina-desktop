@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { fitInside, mimeOf, planShape, pngSize, readBackgroundPixels, sheetCardRegion, subjectBoundsGrey } from "./images";
+import { fitInside, mimeOf, planShape, pngSize, readBackgroundPixels, sheetFaceRegion, subjectBoundsGrey } from "./images";
 
 const rgba = (w: number, h: number, colour: (x: number, y: number) => [number, number, number]) => {
   const d = new Uint8ClampedArray(w * h * 4);
@@ -75,27 +75,22 @@ describe("save shapes: crop around the person, never bars or blur", () => {
 });
 
 describe("own model card", () => {
-  // A 300 × 200 sheet: white dividers at row 98–101, and in the bottom row at x 148–151 and 224–227 (uneven panels).
-  function sheet() {
+  // A 300 × 200 sheet: a white row divider at 98–101 and, in the top row, a column divider at 100–103.
+  it("cuts the face from the first top tile, inside the found dividers, at 3:4 without stretching", () => {
     const w = 300;
     const h = 200;
     const grey = new Uint8Array(w * h).fill(150);
     for (let y = 98; y <= 101; y++) for (let x = 0; x < w; x++) grey[y * w + x] = 255;
-    for (const x0 of [148, 224]) for (let x = x0; x <= x0 + 3; x++) for (let y = 100; y < h; y++) grey[y * w + x] = 255;
-    return { grey, w, h };
-  }
-  it("cuts the full-length front photo between the found dividers, inside them, and widens it to 3:4", () => {
-    const { grey, w, h } = sheet();
-    const r = sheetCardRegion(grey, w, h);
-    expect(r.left).toBeGreaterThan(151);
-    expect(r.left + r.width).toBeLessThan(224);
-    expect(r.top).toBeGreaterThan(101);
-    expect((r.width + 2 * r.pad) / r.height).toBeCloseTo(3 / 4, 1);
+    for (let x = 100; x <= 103; x++) for (let y = 0; y < 100; y++) grey[y * w + x] = 255;
+    const r = sheetFaceRegion(grey, w, h);
+    expect(r.left).toBeGreaterThanOrEqual(4);
+    expect(r.left + r.width).toBeLessThan(100);
+    expect(r.top + r.height).toBeLessThan(98);
+    expect(r.width / r.height).toBeCloseTo(3 / 4, 1);
   });
-  it("falls back to the layout's own fractions when no divider shows", () => {
-    const r = sheetCardRegion(new Uint8Array(400 * 200).fill(150), 400, 200);
-    expect(r.left).toBe(200 + 4);
-    expect(r.left + r.width).toBe(300 - 4);
-    expect(r.top).toBe(100 + 4);
+  it("falls back to the layout's own thirds when no divider shows", () => {
+    const r = sheetFaceRegion(new Uint8Array(300 * 200).fill(150), 300, 200);
+    expect(r.left + r.width).toBeLessThanOrEqual(100);
+    expect(r.top + r.height).toBeLessThanOrEqual(100);
   });
 });

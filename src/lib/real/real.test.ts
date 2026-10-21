@@ -516,8 +516,8 @@ describe("your own models, poses and scenes", () => {
     expect(await api.ownModels()).toHaveLength(1);
     await api.remakeSheet(m.id);
     await until(async () => (await api.ownModel(m.id))?.status === "ready");
-    // Its card is the sheet's full-length front photo, cut out once.
-    expect((await api.ownModel(m.id))!.cardUrl).toContain(`own-models/${m.id}/card.png`);
+    // Its card is its face, cut from the sheet once.
+    expect((await api.ownModel(m.id))!.cardUrl).toContain(`own-models/${m.id}/card-face.png`);
     // Like studio models without poses of their own, an own model borrows the shared poses of its gender.
     const borrowed = await api.posesFor({ source: "own", id: m.id });
     expect(borrowed.length).toBeGreaterThan(0);

@@ -34,7 +34,7 @@ export function modelInfoOwn(m: OwnModel): ModelInfo {
     ref: { source: "own", id: m.id },
     name: m.name,
     sub: `${m.age}`,
-    // The card picture (full length, like the studio models), else the chosen face, else the sheet.
+    // The card picture (the face cut from the sheet), else the chosen face, else the sheet.
     img: m.cardUrl ?? face ?? m.sheetUrl,
     age: m.age,
     own: true,

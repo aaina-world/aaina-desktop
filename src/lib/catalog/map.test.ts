@@ -20,11 +20,11 @@ it("maps an own-pose model with its suits, and a pooled model with the suits of 
   expect(Object.keys(hana.suits!).length).toBeGreaterThan(0);
 });
 
-it("points sheetUrl at the published sheet and shows the full-length preview as every model's card", () => {
+it("points sheetUrl at the published sheet and shows the model's face as its card", () => {
   const [aaina, hana] = mapModels(models as unknown as RawModels, sheetMap, show);
   expect(aaina.sheetUrl).toMatch(/^shown:sheets\/[0-9a-f]{64}\.webp$/);
-  expect(hana.cardUrl).toBe(`shown:${(models as unknown as RawModels).items[1].previewImageUrl}`);
-  expect(hana.cardUrl).not.toBe(hana.faceUrl);
+  expect(hana.cardUrl).toBe(`shown:${(models as unknown as RawModels).items[1].faceImageUrl}`);
+  expect(hana.cardUrl).toBe(hana.faceUrl);
   expect(aaina.photoUrls.length).toBe(3); // an older model: its reference photos
 });
 

@@ -102,7 +102,7 @@ export const MIGRATIONS: Migration[] = [
   {
     id: 2,
     name: "own model card picture",
-    // The full-length front photo cut from the sheet and widened to 3:4, shown on the model's card.
+    // The model's card picture, cut from its sheet.
     statements: [`ALTER TABLE own_models ADD COLUMN card_path TEXT`],
   },
 ];

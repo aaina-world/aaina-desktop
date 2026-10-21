@@ -110,10 +110,13 @@ export function createOwnApi({
       () => data.own.updateModel(id, { status: "failed" }),
     );
 
+  // Versioned: a card cut another way gets a new name, and models with the old one get the new card at start.
+  const cardPathOf = (id: string) => `own-models/${id}/card-face.png`;
+
   /** The model's card picture, cut from its sheet; null (the face or sheet is shown instead) when it can't be made. */
   async function writeCard(id: string, sheet: Uint8Array): Promise<string | null> {
     try {
-      const path = `own-models/${id}/card.png`;
+      const path = cardPathOf(id);
       await data.files.writeAppFile(path, await sheetCard(sheet));
       return path;
     } catch (error) {
@@ -122,12 +125,13 @@ export function createOwnApi({
     }
   }
 
-  /** Models made before cards existed get theirs once, quietly, at start. */
+  /** Models made before this card existed get it once, quietly, at start (the old card file is removed). */
   async function addMissingCards(): Promise<void> {
     for (const model of await data.own.models()) {
-      if (model.status !== "ready" || !model.sheetPath || model.cardPath) continue;
+      if (model.status !== "ready" || !model.sheetPath || model.cardPath === cardPathOf(model.id)) continue;
       const cardPath = await writeCard(model.id, await data.files.readAppFile(model.sheetPath));
       if (cardPath) {
+        if (model.cardPath) await data.files.removeApp(model.cardPath);
         await data.own.updateModel(model.id, { cardPath });
         emit({ type: "own", id: model.id });
       }

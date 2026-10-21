@@ -98,7 +98,7 @@ export type OwnModel = {
   faceOptions: { id: string; url: string }[];
   sheetUrl: string | null;
   sheetPath: string | null;
-  /** The card picture: the sheet's full-length front photo, widened to 3:4 (null until the sheet is made). */
+  /** The card picture: the face, cut from the sheet at 3:4 (null until the sheet is made). */
   cardUrl: string | null;
   cardPath: string | null;
   createdAt: string;
