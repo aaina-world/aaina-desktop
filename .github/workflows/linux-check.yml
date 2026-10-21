@@ -26,11 +26,14 @@ jobs:
         run: |
           Xvfb :99 -screen 0 1440x900x24 & sleep 2
           export DISPLAY=:99
-          for v in plain WEBKIT_DISABLE_DMABUF_RENDERER WEBKIT_DISABLE_COMPOSITING_MODE; do
-            if [ "$v" = plain ]; then dbus-run-session -- sh -c 'aaina-desktop & sleep 25; import -window root plain.png; pkill -f aaina-desktop || true'
-            else dbus-run-session -- env "$v=1" sh -c "aaina-desktop & sleep 25; import -window root $v.png; pkill -f aaina-desktop || true"; fi
+          shot() { # name, then an optional VAR=1
+            dbus-run-session -- env $2 sh -c 'aaina-desktop & app=$!; sleep 25; import -window root "$0.png"; kill $app' "$1" || true
             sleep 2
-          done
+          }
+          shot plain
+          shot dmabuf-off WEBKIT_DISABLE_DMABUF_RENDERER=1
+          shot compositing-off WEBKIT_DISABLE_COMPOSITING_MODE=1
+          ls -la *.png
       - uses: actions/upload-artifact@v4
         with:
           name: linux-check
