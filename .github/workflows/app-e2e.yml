@@ -12,6 +12,11 @@ on:
     tags: ["v*"]
   workflow_dispatch:
 
+# With the OPENAI_API_KEY secret, releases and manual runs also make one real photo per system (about $0.06 each).
+# Everyday pushes never get the key.
+env:
+  OPENAI_API_KEY: ${{ (github.event_name != 'push' || startsWith(github.ref, 'refs/tags/')) && secrets.OPENAI_API_KEY || '' }}
+
 jobs:
   e2e:
     strategy:

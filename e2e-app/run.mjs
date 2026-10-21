@@ -2,10 +2,13 @@
 // No OpenAI key is needed: the key check goes to OpenAI for real and must be refused. Screenshots go to e2e-app/out.
 //   node e2e-app/run.mjs <path to the app>
 import { spawn } from "node:child_process";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { copyFileSync, mkdirSync, writeFileSync } from "node:fs";
+import { homedir } from "node:os";
 import { join } from "node:path";
 
 const APP = process.argv[2];
+// With a real key (OPENAI_API_KEY, releases and manual runs only) the test also makes one standard photo: about $0.06.
+const KEY = process.env.OPENAI_API_KEY ?? "";
 const DRIVER = "http://127.0.0.1:4444";
 const OUT = join(import.meta.dirname, "out");
 mkdirSync(OUT, { recursive: true });
@@ -124,6 +127,20 @@ async function click(label) {
   }
   await sleep(400);
 }
+/** Clicks the first visible, enabled element matching `selector`. */
+async function clickFirst(selector, what) {
+  const found = await run(
+    `const el = [...document.querySelectorAll(arguments[0])].find((e) => e.offsetParent && !e.disabled);
+     if (!el) return false; el.scrollIntoView({ block: "center" }); el.click(); return true;`,
+    selector,
+  );
+  if (!found) {
+    await shot(`missing-${what}`);
+    throw new Error(`No ${what} to pick`);
+  }
+  await sleep(400);
+}
+
 /** Types into a field the way React sees a person type. */
 async function type(selector, value) {
   const ok = await run(
@@ -155,6 +172,13 @@ check("a key OpenAI refuses is refused (the app reaches api.openai.com)", async 
   const t = await text();
   if (!/didn't accept/i.test(t)) throw new Error("OpenAI could not be reached from the app");
   await shot("key-refused");
+  if (KEY) {
+    await type("#key", KEY);
+    await click("Check key");
+    await until("the key to work", (t) => !/Checking/i.test(t) && !/didn't accept/i.test(t), 45_000);
+    const t = await text();
+    if (/couldn't|didn't/i.test(t)) throw new Error("The real key didn't work");
+  }
   await click("Continue");
 });
 check("the photos folder has a place, and setup finishes", async () => {
@@ -202,6 +226,42 @@ check("after quitting and opening again, setup is remembered", async () => {
   await sees("What are we shooting today?", 60_000);
   await shot("reopened");
 });
+
+if (KEY)
+  check("a real photo is made (one standard photo, about $0.06)", async () => {
+    const product = join(homedir(), "aaina-e2e-dress.webp");
+    copyFileSync(new URL("../src/lib/mock/img/demo-dress-product.webp", import.meta.url), product);
+    // The system's file window can't be clicked by a test, so its answer is given directly.
+    await run(
+      `const i = window.__TAURI_INTERNALS__;
+       if (!i.__e2e) { const invoke = i.invoke.bind(i); i.invoke = (cmd, args, o) => cmd === "plugin:dialog|open" ? Promise.resolve([window.__e2eFile]) : invoke(cmd, args, o); i.__e2e = true; }
+       window.__e2eFile = arguments[0];`,
+      product,
+    );
+    await click("New shoot");
+    await sees("Add your product");
+    await click("Choose photos");
+    await until("the product reading", (t) => /Next: model/.test(t) && !/Reading your product/i.test(t), 90_000);
+    await shot("product-read");
+    await click("Next: model");
+    await sees("Choose a model");
+    await sleep(2000);
+    await clickFirst("button.mtile", "model");
+    await click("Next: poses");
+    await sees("Choose poses");
+    await sleep(2000);
+    await clickFirst(".tile.selectable:not(.words)", "pose");
+    await click("Next: scene");
+    await sees("Pick a scene");
+    await clickFirst(".tile.selectable", "scene");
+    await click("Next: review");
+    await sees("Nothing is sent until you press Make");
+    await shot("review");
+    await click("Make 1 photo");
+    await until("the photo", (t) => /\b1 photo\b/.test(t) && !/making/i.test(t), 6 * 60_000);
+    await sleep(3000);
+    await shot("photo-made");
+  });
 
 await start();
 let failed = 0;
