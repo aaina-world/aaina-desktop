@@ -6,7 +6,8 @@
 :root { --chrome-h: 0px; }
 html[data-os="win"] { --chrome-h: 32px; }
 html[data-os="linux"] { --chrome-h: 40px; }
-body { min-width: 1024px; padding-top: var(--chrome-h); }
+/* The window is at least 1024 wide, but on Windows its frame and a classic scrollbar take about 35 of those. */
+body { min-width: 960px; padding-top: var(--chrome-h); }
 
 /* ---------- Window chrome ---------- */
 .win-chrome { position: fixed; top: 0; left: 0; right: 0; height: var(--chrome-h); z-index: 300; display: flex; align-items: center; user-select: none; }
