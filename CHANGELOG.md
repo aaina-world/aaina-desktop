@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.1.3 (22 Oct 2026)
+
+Safety fixes from an independent review.
+
+- The app can only use its own folders, your photos folder (Pictures/Aaina), Downloads, and files or folders you choose or drag onto the window. It no longer has access to your whole home folder. A folder you choose stays allowed after a restart.
+- Restoring a backup can't choose where files go: its photos are copied into your current photos folder, nothing already there is overwritten, and a folder that isn't a real Aaina backup is refused.
+- The studio catalogue can only save files inside its own cache folder.
+- Photos are always drawn again before they are sent to OpenAI, so location, camera and date details in the file are never sent.
+- "New version available" only ever opens this project's release page.
+- Each release now has a SHA256SUMS.txt checksum list and GitHub's signed proof of where every file was built (check one with `gh attestation verify <file> -R aaina-world/aaina-desktop`). A release is only built after every check passes on that exact version.
+
 ## 0.1.2 (22 Oct 2026)
 
 - Windows: no more sideways scrolling when the window is small. Windows' frame and scrollbar left less room than the screens needed.

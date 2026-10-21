@@ -31,6 +31,8 @@ The first builds are not signed yet, so your system warns you once:
 - **Mac:** open the app once (it says it can't be checked), then go to System Settings, Privacy and Security, and choose **Open Anyway**.
 - **Windows:** if SmartScreen appears, choose **More info**, then **Run anyway**.
 
+To check a download, compare it with `SHA256SUMS.txt` on the release page, or confirm GitHub built it from this code with the [GitHub CLI](https://cli.github.com): `gh attestation verify <file> -R aaina-world/aaina-desktop`.
+
 The app can tell you when a new version is out (Settings, Updates). It never installs anything without you.
 
 ## Quick start
