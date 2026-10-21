@@ -1,0 +1,78 @@
+name: App end to end
+
+# Builds the real app on fresh Windows and Linux machines and drives it like a person would (tauri-driver, WebDriver):
+# welcome, connecting OpenAI (a made-up key that OpenAI must refuse, so the app really reaches OpenAI and the key goes
+# through the system keychain), the photos folder, the studio catalogue, models, a new shoot, settings, and opening the
+# app again. Before that, the keychain itself is tested with a long value (Credential Manager, GNOME Keyring).
+# Screenshots of every step are kept under Artifacts on the run page.
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  workflow_dispatch:
+
+jobs:
+  e2e:
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [windows-latest, ubuntu-22.04]
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+      - name: Install Linux packages
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf libsecret-1-dev libssl-dev \
+            webkit2gtk-driver xvfb dbus-x11 gnome-keyring
+      - run: npm ci
+      - name: Build the app
+        run: npx tauri build --no-bundle
+      - name: Install tauri-driver
+        run: cargo install tauri-driver --locked
+
+      - name: Keychain and app (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          xvfb-run -a -s "-screen 0 1440x900x24" dbus-run-session -- bash -c '
+            set -e
+            printf e2e | gnome-keyring-daemon --unlock --components=secrets --daemonize > /dev/null
+            cargo test --manifest-path src-tauri/Cargo.toml -- --ignored
+            tauri-driver > e2e-app/driver.log 2>&1 &
+            sleep 3
+            node e2e-app/run.mjs "$PWD/src-tauri/target/release/aaina-desktop"'
+
+      - name: Keychain (Windows)
+        if: runner.os == 'Windows'
+        run: cargo test --manifest-path src-tauri/Cargo.toml -- --ignored
+      - name: App (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          cargo install --git https://github.com/chippers/msedgedriver-tool
+          msedgedriver-tool
+          $driver = Start-Process tauri-driver -ArgumentList "--native-driver", "$PWD\msedgedriver.exe" -PassThru -RedirectStandardError e2e-app\driver.log
+          Start-Sleep -Seconds 3
+          node e2e-app/run.mjs "$PWD\src-tauri\target\release\aaina-desktop.exe"
+          $code = $LASTEXITCODE
+          Stop-Process -Id $driver.Id -ErrorAction SilentlyContinue
+          exit $code
+
+      - name: Keep the screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-${{ matrix.platform }}
+          path: |
+            e2e-app/out/
+            e2e-app/driver.log
+          if-no-files-found: ignore
