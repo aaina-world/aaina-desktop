@@ -245,7 +245,7 @@ if (KEY)
     await click("Next: model");
     await sees("Choose a model");
     await sleep(2000);
-    await clickFirst("button.mtile", "model");
+    await clickFirst(".mtile", "model");
     await click("Next: poses");
     await sees("Choose poses");
     await sleep(2000);
