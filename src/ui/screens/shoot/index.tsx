@@ -300,7 +300,7 @@ export function ShootScreen() {
           },
         ]}
       >
-        <button className="btn btn-primary btn-sm" onClick={saveAll}>
+        <button className="btn btn-primary btn-sm" onClick={saveAll} disabled={!doneGroups.length}>
           <Icon name="download" size="sm" />
           Save all<KbdOnButton mod>S</KbdOnButton>
         </button>

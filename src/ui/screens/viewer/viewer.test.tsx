@@ -98,6 +98,14 @@ describe("Photo viewer", () => {
     await waitFor(async () => expect((await api.photos(shoot.id)).some((p) => p.id === strip[0].id)).toBe(false));
   });
 
+  it("a change that can't start says why next to the tools, and nothing is queued", async () => {
+    vi.spyOn(api, "makeAgain").mockRejectedValue(new Error("Connect to OpenAI first."));
+    const user = userEvent.setup();
+    open(strip[0]);
+    await user.click(await screen.findByRole("button", { name: /Make again/ }));
+    expect(await screen.findByText("Connect to OpenAI first. Nothing was sent to OpenAI.")).toBeInTheDocument();
+  });
+
   it("a photo that is not there says so and offers a way out", async () => {
     renderRoutes({ "/photo/:id": <ViewerScreen />, "/shoots/:id": <div>Shoot page</div> }, `/photo/nope?shoot=${shoot.id}`);
     expect(await screen.findByText("We can't find that photo")).toBeInTheDocument();

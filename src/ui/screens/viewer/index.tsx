@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams, useSearchParams } from "react-router";
 import { api } from "../../../lib/api";
-import type { Expression, Frame, Photo } from "../../../lib/contract";
+import type { Api, Expression, Frame, Photo } from "../../../lib/contract";
 import { ESTIMATE_USD } from "../../../lib/contract";
 import {
   ConfirmDialog,
   EmptyState,
+  FieldError,
   Icon,
   LoadError,
   SaveDialog,
@@ -123,52 +124,47 @@ export function ViewerScreen() {
   };
   const close = () => navigate(sid ? `/shoots/${sid}` : "/shoots");
 
-  async function again(note?: string, options?: { frame?: Frame; expression?: Expression }) {
+  // A change that could not start says why next to the tools (nothing was sent to OpenAI); one that started shows up in the
+  // panel ("A new version is being made") or, for colours, in the shoot, so only colours are confirmed with a toast.
+  const [actionError, setActionError] = useState<string | null>(null);
+  useEffect(() => setActionError(null), [photo?.id, panel]);
+  async function start(work: (a: Api) => Promise<unknown>, after?: () => void) {
     if (!photo) return;
     setBusy(true);
+    setActionError(null);
     try {
-      await (await api()).makeAgain(photo.id, note, options);
-      toast("Making a new version. It shows here when it's ready.", { icon: "refresh" });
+      await work(await api());
+      after?.();
       setPanel("tools");
-    } catch {
-      toast("We couldn't start that. Nothing was sent to OpenAI.", { icon: "alert" });
+    } catch (e) {
+      setActionError(`${e instanceof Error && e.message ? e.message : "That didn't start."} Nothing was sent to OpenAI.`);
     } finally {
       setBusy(false);
     }
   }
-  async function fix() {
-    if (!photo || !words.trim()) return;
-    setBusy(true);
-    try {
-      await (await api()).fixPhoto(photo.id, words.trim());
-      toast("Making the fix. It is saved as a new version.", { icon: "wand" });
-      setWords("");
-      setPanel("tools");
-    } catch {
-      toast("We couldn't start the fix. Nothing was sent to OpenAI.", { icon: "alert" });
-    } finally {
-      setBusy(false);
-    }
-  }
-  async function colours() {
-    if (!photo || !picked.length) return;
-    setBusy(true);
-    try {
-      await (
-        await api()
-      ).otherColours(
-        photo.id,
-        SW.filter((s) => picked.includes(s.hex)),
-      );
-      toast(`Making ${plural(picked.length, "colour")}. They appear in this shoot.`, { icon: "palette" });
-      setPicked([]);
-      setPanel("tools");
-    } catch {
-      toast("We couldn't start the colours. Nothing was sent to OpenAI.", { icon: "alert" });
-    } finally {
-      setBusy(false);
-    }
-  }
+  const again = (note?: string, options?: { frame?: Frame; expression?: Expression }) =>
+    start((a) => a.makeAgain(photo!.id, note, options));
+  const fix = () =>
+    words.trim()
+      ? start(
+          (a) => a.fixPhoto(photo!.id, words.trim()),
+          () => setWords(""),
+        )
+      : Promise.resolve();
+  const colours = () =>
+    picked.length
+      ? start(
+          (a) =>
+            a.otherColours(
+              photo!.id,
+              SW.filter((s) => picked.includes(s.hex)),
+            ),
+          () => {
+            toast(`Making ${plural(picked.length, "colour")}. They appear in this shoot.`, { icon: "palette" });
+            setPicked([]);
+          },
+        )
+      : Promise.resolve();
   async function frameGo() {
     await again(undefined, { ...(frame !== "as-posed" ? { frame } : {}), ...(expr !== "as-posed" ? { expression: expr } : {}) });
   }
@@ -444,7 +440,7 @@ export function ViewerScreen() {
             {pending.status === "failed" || pending.status === "interrupted" ? (
               <>
                 The new version wasn't made. {failureText(pending).line}{" "}
-                <button className="btn-link" style={{ color: "#f3f3f0" }} onClick={async () => (await api()).tryAgain(pending.id)}>
+                <button className="btn-link" style={{ color: "#f3f3f0" }} onClick={() => void start((a) => a.tryAgain(pending.id))}>
                   Try again
                 </button>
               </>
@@ -453,6 +449,7 @@ export function ViewerScreen() {
             )}
           </div>
         )}
+        {actionError && <FieldError>{actionError}</FieldError>}
 
         {panel === "tools" && (
           <>
@@ -652,7 +649,7 @@ export function ViewerScreen() {
                 return (
                   <button
                     key={s.hex}
-                    className={"vsw" + (picked.length > 0 && !on ? " off" : "")}
+                    className={"vsw" + (!on && picked.length >= 6 ? " off" : "")}
                     aria-pressed={on}
                     disabled={!on && picked.length >= 6}
                     onClick={() => setPicked((l) => (on ? l.filter((h) => h !== s.hex) : [...l, s.hex]))}

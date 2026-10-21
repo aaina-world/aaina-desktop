@@ -98,24 +98,32 @@ export function ModelCreateScreen() {
   const [refused, setRefused] = useState<string | null>(null);
   const [big, setBig] = useState<string | null>(null);
 
-  const view: "start" | "photos" | "faces" | "making" | "ready" | "failed" | "loading" = id
+  const view: "start" | "photos" | "making-faces" | "faces" | "making" | "ready" | "failed" | "loading" = id
     ? model.loading && !m
       ? "loading"
       : !m
         ? "failed"
-        : m.status === "choosing-face"
-          ? "faces"
-          : m.status === "ready"
-            ? "ready"
-            : m.status === "failed"
-              ? "failed"
-              : "making"
+        : m.status === "draft"
+          ? "making-faces"
+          : m.status === "choosing-face"
+            ? "faces"
+            : m.status === "ready"
+              ? "ready"
+              : m.status === "failed"
+                ? "failed"
+                : "making"
     : mode === "photos"
       ? "photos"
       : "start";
   const step =
-    view === "start" || view === "photos" || view === "loading" ? 1 : view === "faces" ? 2 : view === "making" || view === "failed" ? 3 : 4;
-  const progress = useFakeProgress(view === "making", m?.createdAt ?? null);
+    view === "start" || view === "photos" || view === "loading"
+      ? 1
+      : view === "faces" || view === "making-faces"
+        ? 2
+        : view === "making" || view === "failed"
+          ? 3
+          : 4;
+  const progress = useFakeProgress(view === "making" || view === "making-faces", m?.createdAt ?? null);
 
   // Escape leaves the form, like Cancel.
   useEffect(() => {
@@ -505,6 +513,43 @@ export function ModelCreateScreen() {
               </aside>
             </div>
           </>
+        )}
+
+        {view === "making-faces" && (
+          <div className="mcol">
+            <section className="card mcard" aria-live="polite">
+              <div className="row head">
+                <span className="spinner" />
+                <div>
+                  <h2 className="t-title">Making 3 faces</h2>
+                  <p className="t-small muted mt-1">About a minute. You can leave this page; it keeps going.</p>
+                </div>
+              </div>
+              <div className="progress">
+                <i style={{ ["--p" as string]: `${progress}%` }} />
+              </div>
+              <div className="billing">
+                <Icon name="info" size="sm" />
+                <span>
+                  OpenAI bills about {usd0(ESTIMATE_USD.faces)} for the faces. Next you pick one, and the reference sheet is made from it.
+                </span>
+              </div>
+            </section>
+            <div className="faces3">
+              {[1, 2, 3].map((n) => (
+                <div className="fcard" key={n}>
+                  <div className="fm">
+                    <div className="cellb" style={{ height: "100%", display: "grid", placeItems: "center" }}>
+                      <span className="spinner" />
+                    </div>
+                  </div>
+                  <div className="lab">
+                    <b>Face {n}</b>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         )}
 
         {view === "faces" && m && (

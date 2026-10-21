@@ -166,7 +166,19 @@ describe("products and own things", () => {
     expect((await own.model(model.id))!.faceOptions).toEqual([{ id: "f1", url: "app://own-models/m/f1.png" }]);
     const pose = await own.createPose({ name: "Walking", words: "walking", model: { source: "own", id: model.id } });
     const scene = await own.createScene({ name: "Cafe", words: "a cafe" });
+    // A model whose faces were still being made (a "draft") can't finish either.
+    const faces = await own.createModel({ name: "Ana", gender: "woman", age: 25, appearance: "woman, 25", madeFrom: "description" });
+    const chosen = await own.createModel({
+      name: "Leo",
+      gender: "man",
+      age: 40,
+      appearance: "man, 40",
+      madeFrom: "description",
+      status: "choosing-face",
+    });
     await own.failUnfinishedOnStart();
+    expect((await own.model(faces.id))!.status).toBe("failed");
+    expect((await own.model(chosen.id))!.status).toBe("choosing-face");
     expect((await own.pose(pose.id))!.status).toBe("failed");
     expect((await own.scene(scene.id))!.status).toBe("failed");
     expect((await own.model(model.id))!.status).toBe("failed");

@@ -210,7 +210,7 @@ export function createOwnRepo(db: Sql, urls: Urls) {
   async function failUnfinishedOnStart(): Promise<void> {
     await db.execute(`UPDATE own_poses SET status = 'failed' WHERE status = 'making'`);
     await db.execute(`UPDATE own_scenes SET status = 'failed' WHERE status = 'making'`);
-    await db.execute(`UPDATE own_models SET status = 'failed' WHERE status = 'making-sheet'`);
+    await db.execute(`UPDATE own_models SET status = 'failed' WHERE status IN ('draft', 'making-sheet')`);
   }
 
   return {

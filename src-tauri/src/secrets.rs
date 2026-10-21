@@ -17,26 +17,41 @@ fn entry(name: &str) -> Result<Entry, String> {
     Entry::new(SERVICE, name).map_err(|e| e.to_string())
 }
 
-#[tauri::command]
-pub fn secret_get(name: String) -> Result<Option<String>, String> {
-    match entry(&name)?.get_password() {
+fn get(name: &str) -> Result<Option<String>, String> {
+    match entry(name)?.get_password() {
         Ok(value) => Ok(Some(value)),
         Err(keyring::Error::NoEntry) => Ok(None),
         Err(e) => Err(e.to_string()),
     }
 }
 
-#[tauri::command]
-pub fn secret_set(name: String, value: String) -> Result<(), String> {
-    entry(&name)?.set_password(&value).map_err(|e| e.to_string())
+fn set(name: &str, value: &str) -> Result<(), String> {
+    entry(name)?.set_password(value).map_err(|e| e.to_string())
 }
 
-#[tauri::command]
-pub fn secret_delete(name: String) -> Result<(), String> {
-    match entry(&name)?.delete_credential() {
+fn delete(name: &str) -> Result<(), String> {
+    match entry(name)?.delete_credential() {
         Ok(()) | Err(keyring::Error::NoEntry) => Ok(()),
         Err(e) => Err(e.to_string()),
     }
+}
+
+// The commands are async so they run off the main thread: the system may ask the person to allow keychain access, and the
+// window must keep drawing while that question is open.
+
+#[tauri::command]
+pub async fn secret_get(name: String) -> Result<Option<String>, String> {
+    get(&name)
+}
+
+#[tauri::command]
+pub async fn secret_set(name: String, value: String) -> Result<(), String> {
+    set(&name, &value)
+}
+
+#[tauri::command]
+pub async fn secret_delete(name: String) -> Result<(), String> {
+    delete(&name)
 }
 
 #[cfg(test)]
@@ -72,11 +87,8 @@ mod tests {
     #[test]
     fn a_name_that_is_not_allowed_never_reaches_the_keychain() {
         assert_eq!(entry("something_else").err().as_deref(), Some("unknown secret"));
-        assert_eq!(secret_get("something_else".into()).err().as_deref(), Some("unknown secret"));
-        assert_eq!(
-            secret_set("something_else".into(), "x".into()).err().as_deref(),
-            Some("unknown secret")
-        );
-        assert_eq!(secret_delete("something_else".into()).err().as_deref(), Some("unknown secret"));
+        assert_eq!(get("something_else").err().as_deref(), Some("unknown secret"));
+        assert_eq!(set("something_else", "x").err().as_deref(), Some("unknown secret"));
+        assert_eq!(delete("something_else").err().as_deref(), Some("unknown secret"));
     }
 }
