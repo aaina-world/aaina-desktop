@@ -1,0 +1,29 @@
+import { defineConfig } from "vitest/config";
+
+// Two projects: the logic in src/lib runs in plain Node; the screens and components run in jsdom.
+export default defineConfig({
+  test: {
+    projects: [
+      { test: { name: "lib", environment: "node", include: ["src/lib/**/*.test.ts"] } },
+      {
+        test: {
+          name: "ui",
+          environment: "jsdom",
+          environmentOptions: { jsdom: { url: "http://localhost/" } },
+          include: ["src/ui/**/*.test.{ts,tsx}"],
+          setupFiles: ["src/test/setup.ts"],
+          css: false,
+          testTimeout: 15_000,
+        },
+      },
+    ],
+    coverage: {
+      provider: "v8",
+      reporter: ["text-summary", "text", "lcov"],
+      // A little under what the suite reaches today (97 / 88 / 96): a drop below fails the run.
+      thresholds: { lines: 95, statements: 95, functions: 93, branches: 85 },
+      include: ["src/lib/**/*.ts"],
+      exclude: ["src/lib/**/*.test.ts", "src/lib/**/*.testkit.ts", "src/lib/**/*.d.ts", "src/lib/mock/**", "src/lib/catalog/fixtures/**"],
+    },
+  },
+});

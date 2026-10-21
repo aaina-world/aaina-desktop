@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Home · Aaina Desktop</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../assets/ds.css">
+<link rel="stylesheet" href="../assets/desktop.css">
+<script src="../assets/shell.js"></script>
+<style>
+  .hero { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: var(--s-8); align-items: stretch; }
+  .hero .drop { min-height: 100%; }
+  .hero-copy { display: flex; flex-direction: column; justify-content: center; gap: var(--s-4); padding: var(--s-4) 0; }
+  .recent-products { display: flex; gap: 10px; flex-wrap: nowrap; align-items: center; min-width: 0; }
+  .recent-products .prod { flex: none; }
+  @media (max-width: 1279px) { .recent-products .t-caption, .recent-products .btn-link { display: none; } }
+  .recent-products .prod { display: flex; align-items: center; gap: 10px; height: 52px; padding: 4px 14px 4px 4px; border-radius: var(--r-md); background: var(--bg-raised); border: 1px solid var(--line); font-size: var(--text-sm); font-weight: 500; }
+  .recent-products .prod img { width: 44px; height: 44px; border-radius: var(--r-sm); object-fit: cover; background: #fff; }
+  .recent-products .prod:hover { border-color: var(--fg-subtle); }
+  .modes { display: grid; gap: var(--s-4); grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .modes .mode .media { aspect-ratio: 16 / 10; }
+  .continue { display: grid; gap: var(--s-3); grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .cont { display: flex; gap: 12px; align-items: center; padding: 10px; border-radius: var(--r-lg); background: var(--bg-raised); border: 1px solid var(--line); min-width: 0; }
+  .cont:hover { border-color: var(--line-strong); box-shadow: var(--shadow-1); }
+  .cont .th { width: 56px; height: 72px; flex: none; border-radius: var(--r-sm); overflow: hidden; background: var(--bg-sunken); position: relative; }
+  .cont .th img { width: 100%; height: 100%; object-fit: cover; }
+  .more-on-aaina { display: flex; align-items: center; gap: var(--s-4); padding: var(--s-4) var(--s-5); border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--bg-raised); }
+  .more-on-aaina .ics { display: flex; gap: 6px; color: var(--fg-subtle); }
+  @media (max-width: 1279px) { .continue { grid-template-columns: repeat(2, minmax(0, 1fr)); } .continue .cont:nth-child(3) { display: none; } }
+  .tile.contain .media { background: #fff; }
+  .tile.contain .media img { object-fit: contain; }
+</style>
+
+<body data-nav="home">
+<main class="main" id="main">
+  <header class="topbar">
+    <div class="crumbs"><span class="here">Home</span></div>
+    <div class="grow"></div>
+    <label class="input-wrap" style="width:min(360px,40vw)"><i data-i="search"></i><input class="input search" placeholder="Search shoots, products, models" aria-label="Search"><span class="kbd"><span data-mod>⌘</span>K</span></label>
+  </header>
+
+  <div class="page">
+    <div class="notice mockstrip" data-panels="state" style="margin-bottom:var(--s-5);display:flex;gap:12px;align-items:center"><b>Mockup state:</b><div class="segmented" role="tablist" aria-label="Mockup state" style="margin-left:auto"><button role="tab" aria-selected="true" data-panel="used">Returning</button><button role="tab" aria-selected="false" data-panel="new">First shoot</button></div></div>
+
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="t-eyebrow">Good evening</span>
+        <h1 class="t-display">What are we <em class="italic">shooting</em> today?</h1>
+        <p class="muted" style="max-width:46ch">Add a product photo and choose a model, poses and a scene. Everything is made and kept on this computer.</p>
+        <div class="recent-products" data-panel-of="state" data-panel-id="used">
+          <span class="t-caption" style="margin-right:4px">Recent products</span>
+          <a class="prod" href="create-model.html"><img src="../assets/img/results/real-ghost.webp" alt="">Cobalt T-shirt</a>
+          <a class="prod" href="create-model.html"><img src="../assets/img/templates/sample-garment.webp" alt="">Linen shirt</a>
+          <a class="btn btn-link t-small nowrap" href="library.html" style="margin-left:4px">All products</a>
+        </div>
+        <span class="local-note" data-panel-of="state" data-panel-id="new" hidden><i data-i="lock"></i>Your photos never leave this computer, except to OpenAI while a photo is made.</span>
+      </div>
+      <a class="drop" href="create-product.html">
+        <span class="ico-ring"><i data-i="upload" class="lg"></i></span>
+        <span class="t-title">Drop a product photo</span>
+        <span class="t-small muted">or <u>choose from your files</u>. Front, back and close-ups all help.</span>
+        <span class="t-caption">JPG, PNG or WebP · up to 6 photos</span>
+      </a>
+    </section>
+
+    <section class="section">
+      <div class="section-head"><div><h2 class="t-section">Make product photos</h2><p class="t-caption mt-1">For your store and marketplace listings</p></div></div>
+      <div class="modes">
+        <a class="mode" href="create-product.html"><div class="media"><img src="../assets/img/start/photoshoot-chloe-600.webp" alt=""></div><div class="body"><span class="t">On a model</span><span class="d">Your product on a studio model or your own, in the poses and scenes you pick</span><span class="price cost">about $0.05 a photo</span></div></a>
+        <a class="mode" href="create-ghost.html"><div class="media"><img src="../assets/img/start/ghost-600.webp" alt=""></div><div class="body"><span class="t">Ghost mannequin</span><span class="d">The garment alone, in its worn 3D shape, on white</span><span class="price cost">about $0.05 an angle</span></div></a>
+        <a class="mode" href="create-flatlay.html"><div class="media"><img src="../assets/img/start/flatlay-600.webp" alt=""></div><div class="body"><span class="t">Flat-lay</span><span class="d">Laid flat and shot from above: clean, folded or styled</span><span class="price cost">about $0.05 a style</span></div></a>
+      </div>
+    </section>
+
+    <section class="section" data-panel-of="state" data-panel-id="used">
+      <div class="section-head"><h2 class="t-section">Pick up where you left off</h2><a class="link" href="shoots.html">All shoots</a></div>
+      <div class="continue">
+        <a class="cont" href="shoot.html"><span class="th"><img src="../assets/img/results/real-onmodel.webp" alt=""><span class="making" style="padding:4px"><span class="progress" style="width:80%"><i style="--p:62%"></i></span></span></span><span class="grow"><span class="t-small" style="font-weight:600;display:block">Cobalt T-shirt</span><span class="t-caption">On a model · 3 of 5 photos ready</span></span><span class="badge info dot">Making</span></a>
+        <a class="cont" href="create-review.html"><span class="th"><img src="../assets/img/templates/sample-garment.webp" alt=""></span><span class="grow"><span class="t-small" style="font-weight:600;display:block">Linen shirt</span><span class="t-caption">Draft · scene not chosen · 2 h ago</span></span><i data-i="chev" class="sm subtle"></i></a>
+        <a class="cont" href="shoot.html"><span class="th"><img src="../assets/img/results/real-flatlay.webp" alt=""></span><span class="grow"><span class="t-small" style="font-weight:600;display:block">Summer kurta</span><span class="t-caption">Flat-lay · 4 photos · yesterday</span></span><i data-i="chev" class="sm subtle"></i></a>
+      </div>
+    </section>
+
+    <section class="section" data-panel-of="state" data-panel-id="used">
+      <div class="section-head"><h2 class="t-section">Recent photos</h2><a class="link" href="shoots.html">All shoots</a></div>
+      <div class="grid c6">
+        <a class="tile" href="viewer.html"><div class="media"><img src="../assets/img/results/real-onmodel.webp" alt=""></div></a>
+        <a class="tile" href="viewer.html"><div class="media"><img src="../assets/img/results/real-aaina.webp" alt=""></div></a>
+        <a class="tile" href="viewer.html"><div class="media"><img src="../assets/img/results/real-ansh.webp" alt=""></div></a>
+        <a class="tile contain" href="viewer.html"><div class="media"><img src="../assets/img/results/real-ghost.webp" alt=""></div></a>
+        <a class="tile contain" href="viewer.html"><div class="media"><img src="../assets/img/results/real-flatlay.webp" alt=""></div></a>
+        <a class="tile" href="viewer.html"><div class="media"><img src="../assets/img/library/model-chloe-p.webp" alt=""></div></a>
+      </div>
+    </section>
+
+    <section class="section" data-panel-of="state" data-panel-id="new" hidden>
+      <div class="section-head"><h2 class="t-section">How it works</h2></div>
+      <div class="continue">
+        <div class="cont"><span class="th" style="display:grid;place-items:center"><i data-i="upload"></i></span><span class="grow"><span class="t-small" style="font-weight:600;display:block">1. Add your product</span><span class="t-caption">A clear photo on any background</span></span></div>
+        <div class="cont"><span class="th" style="display:grid;place-items:center"><i data-i="user"></i></span><span class="grow"><span class="t-small" style="font-weight:600;display:block">2. Pick a model, poses and a scene</span><span class="t-caption">377 studio models, ready to use</span></span></div>
+        <div class="cont"><span class="th" style="display:grid;place-items:center"><i data-i="images"></i></span><span class="grow"><span class="t-small" style="font-weight:600;display:block">3. Make your photos</span><span class="t-caption">About a minute each, saved here</span></span></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="more-on-aaina">
+        <span class="ics"><i data-i="video"></i><i data-i="tryon"></i><i data-i="doc"></i></span>
+        <div class="grow"><div class="t-small" style="font-weight:600">Videos, try-ons and listings are on Aaina</div><div class="t-caption mt-1">Same models and scenes, made on Aaina's servers.</div></div>
+        <a class="btn btn-ghost btn-sm" href="#">Open aaina.world <i data-i="expand" class="sm"></i></a>
+      </div>
+    </section>
+  </div>
+</main>
+</body>

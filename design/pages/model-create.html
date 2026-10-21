@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Create a model · Aaina Desktop</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../assets/ds.css">
+<link rel="stylesheet" href="../assets/desktop.css">
+<script src="../assets/shell.js"></script>
+<style>
+  .flowbar { display: flex; align-items: center; gap: var(--s-3); }
+  .flowbar .stepper { flex: 1; justify-content: center; }
+  @media (max-width: 1180px) { .flowbar .stepper .step:not([aria-current="step"]) { font-size: 0; gap: 0; padding: 0 6px 0 6px; } .flowbar .stepper .step:not([aria-current="step"]) .n { font-size: 11px; } }
+  .col { width: 100%; display: flex; flex-direction: column; gap: var(--s-5); }
+  .starts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-4); }
+  .card.start { display: flex; flex-direction: column; align-items: flex-start; gap: var(--s-4); padding: var(--s-5); text-align: left; transition: box-shadow var(--dur-2), border-color var(--dur-1); }
+  .card.start:hover { border-color: var(--line-strong); box-shadow: var(--shadow-1); }
+  .card.start[aria-selected="true"] { border-color: var(--fg); box-shadow: 0 0 0 1px var(--fg); }
+  .card.start .badge { margin-top: auto; height: 26px; padding: 0 10px; font-size: 12px; }
+  .faces { display: flex; height: 96px; } .faces img { height: 100%; aspect-ratio: 3 / 4; object-fit: cover; border-radius: var(--r-md); border: 3px solid var(--bg-raised); margin-left: -18px; } .faces img:first-child { margin-left: 0; }
+  .faces .ph { height: 100%; aspect-ratio: 3 / 4; border-radius: var(--r-md); border: 3px solid var(--bg-raised); margin-left: 10px; background: var(--bg-sunken); display: grid; place-items: center; color: var(--fg-subtle); } .faces .ph:first-child { margin-left: 0; }
+  .faces .ph .ico { width: 26px; height: 26px; stroke-width: 1.2; }
+  .pgrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-3); align-items: stretch; }
+  .pbox { display: flex; flex-direction: column; gap: 8px; padding: var(--s-4); border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--bg-raised); min-width: 0; }
+  .pbox .phead { display: flex; align-items: center; justify-content: space-between; gap: 8px; } .pbox .phead b { font-size: var(--text-sm); }
+  .pframe { position: relative; aspect-ratio: 3 / 4; border-radius: var(--r-md); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: var(--s-3); text-align: center; margin-top: auto; min-height: 0; }
+  .pframe.empty { border: 1.5px dashed var(--line-strong); background: var(--bg); }
+  .pframe.refused { border: 1.5px solid var(--danger); background: var(--danger-soft); color: var(--danger); }
+  .pframe .ico-ring { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--bg-sunken); color: var(--fg-muted); }
+  .consent { display: flex; gap: 12px; align-items: center; padding: var(--s-4); border-radius: var(--r-md); background: var(--bg-sunken); font-size: var(--text-sm); line-height: 1.5; cursor: pointer; }
+  .consent .check[aria-checked="true"]::after { content: ""; width: 10px; height: 6px; border-left: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: translateY(-1px) rotate(-45deg); }
+  .mcard { padding: var(--s-6); display: flex; flex-direction: column; gap: var(--s-4); }
+  .mcard .row.head { align-items: center; gap: 12px; }
+  .billing { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; border-radius: var(--r-md); background: var(--bg-sunken); font-size: var(--text-sm); color: var(--fg-muted); }
+  .billing .ico { flex: none; margin-top: 1px; }
+  .faces3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-4); }
+  .fcard { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+  .fcard .fm { position: relative; aspect-ratio: 3 / 4; border-radius: var(--r-lg); overflow: hidden; background: var(--bg-sunken); }
+  .fcard .fm img { width: 100%; height: 100%; object-fit: cover; object-position: center 12%; }
+  .fcard .fm .over-tr { position: absolute; top: 8px; right: 8px; }
+  .fcard .lab { font-size: var(--text-sm); }
+  .ready { display: grid; grid-template-columns: minmax(0, 560px) minmax(0, 1fr); gap: var(--s-8); align-items: start; }
+  .ready .info { display: flex; flex-direction: column; gap: var(--s-4); padding-top: var(--s-2); }
+  .sheet { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3px; padding: 3px; aspect-ratio: 1; border-radius: var(--r-lg); background: var(--bg-raised); border: 1px solid var(--line); overflow: hidden; width: 100%; }
+  .sheet img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; background: var(--bg-sunken); }
+  .sheet.one { display: block; padding: 0; } .sheet.one img { border-radius: 0; }
+  .sheet.busy .cellb { display: grid; place-items: center; background: var(--bg-sunken); border-radius: 4px; }
+  .sheet.busy .cellb:nth-child(-n+2) { background: linear-gradient(110deg, var(--bg-sunken) 30%, var(--bg-raised) 50%, var(--bg-sunken) 70%); }
+  .split > aside { position: sticky; top: calc(var(--topbar-h) + 16px); }
+  @media (max-width: 1100px) { .ready { grid-template-columns: minmax(0, 440px) minmax(0, 1fr); gap: var(--s-6); } }
+</style>
+
+<body data-nav="library" data-flow>
+<main class="main" id="main">
+  <header class="topbar">
+    <div class="flowbar grow">
+      <a class="btn btn-ghost btn-icon" href="library.html#models" aria-label="Back to Library"><i data-i="left"></i></a>
+      <div class="crumbs"><a href="library.html">Library</a><span class="sep">/</span><a href="library.html#models">Models</a><span class="sep">/</span><span class="here">Create a model</span></div>
+      <nav class="stepper" aria-label="Steps"><span class="step" id="s1"><span class="n">1</span>Describe or add photos</span><span class="step-sep"></span><span class="step" id="s2"><span class="n">2</span>Pick a face</span><span class="step-sep"></span><span class="step" id="s3"><span class="n">3</span>Reference sheet</span><span class="step-sep"></span><span class="step" id="s4"><span class="n">4</span>Ready</span></nav>
+    </div>
+  </header>
+
+  <div class="page">
+    <div class="notice mockstrip" style="margin-bottom:var(--s-5);display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center"><b>Mockup state:</b><div class="segmented" role="tablist" aria-label="Mockup state" id="states" style="margin-left:auto"><button role="tab" aria-selected="true" data-go="start">Start</button><button role="tab" aria-selected="false" data-go="photos">From photos</button><button role="tab" aria-selected="false" data-go="faces">Choosing a face</button><button role="tab" aria-selected="false" data-go="making">Making the sheet</button><button role="tab" aria-selected="false" data-go="ready">Sheet ready</button><button role="tab" aria-selected="false" data-go="refused">Photo refused</button></div></div>
+<div data-pn="start" hidden>
+  <div class="page-head" style="margin-bottom:var(--s-6)"><div><h1 class="t-page">Create a model</h1><p class="lede">A model made only for you. It stays on this computer, and nobody else can see it.</p></div></div>
+  <div class="starts">
+      <button class="card start" data-go="start" aria-selected="true">
+        <span class="faces" aria-hidden="true"><img src="../assets/img/library/model-tara-p.webp" alt=""><img src="../assets/img/library/model-camille-p.webp" alt=""><img src="../assets/img/library/model-nia-p.webp" alt=""></span>
+        <span class="stack" style="--gap:6px"><span class="t-title">From a description</span><span class="t-small muted">Answer a few questions. You get 3 face options of a made-up person, then pick one.</span></span>
+        <span class="badge info"><i data-i="sparkle" class="sm" style="width:12px;height:12px"></i>A made-up person</span>
+      </button>
+      <button class="card start" data-go="photos" aria-selected="false">
+        <span class="faces" aria-hidden="true"><span class="ph"><i data-i="camera"></i></span><span class="ph"><i data-i="images"></i></span><span class="ph"><i data-i="user"></i></span></span>
+        <span class="stack" style="--gap:6px"><span class="t-title">From photos of a real person</span><span class="t-small muted">1 to 3 photos of one adult who agreed to be your model. We make the reference sheet straight from them.</span></span>
+        <span class="badge success"><i data-i="shield" class="sm" style="width:12px;height:12px"></i>With their permission</span>
+      </button>
+    </div>
+  <div class="split" style="margin-top:var(--s-6)"><div class="stack" style="--gap:12px"><div><h2 class="t-section">Describe the person</h2><p class="t-small muted mt-1">Pick what you like. Anything you skip, we choose.</p></div><div class="card pad stack" style="--gap:20px">
+        <div class="field"><label class="label" for="nm">Name <span class="opt">(only you see it)</span></label><input class="input" id="nm" placeholder="For example, Riya" autocomplete="off"></div>
+        <div class="row" style="--gap:20px;align-items:flex-start">
+          <div class="field grow"><span class="label">Gender</span><div class="segmented" role="tablist" aria-label="Gender" data-single style="align-self:flex-start"><button role="tab" aria-selected="true">Woman</button><button role="tab" aria-selected="false">Man</button></div></div>
+          <div class="field" style="width:140px"><label class="label" for="age">Age</label><input class="input" id="age" type="number" min="18" max="90" value="30"><span class="hint">18 to 90</span></div>
+        </div>
+        <div class="field"><span class="label">Look</span><div class="chips" data-single><button class="chip" aria-pressed="true">South Asian</button><button class="chip" aria-pressed="false">East Asian</button><button class="chip" aria-pressed="false">Southeast Asian</button><button class="chip" aria-pressed="false">Black</button><button class="chip" aria-pressed="false">Middle Eastern</button><button class="chip" aria-pressed="false">Latina</button><button class="chip" aria-pressed="false">White</button><button class="chip" aria-pressed="false">Mixed</button><button class="chip" aria-pressed="false">Any</button></div></div>
+        <div class="field"><span class="label">Body</span><div class="chips" data-single><button class="chip" aria-pressed="false">Slim</button><button class="chip" aria-pressed="true">Average</button><button class="chip" aria-pressed="false">Athletic</button><button class="chip" aria-pressed="false">Curvy</button><button class="chip" aria-pressed="false">Plus size</button><button class="chip" aria-pressed="false">Any</button></div></div>
+        <div class="field"><span class="label">Hair</span><div class="chips" data-single><button class="chip" aria-pressed="true">Long and loose</button><button class="chip" aria-pressed="false">Shoulder length</button><button class="chip" aria-pressed="false">Short</button><button class="chip" aria-pressed="false">Curly</button><button class="chip" aria-pressed="false">Tied back</button><button class="chip" aria-pressed="false">Covered</button></div></div>
+        <div class="field"><label class="label" for="free">Anything else <span class="opt">(optional)</span></label><textarea class="textarea" id="free" style="min-height:84px" placeholder="For example, a warm smile, freckles, round glasses" maxlength="200"></textarea><div class="counter">0 / 200</div></div>
+        <p class="t-caption row" style="--gap:8px;align-items:flex-start"><i data-i="info" class="sm" style="flex:none"></i><span>Models are adults, 18 to 90. Your words are checked before anything is made.</span></p>
+      </div></div><aside><div class="card price-card"><div class="t-title">What it costs</div><div class="price-line"><span>3 face options</span><b>about $0.15</b></div><div class="price-line"><span>Reference sheet</span><b>about $0.20</b></div><div class="price-total"><span class="t-small muted">Together</span><span class="v" style="font-size:24px">about $0.35</span></div><p class="t-caption">Billed by OpenAI to your connection. Make it again any time; each try is billed by OpenAI.</p></div>
+        <p class="local-note"><i data-i="lock"></i>The model and its photos stay on this computer.</p></aside></div>
+</div><div data-pn="photos" hidden>
+  <div class="page-head" style="margin-bottom:var(--s-6)"><div><h1 class="t-page">Create a model</h1><p class="lede">A model made only for you. It stays on this computer, and nobody else can see it.</p></div></div>
+  <div class="starts">
+      <button class="card start" data-go="start" aria-selected="false">
+        <span class="faces" aria-hidden="true"><img src="../assets/img/library/model-tara-p.webp" alt=""><img src="../assets/img/library/model-camille-p.webp" alt=""><img src="../assets/img/library/model-nia-p.webp" alt=""></span>
+        <span class="stack" style="--gap:6px"><span class="t-title">From a description</span><span class="t-small muted">Answer a few questions. You get 3 face options of a made-up person, then pick one.</span></span>
+        <span class="badge info"><i data-i="sparkle" class="sm" style="width:12px;height:12px"></i>A made-up person</span>
+      </button>
+      <button class="card start" data-go="photos" aria-selected="true">
+        <span class="faces" aria-hidden="true"><span class="ph"><i data-i="camera"></i></span><span class="ph"><i data-i="images"></i></span><span class="ph"><i data-i="user"></i></span></span>
+        <span class="stack" style="--gap:6px"><span class="t-title">From photos of a real person</span><span class="t-small muted">1 to 3 photos of one adult who agreed to be your model. We make the reference sheet straight from them.</span></span>
+        <span class="badge success"><i data-i="shield" class="sm" style="width:12px;height:12px"></i>With their permission</span>
+      </button>
+    </div>
+  <div class="split" style="margin-top:var(--s-6)"><div class="stack" style="--gap:12px"><div><h2 class="t-section">Add photos of the person</h2><p class="t-small muted mt-1">One real adult, 18 or older, who agreed to be your model. Not a well-known person.</p></div><div class="stack" style="--gap:20px">
+        <div class="pgrid">
+          <div class="pbox"><div class="phead"><b>Front face</b><span class="badge solid">Required</span></div><p class="t-caption">Clear, well lit, looking at the camera.</p><div class="pframe empty"><span class="ico-ring"><i data-i="camera"></i></span><button class="btn btn-secondary btn-sm">Choose photo</button><span class="t-caption">or drop it here</span></div></div>
+          <div class="pbox"><div class="phead"><b>Full length</b><span class="badge">Optional</span></div><p class="t-caption">Head to toe, standing.</p><div class="pframe empty"><span class="ico-ring"><i data-i="images"></i></span><button class="btn btn-secondary btn-sm">Choose photo</button><span class="t-caption">or drop it here</span></div></div>
+          <div class="pbox"><div class="phead"><b>From the side</b><span class="badge">Optional</span></div><p class="t-caption">A profile or three-quarter view.</p><div class="pframe empty"><span class="ico-ring"><i data-i="images"></i></span><button class="btn btn-secondary btn-sm">Choose photo</button><span class="t-caption">or drop it here</span></div></div>
+        </div>
+        <div class="consent"><span class="check" role="checkbox" aria-checked="false" tabindex="0" id="ck" aria-label="I have this person's permission"></span><b>I have this person's permission. They are 18 or older.</b></div>
+        <div class="card pad stack" style="--gap:12px"><div class="field"><label class="label" for="nm2">Name <span class="opt">(only you see it)</span></label><input class="input" id="nm2" placeholder="For example, Riya" autocomplete="off"></div>
+          <p class="t-caption row" style="--gap:8px;align-items:flex-start"><i data-i="shield" class="sm" style="flex:none"></i><span>A check looks for one clear adult face in each photo and refuses famous people. Photos stay on this computer, and go to OpenAI only to make the sheet.</span></p></div>
+      </div></div><aside><div class="card price-card"><div class="t-title">What it costs</div><div class="price-line"><span>Photo check</span><b>about $0.01 a photo</b></div><div class="price-line"><span>Reference sheet</span><b>about $0.20</b></div><div class="price-total"><span class="t-small muted">Together</span><span class="v" style="font-size:24px">about $0.22</span></div><p class="t-caption">Billed by OpenAI to your connection. Make it again any time; each try is billed by OpenAI.</p></div>
+        <p class="local-note"><i data-i="lock"></i>The model and its photos stay on this computer.</p></aside></div>
+</div><div data-pn="refused" hidden>
+  <div class="page-head" style="margin-bottom:var(--s-6)"><div><h1 class="t-page">Create a model</h1><p class="lede">A model made only for you. It stays on this computer, and nobody else can see it.</p></div></div>
+  <div class="starts">
+      <button class="card start" data-go="start" aria-selected="false">
+        <span class="faces" aria-hidden="true"><img src="../assets/img/library/model-tara-p.webp" alt=""><img src="../assets/img/library/model-camille-p.webp" alt=""><img src="../assets/img/library/model-nia-p.webp" alt=""></span>
+        <span class="stack" style="--gap:6px"><span class="t-title">From a description</span><span class="t-small muted">Answer a few questions. You get 3 face options of a made-up person, then pick one.</span></span>
+        <span class="badge info"><i data-i="sparkle" class="sm" style="width:12px;height:12px"></i>A made-up person</span>
+      </button>
+      <button class="card start" data-go="photos" aria-selected="true">
+        <span class="faces" aria-hidden="true"><span class="ph"><i data-i="camera"></i></span><span class="ph"><i data-i="images"></i></span><span class="ph"><i data-i="user"></i></span></span>
+        <span class="stack" style="--gap:6px"><span class="t-title">From photos of a real person</span><span class="t-small muted">1 to 3 photos of one adult who agreed to be your model. We make the reference sheet straight from them.</span></span>
+        <span class="badge success"><i data-i="shield" class="sm" style="width:12px;height:12px"></i>With their permission</span>
+      </button>
+    </div>
+  <div class="split" style="margin-top:var(--s-6)"><div class="stack" style="--gap:12px"><div><h2 class="t-section">Add photos of the person</h2><p class="t-small muted mt-1">One real adult, 18 or older, who agreed to be your model. Not a well-known person.</p></div><div class="stack" style="--gap:20px">
+        <div class="pgrid">
+          <div class="pbox"><div class="phead"><b>Front face</b><span class="badge solid">Required</span></div><p class="t-caption">Clear, well lit, looking at the camera.</p><div class="pframe refused"><i data-i="alert"></i><span class="t-caption" style="color:var(--fg)">This photo wasn't used</span><button class="btn btn-secondary btn-sm">Choose another photo</button></div><div class="field-error" role="alert"><i data-i="alert" class="sm" style="flex:none;margin-top:1px"></i>We couldn't see one clear adult face in this photo.</div></div>
+          <div class="pbox"><div class="phead"><b>Full length</b><span class="badge">Optional</span></div><p class="t-caption">Head to toe, standing.</p><div class="pframe empty"><span class="ico-ring"><i data-i="images"></i></span><button class="btn btn-secondary btn-sm">Choose photo</button><span class="t-caption">or drop it here</span></div></div>
+          <div class="pbox"><div class="phead"><b>From the side</b><span class="badge">Optional</span></div><p class="t-caption">A profile or three-quarter view.</p><div class="pframe empty"><span class="ico-ring"><i data-i="images"></i></span><button class="btn btn-secondary btn-sm">Choose photo</button><span class="t-caption">or drop it here</span></div></div>
+        </div>
+        <div class="consent"><span class="check" role="checkbox" aria-checked="false" tabindex="0" id="ck" aria-label="I have this person's permission"></span><b>I have this person's permission. They are 18 or older.</b></div>
+        <div class="card pad stack" style="--gap:12px"><div class="field"><label class="label" for="nm2">Name <span class="opt">(only you see it)</span></label><input class="input" id="nm2" placeholder="For example, Riya" autocomplete="off"></div>
+          <p class="t-caption row" style="--gap:8px;align-items:flex-start"><i data-i="shield" class="sm" style="flex:none"></i><span>A check looks for one clear adult face in each photo and refuses famous people. Photos stay on this computer, and go to OpenAI only to make the sheet.</span></p></div>
+      </div></div><aside><div class="card price-card"><div class="t-title">What it costs</div><div class="price-line"><span>Photo check</span><b>about $0.01 a photo</b></div><div class="price-line"><span>Reference sheet</span><b>about $0.20</b></div><div class="price-total"><span class="t-small muted">Together</span><span class="v" style="font-size:24px">about $0.22</span></div><p class="t-caption">Billed by OpenAI to your connection. Make it again any time; each try is billed by OpenAI.</p></div>
+        <p class="local-note"><i data-i="lock"></i>The model and its photos stay on this computer.</p></aside></div>
+</div>
+<div data-pn="faces" hidden><div class="col">
+  <div><span class="t-eyebrow">Step 2 of 4</span><h1 class="t-page mt-2" style="font-size:var(--text-3xl)">Pick a face</h1><p class="t-small muted mt-1">Choose the face you like. The reference sheet is made from it, and the other two are deleted.</p></div>
+  <div class="faces3">
+    <div class="fcard"><div class="fm"><img src="../assets/img/library/model-tara-p.webp" alt="Face 1"><span class="over-tr"><button class="icon-btn-glass" aria-label="Enlarge face 1"><i data-i="expand"></i></button></span></div><div class="lab"><b>Face 1</b></div><button class="btn btn-primary btn-block" data-go="making">Use this face<span class="cost">sheet about $0.20</span></button></div>
+    <div class="fcard"><div class="fm"><img src="../assets/img/library/model-camille-p.webp" alt="Face 2"><span class="over-tr"><button class="icon-btn-glass" aria-label="Enlarge face 2"><i data-i="expand"></i></button></span></div><div class="lab"><b>Face 2</b></div><button class="btn btn-primary btn-block" data-go="making">Use this face<span class="cost">sheet about $0.20</span></button></div>
+    <div class="fcard"><div class="fm"><img src="../assets/img/library/model-nia-p.webp" alt="Face 3"><span class="over-tr"><button class="icon-btn-glass" aria-label="Enlarge face 3"><i data-i="expand"></i></button></span></div><div class="lab"><b>Face 3</b></div><button class="btn btn-primary btn-block" data-go="making">Use this face<span class="cost">sheet about $0.20</span></button></div>
+  </div>
+  <section class="card mcard" style="flex-direction:row;align-items:center;flex-wrap:wrap;gap:var(--s-4)"><div class="grow" style="min-width:240px"><h3 class="t-title">Not quite right?</h3><p class="t-small muted mt-1">Your answers are kept, so you only change what you want. Each try is billed by OpenAI.</p></div><button class="btn btn-secondary"><i data-i="refresh"></i>Make 3 more faces<span class="cost">about $0.15</span></button></section>
+</div></div>
+<div data-pn="making" hidden><div class="col">
+  <section class="card mcard" aria-live="polite"><div class="row head"><span class="spinner"></span><div><h2 class="t-title">Making the reference sheet</h2><p class="t-small muted mt-1">About a minute. You can leave this page; it keeps going.</p></div></div>
+    <div class="progress"><i style="--p:55%"></i></div>
+    <div class="billing"><i data-i="info" class="sm"></i><span>OpenAI bills about $0.20 for the sheet. If it can't be made, you aren't billed.</span></div></section>
+  <div class="ready"><div class="sheet busy"><div class="cellb"><span class="spinner"></span></div><div class="cellb"><span class="spinner"></span></div><div class="cellb"><span class="spinner"></span></div><div class="cellb"><span class="spinner"></span></div><div class="cellb"><span class="spinner"></span></div><div class="cellb"><span class="spinner"></span></div></div>
+    <div class="info"><div class="t-eyebrow">Step 3 of 4</div><h2 class="t-section">Six photos of the same person</h2><p class="t-small muted">A front portrait, both three-quarter views, a profile, and two full-length photos. Every shoot uses this sheet to keep the same face and body.</p><div class="row" style="--gap:10px"><img src="../assets/img/library/model-tara-p.webp" alt="Chosen face" style="width:56px;aspect-ratio:3/4;object-fit:cover;border-radius:var(--r-sm);border:1px solid var(--line)"><span class="t-small">Made from <b>Face 1</b></span></div></div></div>
+</div></div>
+<div data-pn="ready" hidden><div class="col" style="max-width:1000px">
+  <div class="ready"><div class="sheet one" role="img" aria-label="Reference sheet, six photos of one person"><img src="../assets/img/library/sheet-sample.webp" alt=""></div>
+    <div class="info"><div><span class="badge success dot">Checked, ready to use</span><h1 class="t-page mt-3" style="font-size:var(--text-3xl)">Meet your model</h1><p class="t-small muted mt-2">Six photos of one person. Check the face and body look the way you want before you use it.</p></div>
+      <div class="field"><label class="label" for="nm3">Name <span class="opt">(only you see it)</span></label><input class="input" id="nm3" value="Meera"></div>
+      <div class="stack" style="--gap:8px"><a class="btn btn-primary btn-lg btn-block" href="model-own.html"><i data-i="check"></i>Use this model</a><button class="btn btn-secondary btn-lg btn-block"><i data-i="refresh"></i>Make it again<span class="cost">about $0.20</span></button></div>
+      <p class="t-caption">Make it again any time; each try is billed by OpenAI. Your earlier sheet is kept until you choose.</p>
+      <div class="divider"></div><span class="local-note"><i data-i="lock"></i>Saved on this computer. Only you can use it.</span></div></div>
+</div></div>
+  </div>
+
+  <div class="actionbar" data-for="start photos refused">
+    <div class="summary">
+      <div class="txt" data-for="start"><b>3 face options, then a reference sheet</b><span>Nothing is made until you press the button</span></div>
+      <div class="txt" data-for="photos"><b>Add a clear face photo and tick the box to go on</b><span>Nothing is made until you press the button</span></div>
+      <div class="txt" data-for="refused"><b>Choose another face photo to go on</b><span>The first one wasn't used and wasn't billed</span></div>
+    </div>
+    <a class="btn btn-ghost" href="library.html#models">Cancel<span class="kbd" style="margin-left:6px">Esc</span></a>
+    <button class="btn btn-primary btn-lg" data-go="faces" data-for="start"><i data-i="sparkle"></i>Show me 3 faces<span class="cost">about $0.15</span></button>
+    <button class="btn btn-primary btn-lg is-disabled" aria-disabled="true" data-for="photos refused"><i data-i="sparkle"></i>Make my model<span class="cost">about $0.22</span></button>
+  </div>
+</main>
+<script>
+  var STEP = { start: 1, photos: 1, refused: 1, faces: 2, making: 3, ready: 4 };
+  function show(id) {
+    document.querySelectorAll('[data-pn]').forEach(function (e) { e.hidden = e.dataset.pn !== id; });
+    document.querySelectorAll('[data-for]').forEach(function (e) { e.hidden = e.dataset.for.split(' ').indexOf(id) < 0; });
+    var on = STEP[id];
+    document.querySelectorAll('.stepper .step').forEach(function (s, i) { if (i + 1 === on) s.setAttribute('aria-current', 'step'); else s.removeAttribute('aria-current'); s.classList.toggle('done', on > i + 1); });
+    document.querySelectorAll('#states [role="tab"]').forEach(function (t) { t.setAttribute('aria-selected', t.dataset.go === id); });
+  }
+  document.addEventListener('click', function (e) {
+    var ck = e.target.closest('.consent'); if (ck) { var c = ck.querySelector('.check'); c.setAttribute('aria-checked', c.getAttribute('aria-checked') !== 'true'); }
+    var g = e.target.closest('[data-go]'); if (g) { e.preventDefault(); show(g.dataset.go); window.scrollTo(0, 0); }
+  });
+  show('start');
+</script>
+</body>
+</html>

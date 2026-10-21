@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Choose poses · Aaina Desktop</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../assets/ds.css">
+<link rel="stylesheet" href="../assets/desktop.css">
+<script src="../assets/shell.js"></script>
+<style>
+  .flowbar { display: flex; align-items: center; gap: var(--s-3); min-width: 0; }
+  .flowbar .stepper { flex: 1; justify-content: center; }
+  @media (max-width: 1179px) { .flowbar .crumbs { display: none; } }
+  .saved { display: inline-flex; align-items: center; gap: 6px; font: 500 var(--text-2xs)/1 var(--font-mono); color: var(--fg-subtle); white-space: nowrap; }
+  .saved .ico { width: 14px; height: 14px; color: var(--success); }
+  .mockstrip { margin-bottom: var(--s-5); flex-wrap: wrap; }
+  .mockstrip .segmented { margin-left: auto; }
+  .summary-card .sum-row { display: flex; align-items: center; gap: 12px; padding: 12px 16px; }
+  .summary-card .sum-row + .sum-row { border-top: 1px solid var(--line); }
+  .summary-card .sum-row img { width: 40px; height: 52px; border-radius: var(--r-xs); object-fit: cover; background: #fff; flex: none; }
+  .summary-card .sum-row .ph { width: 40px; height: 52px; border-radius: var(--r-xs); background: var(--bg-sunken); flex: none; display: grid; place-items: center; color: var(--fg-subtle); }
+  .summary-card .sum-row .k { font-size: var(--text-xs); color: var(--fg-subtle); }
+  .summary-card .sum-row .v { font-size: var(--text-sm); font-weight: 500; }
+  .summary-card .sum-row .edit { margin-left: auto; font-size: var(--text-xs); font-weight: 500; color: var(--fg-muted); text-decoration: underline; text-underline-offset: 3px; }
+  .picked { display: flex; gap: 6px; flex-wrap: wrap; }
+  .picked img { width: 40px; height: 52px; border-radius: var(--r-xs); object-fit: cover; }
+  .picked .empty-slot { width: 40px; height: 52px; border-radius: var(--r-xs); border: 1px dashed var(--line-strong); }
+  .block { padding: var(--s-5); display: flex; flex-direction: column; gap: var(--s-4); }
+  .block + .block { margin-top: var(--s-4); }
+  .block-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s-3); }
+  .tile.contain .media { background: #fff; }
+  .quality { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); }
+  .quality .t-small { font-weight: 500; }
+  .price-card .cost { font-size: var(--text-xs); }
+  .keynote { flex: 1 1 200px; display: flex; gap: 8px; align-items: flex-start; font-size: var(--text-xs); color: var(--fg-subtle); line-height: 1.45; }
+  .keynote .ico { width: 14px; height: 14px; margin-top: 1px; }
+  .notice .btn { margin-left: auto; }
+  .readby { display: inline-flex; align-items: center; gap: 6px; font: 500 var(--text-2xs)/1 var(--font-mono); color: var(--fg-subtle); white-space: nowrap; }
+  .readby .ico { width: 14px; height: 14px; }
+
+  .pill { height: 22px; padding: 0 8px; font-size: 10.5px; }
+  .refslot { width: 120px; flex: none; }
+  .descgrid { display: flex; gap: var(--s-4); align-items: flex-start; flex-wrap: wrap; }
+  .vwrap { position: relative; }
+  .vwrap .textarea { min-height: 120px; }
+</style>
+
+<body data-nav="home" data-flow>
+<main class="main" id="main">
+  <header class="topbar">
+    <div class="flowbar grow">
+      <a class="btn btn-ghost btn-icon" href="create-model.html" aria-label="Back"><i data-i="left"></i></a>
+      <div class="crumbs"><a href="home.html">New shoot</a><span class="sep">/</span><span class="here">Cobalt T-shirt</span></div>
+      <nav class="stepper" aria-label="Steps"><a class="step done" href="create-product.html"><span class="n"><i data-i="check" class="sm" style="width:12px;height:12px"></i></span>Product</a><span class="step-sep"></span><a class="step done" href="create-model.html"><span class="n"><i data-i="check" class="sm" style="width:12px;height:12px"></i></span>Model</a><span class="step-sep"></span><span class="step" aria-current="step"><span class="n">3</span>Poses</span><span class="step-sep"></span><a class="step" href="create-scene.html"><span class="n">4</span>Scene</a><span class="step-sep"></span><a class="step" href="create-review.html"><span class="n">5</span>Review</a></nav>
+      <span class="saved" title="Drafts save automatically"><i data-i="check"></i>Saved</span>
+    </div>
+  </header>
+
+  <div class="page">
+    <div class="split">
+      <section style="min-width:0">
+        <div data-panel-of="state" data-panel-id="adult"><div class="page-head" style="margin-bottom:var(--s-5)"><div><span class="t-eyebrow">On a model · Tara</span><h1 class="t-page mt-2">Choose <em class="italic">poses</em></h1><p class="lede">Pick up to 6. Each pose is one photo. Poses made for T-shirts come first.</p></div></div>
+        <div class="toolbar">
+          <div class="segmented" role="tablist" aria-label="Pose source" data-panels="src"><button role="tab" aria-selected="true" data-panel="sug">Suggested</button><button role="tab" aria-selected="false" data-panel="all">All <span class="subtle num">246</span></button><button role="tab" aria-selected="false" data-panel="own">Yours</button></div>
+          <div class="grow"></div>
+          <label class="input-wrap search-wrap" style="width:min(220px,100%)"><i data-i="search"></i><input class="input search" placeholder="Search poses" aria-label="Search poses"></label>
+          <div class="chips"><button class="chip dropdown">Framing</button><button class="chip dropdown">View</button><button class="chip dropdown">Style</button></div>
+        </div>
+        <div data-panel-of="src" data-panel-id="sug"><div class="section-head"><h2 class="t-title">Made for T-shirts</h2><span class="t-caption">3 of 6 picked</span></div><div class="grid c4"><button class="tile selectable" aria-selected="true"><div class="media"><span class="over-tl"><span class="icon-btn-glass hover-only" title="Pin"><i data-i="pin"></i></span></span><img src="../assets/img/poses/pose-11.webp" alt=""><span class="sel-mark"><span class="order">1</span></span></div><div class="cap"><div class="grow"><div class="t">Arms crossed, wide stance</div><div class="m">Full length · front</div></div></div></button><button class="tile selectable" aria-selected="true"><div class="media"><img src="../assets/img/poses/pose-4.webp" alt=""><span class="sel-mark"><span class="order">2</span></span><span class="over-bl"><span class="badge glass pill">Shown on Nia</span></span></div><div class="cap"><div class="grow"><div class="t">Asymmetric stance</div><div class="m">Full length · three-quarter</div></div></div></button><button class="tile selectable" aria-selected="false"><div class="media"><img src="../assets/img/poses/pose-15.webp" alt=""><span class="sel-mark"></span></div><div class="cap"><div class="grow"><div class="t">Peace sign</div><div class="m">Waist up · front</div></div></div></button><button class="tile selectable" aria-selected="true"><div class="media"><img src="../assets/img/poses/pose-5.webp" alt=""><span class="sel-mark"><span class="order">3</span></span></div><div class="cap"><div class="grow"><div class="t">One shoulder drop</div><div class="m">Waist up · three-quarter</div></div></div></button><button class="tile selectable" aria-selected="false"><div class="media"><img src="../assets/img/poses/pose-16.webp" alt=""><span class="sel-mark"></span></div><div class="cap"><div class="grow"><div class="t">Point at camera</div><div class="m">Full length · front</div></div></div></button><button class="tile selectable" aria-selected="false"><div class="media"><img src="../assets/img/poses/pose-3.webp" alt=""><span class="sel-mark"></span><span class="over-bl"><span class="badge glass pill">Shown on Camille</span></span></div><div class="cap"><div class="grow"><div class="t">Walking, one hand in</div><div class="m">Full length · walking</div></div></div></button><button class="tile selectable" aria-selected="false"><div class="media"><img src="../assets/img/poses/pose-14.webp" alt=""><span class="sel-mark"></span></div><div class="cap"><div class="grow"><div class="t">Mid-air hop</div><div class="m">Full length · front</div></div></div></button><button class="tile selectable" aria-selected="false"><div class="media"><img src="../assets/img/poses/pose-12.webp" alt=""><span class="sel-mark"></span></div><div class="cap"><div class="grow"><div class="t">Cap brim pull</div><div class="m">Waist up · front</div></div></div></button></div><div class="section-head mt-10"><h2 class="t-title">Also works</h2><a class="link" href="#">Show all 64</a></div><div class="grid c4"><button class="tile selectable" aria-selected="false"><div class="media"><img src="../assets/img/poses/pose-1.webp" alt=""><span class="sel-mark"></span></div><div class="cap"><div class="grow"><div class="t">Relaxed, hands low</div><div class="m">Full length · front</div></div></div></button><button class="tile selectable" aria-selected="false"><div class="media"><img src="../assets/img/poses/pose-10.webp" alt=""><span class="sel-mark"></span><span class="over-bl"><span class="badge glass pill">Shown on Nia</span></span></div><div class="cap"><div class="grow"><div class="t">Hand on hem</div><div class="m">Full length · three-quarter</div></div></div></button><button class="tile selectable" aria-selected="false"><div class="media"><img src="../assets/img/poses/pose-2.webp" alt=""><span class="sel-mark"></span></div><div class="cap"><div class="grow"><div class="t">Seated on a cube</div><div class="m">Full length · seated</div></div></div></button><button class="tile selectable" aria-selected="false"><div class="media"><img src="../assets/img/poses/pose-13.webp" alt=""><span class="sel-mark"></span></div><div class="cap"><div class="grow"><div class="t">Floor sit, knee up</div><div class="m">Full length · seated</div></div></div></button></div></div>
+        <div data-panel-of="src" data-panel-id="all" hidden><div class="section-head"><h2 class="t-title">All poses</h2><span class="t-caption">Showing 12 of 246</span></div><div class="grid c4"><button class="tile selectable" aria-selected="true"><div class="media"><span class="over-tl"><span class="icon-btn-glass hover-only" title="Pin"><i data-i="pin"></i></span></span><img src="../assets/img/poses/pose-11.webp" alt=""><span class="sel-mark"><span class="order">1</span></span></div><div class="cap"><div class="grow"><div class="t">Arms crossed, wide stance</div><div class="m">Full length · front</div></div></div></button><button class="tile selectable" aria-selected="true"><div class="media"><img src="../assets/img/poses/pose-4.webp" alt=""><span class="sel-mark"><span class="order">2</span></span><span class="over-bl"><span class="badge glass pill">Shown on Nia</span></span></div><div class="cap"><div class="grow"><div class="t">Asymmetric stance</div><div class="m">Full length · three-quarter</div></div></div></button><button class="tile selectable" aria-selected="false"><div class="media"><img src="../assets/img/poses/pose-15.webp" alt=""><span class="sel-mark"></span></div><div class="cap"><div class="grow"><div class="t">Peace sign</div><div class="m">Waist up · front</div></div></div></button><button class="tile selectable" aria-selected="false"><div class="media"><img src="../assets/img/poses/pose-1.webp" alt=""><span class="sel-mark"></span></div><div class="cap"><div class="grow"><div class="t">Relaxed, hands low</div><div class="m">Full length · front</div></div></div></button><button class="tile selectable" aria-selected="false"><div class="media"><img src="../assets/img/poses/pose-10.webp" alt=""><span class="sel-mark"></span><span class="over-bl"><span class="badge glass pill">Shown on Nia</span></span></div><div class="cap"><div class="grow"><div class="t">Hand on hem</div><div class="m">Full length · three-quarter</div></div></div></button><button class="tile selectable" aria-selected="false"><div class="media"><img src="../assets/img/poses/pose-2.webp" alt=""><span class="sel-mark"></span></div><div class="cap"><div class="grow"><div class="t">Seated on a cube</div><div class="m">Full length · seated</div></div></div></button><button class="tile selectable" aria-selected="false"><div class="media"><img src="../assets/img/poses/pose-13.webp" alt=""><span class="sel-mark"></span></div><div class="cap"><div class="grow"><div class="t">Floor sit, knee up</div><div class="m">Full length · seated</div></div></div></button><button class="tile selectable" aria-selected="true"><div class="media"><img src="../assets/img/poses/pose-5.webp" alt=""><span class="sel-mark"><span class="order">3</span></span></div><div class="cap"><div class="grow"><div class="t">One shoulder drop</div><div class="m">Waist up · three-quarter</div></div></div></button><button class="tile selectable" aria-selected="false"><div class="media"><img src="../assets/img/poses/pose-16.webp" alt=""><span class="sel-mark"></span></div><div class="cap"><div class="grow"><div class="t">Point at camera</div><div class="m">Full length · front</div></div></div></button><button class="tile selectable" aria-selected="false"><div class="media"><img src="../assets/img/poses/pose-3.webp" alt=""><span class="sel-mark"></span><span class="over-bl"><span class="badge glass pill">Shown on Camille</span></span></div><div class="cap"><div class="grow"><div class="t">Walking, one hand in</div><div class="m">Full length · walking</div></div></div></button><button class="tile selectable" aria-selected="false"><div class="media"><img src="../assets/img/poses/pose-14.webp" alt=""><span class="sel-mark"></span></div><div class="cap"><div class="grow"><div class="t">Mid-air hop</div><div class="m">Full length · front</div></div></div></button><button class="tile selectable" aria-selected="false"><div class="media"><img src="../assets/img/poses/pose-12.webp" alt=""><span class="sel-mark"></span></div><div class="cap"><div class="grow"><div class="t">Cap brim pull</div><div class="m">Waist up · front</div></div></div></button></div><div class="row mt-6" style="justify-content:center"><button class="btn btn-secondary">Show more poses</button></div></div>
+        <div data-panel-of="src" data-panel-id="own" hidden><div class="section-head"><h2 class="t-title">Your poses</h2><span class="t-caption">Only on this computer</span></div><div class="grid c4"><button class="tile add" data-open="dlg-make"><div class="media" style="--ratio:2/3"><div><span class="plus-disc"><i data-i="plus"></i></span><div class="t-small" style="font-weight:600;color:var(--fg)">Make a pose</div><div class="t-caption mt-1">From words or a photo</div><div class="cost mt-2" style="display:block">about $0.04</div></div></div><div class="cap"><div class="grow"><div class="t">&nbsp;</div></div></div></button>
+          <button class="tile add" data-open="dlg-describe"><div class="media" style="--ratio:2/3"><div><span class="plus-disc"><i data-i="edit"></i></span><div class="t-small" style="font-weight:600;color:var(--fg)">Describe a pose</div><div class="t-caption mt-1">Words only</div><div class="cost mt-2" style="display:block">Free</div></div></div><div class="cap"><div class="grow"><div class="t">&nbsp;</div></div></div></button><button class="tile selectable" aria-selected="false"><div class="media"><img src="../assets/img/poses/pose-10.webp" alt=""><span class="sel-mark"></span><span class="over-bl"><span class="badge glass pill">Made by you</span></span></div><div class="cap"><div class="grow"><div class="t">Hand on collar</div><div class="m">Made 2 Oct</div></div></div></button><button class="tile selectable" aria-selected="false"><div class="media"><img src="../assets/img/poses/pose-2.webp" alt=""><span class="sel-mark"></span><span class="over-bl"><span class="badge glass pill">Made by you</span></span></div><div class="cap"><div class="grow"><div class="t">Seated on a cube</div><div class="m">Made 28 Sep</div></div></div></button></div></div>
+</div>
+        
+      </section>
+      <aside>
+        <div data-panel-of="state" data-panel-id="adult" class="stack" style="--gap:var(--s-4)"><div class="card summary-card"><div class="sum-row"><img src="../assets/img/results/real-ghost.webp" alt="" style="object-fit:contain"><div class="grow"><div class="k">Product</div><div class="v">Cobalt T-shirt</div></div><a class="edit" href="create-product.html">Change</a></div><div class="sum-row"><img src="../assets/img/models/tara.webp" alt=""><div class="grow"><div class="k">Model</div><div class="v">Tara · 26</div></div><a class="edit" href="create-model.html">Change</a></div><div class="sum-row" style="align-items:flex-start"><div class="grow"><div class="k" style="margin-bottom:8px">Poses · 3 of 6</div><div class="picked"><img src="../assets/img/poses/pose-11.webp" alt=""><img src="../assets/img/poses/pose-4.webp" alt=""><img src="../assets/img/poses/pose-5.webp" alt=""><span class="empty-slot"></span><span class="empty-slot"></span><span class="empty-slot"></span></div></div></div><div class="sum-row"><span class="ph" style=""><i data-i="picture" class="sm"></i></span><div class="grow"><div class="k">Scene</div><div class="v subtle">Next step</div></div></div></div><div class="card price-card">
+          <div class="price-line"><span>3 photos × about $0.05</span><b>about $0.15</b></div>
+          <div class="price-total"><span class="t-small muted">Total</span><span class="v num">about $0.15</span></div>
+          <div class="t-caption">Standard quality. You can change this on the last step. Nothing is sent until you press Make.</div>
+        </div></div>
+
+      </aside>
+    </div>
+  </div>
+
+  <div class="actionbar">
+    <div class="summary"><div class="thumbs"><img src="../assets/img/poses/pose-11.webp" alt=""><img src="../assets/img/poses/pose-4.webp" alt=""><img src="../assets/img/poses/pose-5.webp" alt=""></div><div class="txt"><b>3 poses picked</b><span class="num">3 photos · about $0.15</span></div></div>
+    <a class="btn btn-secondary" href="create-model.html">Back</a>
+    <a class="btn btn-primary" href="create-scene.html">Next: scene <i data-i="right"></i></a>
+  </div>
+
+  <div class="scrim" id="dlg-make" hidden><div class="dialog" role="dialog" aria-label="Make a pose">
+    <div class="dialog-head"><div><div class="t">Make a pose</div><div class="d">We make a pose photo of Tara first, then use it in this shoot. Words, a reference photo, or both.</div></div><button class="btn btn-ghost btn-icon close" data-close aria-label="Close"><i data-i="x"></i></button></div>
+    <div class="dialog-body stack">
+      <div class="field"><label class="label" for="mk-pose">Describe the pose</label><div class="vwrap"><textarea class="textarea" id="mk-pose" placeholder="e.g. Leaning on a wall, one hand in her pocket, looking over her shoulder"></textarea></div><span class="counter">0 / 300</span></div>
+      <div class="descgrid"><div class="refslot"><button class="tile add w-full"><div class="media" style="--ratio:3/4"><div><span class="plus-disc" style="width:36px;height:36px"><i data-i="plus"></i></span><div class="t-caption">Reference photo</div></div></div></button></div><div class="grow" style="flex:1 1 0;min-width:180px"><div class="t-small" style="font-weight:600">Add one reference photo <span class="subtle" style="font-weight:400">· optional</span></div><div class="t-caption mt-1">A photo of someone in the pose you want. We read the pose from it and do not keep the photo.</div></div></div>
+      <div class="keynote"><i data-i="key"></i><span>Made with your OpenAI key. Ready in about a minute.</span></div>
+    </div>
+    <div class="dialog-foot"><span class="total">Cost <b>about $0.04</b></span><button class="btn btn-secondary" data-close>Cancel</button><button class="btn btn-primary" data-close>Make this pose <span class="cost">about $0.04</span></button></div>
+  </div></div>
+
+  <div class="scrim" id="dlg-describe" hidden><div class="dialog" role="dialog" aria-label="Describe a pose">
+    <div class="dialog-head"><div><div class="t">Describe a pose</div><div class="d">Used in your photo as written. Nothing is made until you press Make on the last step.</div></div><button class="btn btn-ghost btn-icon close" data-close aria-label="Close"><i data-i="x"></i></button></div>
+    <div class="dialog-body stack">
+      <div class="field"><label class="label" for="ds-pose">How should Tara stand?</label><div class="vwrap"><textarea class="textarea" id="ds-pose" placeholder="e.g. Walking toward the camera, one hand in her pocket"></textarea></div><span class="counter">0 / 300</span></div>
+    </div>
+    <div class="dialog-foot"><span class="total">Cost <b>Free</b></span><button class="btn btn-secondary" data-close>Cancel</button><button class="btn btn-primary" data-close>Use this pose</button></div>
+  </div></div>
+
+</main>
+<script>
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-q-set]'); if (!b) return;
+    document.querySelectorAll('[data-q]').forEach(function (el) { el.hidden = el.dataset.q !== b.dataset.qSet; });
+    document.querySelectorAll('[data-q-set]').forEach(function (x) { x.setAttribute('aria-selected', String(x.dataset.qSet === b.dataset.qSet)); });
+  });
+</script>
+</body>
+</html>

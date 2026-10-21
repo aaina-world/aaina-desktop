@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Mei · Aaina Desktop</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../assets/ds.css">
+<link rel="stylesheet" href="../assets/desktop.css">
+<script src="../assets/shell.js"></script>
+<style>
+  .titlerow { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .name-input { height: 48px; width: 260px; font: 400 var(--text-3xl)/1 var(--font-display); padding: 0 14px; }
+  .own { display: grid; grid-template-columns: minmax(0, 560px) minmax(0, 1fr); gap: var(--s-8); align-items: start; margin-top: var(--s-6); }
+  .sheet { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3px; padding: 3px; aspect-ratio: 1; border-radius: var(--r-lg); background: var(--bg-raised); border: 1px solid var(--line); overflow: hidden; width: 100%; }
+  .sheet img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; background: var(--bg-sunken); }
+  .sheet.one { display: block; padding: 0; } .sheet.one img { border-radius: 0; }
+  .kv .list-item { padding: 11px 0; }
+  .kv .k { width: 120px; flex: none; color: var(--fg-subtle); font-size: var(--text-sm); }
+  .kv .v { font-size: var(--text-sm); font-weight: 500; min-width: 0; }
+  .side { display: flex; flex-direction: column; gap: var(--s-4); }
+  .actions { display: flex; flex-direction: column; align-items: stretch; gap: var(--s-2); }
+  @media (max-width: 1100px) { .own { grid-template-columns: minmax(0, 420px) minmax(0, 1fr); gap: var(--s-6); } }
+</style>
+
+<body data-nav="library" data-st="ready">
+<main class="main" id="main">
+  <header class="topbar">
+    <a class="btn btn-ghost btn-icon" href="library.html#models" aria-label="Back to Library"><i data-i="left"></i></a>
+    <div class="crumbs"><a href="library.html">Library</a><span class="sep">/</span><a href="library.html#models">Models</a><span class="sep">/</span><span class="here">Mei</span></div>
+  </header>
+
+  <div class="page">
+    <div class="notice mockstrip" data-st-strip style="margin-bottom:var(--s-5);display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center"><b>Mockup state:</b><div class="segmented" role="tablist" aria-label="Mockup state" style="margin-left:auto"><button role="tab" aria-selected="true" data-st="ready">Ready</button><button role="tab" aria-selected="false" data-st="renaming">Renaming</button><button role="tab" aria-selected="false" data-st="delete">Delete model</button></div></div>
+
+    <div class="page-head">
+      <div>
+        <div class="titlerow"><h1 class="t-page" data-hide="renaming">Mei</h1><input class="input name-input" data-show="renaming" hidden value="Mei" aria-label="Model name"><span class="badge success dot">Ready to use</span></div>
+        <p class="lede">Woman · 46 · East Asian · made on 14 Oct 2026</p>
+      </div>
+      <div class="page-tools">
+        <button class="btn btn-secondary" data-st-go="renaming"><i data-i="edit"></i>Rename</button>
+        <button class="btn btn-danger-ghost" data-st-go="delete"><i data-i="trash"></i>Delete model</button>
+      </div>
+    </div>
+
+    <div class="own">
+      <div class="sheet one" role="img" aria-label="Reference sheet, six photos of Mei"><img src="../assets/img/library/sheet-sample.webp" alt=""></div>
+      <div class="side">
+        <div class="stack" style="--gap:8px"><h2 class="t-section">Reference sheet</h2><p class="t-small muted">Six photos of one person. Every shoot uses this sheet to keep the same face and body.</p></div>
+        <div class="card pad" style="padding-top:var(--s-2);padding-bottom:var(--s-2)"><div class="list kv">
+          <div class="list-item"><span class="k">Made from</span><span class="v">A description</span></div>
+          <div class="list-item"><span class="k">Look</span><span class="v">East Asian</span></div>
+          <div class="list-item"><span class="k">Body</span><span class="v">Average</span></div>
+          <div class="list-item"><span class="k">Hair</span><span class="v">Straight, shoulder length</span></div>
+          <div class="list-item"><span class="k">Sheet check</span><span class="v grow">One clear person</span><span class="badge success"><i data-i="check" class="sm" style="width:12px;height:12px"></i>Passed</span></div>
+          <div class="list-item"><span class="k">Kept in</span><span class="v grow t-mono" style="font-size:var(--text-xs);word-break:break-all"><span data-path>~/Pictures/Aaina</span></span></div>
+        </div></div>
+        <div class="actions"><a class="btn btn-primary btn-lg" href="create-product.html"><i data-i="plus"></i>New shoot with this model</a><div class="row" style="--gap:8px"><button class="btn btn-secondary grow"><i data-i="folder"></i><span data-folder>Show in Finder</span></button><button class="btn btn-secondary grow"><i data-i="refresh"></i>New sheet<span class="cost">about $0.20</span></button></div></div>
+        <span class="local-note"><i data-i="lock"></i>Only on this computer. Poses made with this model stay private.</span>
+      </div>
+    </div>
+
+    <section class="section">
+      <div class="section-head"><div><h2 class="t-section">Photos made with Mei <span class="subtle num" style="font-weight:400">12</span></h2><p class="t-caption mt-1">The latest from your shoots</p></div><a class="link" href="shoots.html">All shoots</a></div>
+      <div class="grid c6"><article class="tile"><div class="media"><a href="viewer.html" aria-label="Cobalt T-shirt"><img src="../assets/img/results/real-onmodel.webp" alt="" loading="lazy"></a></div><div class="cap"><div class="grow"><div class="t">Cobalt T-shirt</div><div class="m">21 Oct 2026</div></div></div></article><article class="tile"><div class="media"><a href="viewer.html" aria-label="Cobalt T-shirt"><img src="../assets/img/results/real-aaina.webp" alt="" loading="lazy"></a></div><div class="cap"><div class="grow"><div class="t">Cobalt T-shirt</div><div class="m">21 Oct 2026</div></div></div></article><article class="tile"><div class="media"><a href="viewer.html" aria-label="Cream kurta set"><img src="../assets/img/start/photoshoot-600.webp" alt="" loading="lazy"></a></div><div class="cap"><div class="grow"><div class="t">Cream kurta set</div><div class="m">17 Oct 2026</div></div></div></article><article class="tile"><div class="media"><a href="viewer.html" aria-label="Sage block-print kurta"><img src="../assets/img/start/picture-600.webp" alt="" loading="lazy"></a></div><div class="cap"><div class="grow"><div class="t">Sage block-print kurta</div><div class="m">12 Oct 2026</div></div></div></article><article class="tile"><div class="media"><a href="viewer.html" aria-label="Camel coat"><img src="../assets/img/start/photoshoot-chloe-600.webp" alt="" loading="lazy"></a></div><div class="cap"><div class="grow"><div class="t">Camel coat</div><div class="m">20 Oct 2026</div></div></div></article>
+        <a class="tile add" href="create-product.html"><div class="media"><div><span class="plus-disc"><i data-i="plus"></i></span><span class="t-small" style="font-weight:600;display:block">New shoot</span><span class="t-caption">With Mei</span></div></div><div class="cap"><div class="grow"><div class="t">&nbsp;</div><div class="m">&nbsp;</div></div></div></a>
+      </div>
+    </section>
+  </div>
+
+  <div class="scrim" id="dlg-del" data-show="delete" hidden><div class="dialog sm" role="alertdialog" aria-labelledby="del-t">
+    <div class="dialog-head"><div><div class="t" id="del-t">Delete Mei?</div><div class="d">Its sheet and photos are deleted from this computer. Photos you already made stay.</div></div></div>
+    <div class="dialog-foot"><span class="grow"></span><button class="btn btn-secondary" data-close data-st-go="ready">Keep it</button><button class="btn btn-danger" data-close data-st-go="ready"><i data-i="trash"></i>Delete model</button></div>
+  </div></div>
+</main>
+<script>
+(function () {
+  var strip = document.querySelector('[data-st-strip]');
+  function set(s) {
+    document.body.dataset.st = s;
+    document.querySelectorAll('[data-show]').forEach(function (e) { e.hidden = e.dataset.show.split(' ').indexOf(s) < 0; });
+    document.querySelectorAll('[data-hide]').forEach(function (e) { e.hidden = e.dataset.hide.split(' ').indexOf(s) >= 0; });
+    strip.querySelectorAll('[role=tab]').forEach(function (t) { t.setAttribute('aria-selected', t.dataset.st === s); });
+    if (s === 'renaming') { var i = document.querySelector('.name-input'); i.focus(); i.select(); }
+  }
+  strip.addEventListener('click', function (e) { var t = e.target.closest('[data-st]'); if (t) set(t.dataset.st); });
+  document.addEventListener('click', function (e) { var g = e.target.closest('[data-st-go]'); if (g) set(g.dataset.stGo); });
+  document.querySelector('.name-input').addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === 'Escape') set('ready'); });
+  set('ready');
+})();
+</script>
+</body>
+</html>

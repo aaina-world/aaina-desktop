@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Review · Aaina Desktop</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../assets/ds.css">
+<link rel="stylesheet" href="../assets/desktop.css">
+<script src="../assets/shell.js"></script>
+<style>
+  .flowbar { display: flex; align-items: center; gap: var(--s-3); min-width: 0; }
+  .flowbar .stepper { flex: 1; justify-content: center; }
+  @media (max-width: 1179px) { .flowbar .crumbs { display: none; } }
+  .saved { display: inline-flex; align-items: center; gap: 6px; font: 500 var(--text-2xs)/1 var(--font-mono); color: var(--fg-subtle); white-space: nowrap; }
+  .saved .ico { width: 14px; height: 14px; color: var(--success); }
+  .mockstrip { margin-bottom: var(--s-5); flex-wrap: wrap; }
+  .mockstrip .segmented { margin-left: auto; }
+  .summary-card .sum-row { display: flex; align-items: center; gap: 12px; padding: 12px 16px; }
+  .summary-card .sum-row + .sum-row { border-top: 1px solid var(--line); }
+  .summary-card .sum-row img { width: 40px; height: 52px; border-radius: var(--r-xs); object-fit: cover; background: #fff; flex: none; }
+  .summary-card .sum-row .ph { width: 40px; height: 52px; border-radius: var(--r-xs); background: var(--bg-sunken); flex: none; display: grid; place-items: center; color: var(--fg-subtle); }
+  .summary-card .sum-row .k { font-size: var(--text-xs); color: var(--fg-subtle); }
+  .summary-card .sum-row .v { font-size: var(--text-sm); font-weight: 500; }
+  .summary-card .sum-row .edit { margin-left: auto; font-size: var(--text-xs); font-weight: 500; color: var(--fg-muted); text-decoration: underline; text-underline-offset: 3px; }
+  .picked { display: flex; gap: 6px; flex-wrap: wrap; }
+  .picked img { width: 40px; height: 52px; border-radius: var(--r-xs); object-fit: cover; }
+  .picked .empty-slot { width: 40px; height: 52px; border-radius: var(--r-xs); border: 1px dashed var(--line-strong); }
+  .block { padding: var(--s-5); display: flex; flex-direction: column; gap: var(--s-4); }
+  .block + .block { margin-top: var(--s-4); }
+  .block-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s-3); }
+  .tile.contain .media { background: #fff; }
+  .quality { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); }
+  .quality .t-small { font-weight: 500; }
+  .price-card .cost { font-size: var(--text-xs); }
+  .keynote { flex: 1 1 200px; display: flex; gap: 8px; align-items: flex-start; font-size: var(--text-xs); color: var(--fg-subtle); line-height: 1.45; }
+  .keynote .ico { width: 14px; height: 14px; margin-top: 1px; }
+  .notice .btn { margin-left: auto; }
+  .readby { display: inline-flex; align-items: center; gap: 6px; font: 500 var(--text-2xs)/1 var(--font-mono); color: var(--fg-subtle); white-space: nowrap; }
+  .readby .ico { width: 14px; height: 14px; }
+
+  .pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-4); }
+  @media (max-width: 1279px) { .pair { grid-template-columns: minmax(0, 1fr); } }
+  .pickcard { display: flex; align-items: center; gap: 14px; padding: 14px; }
+  .pickcard img, .pickcard .ph { width: 56px; height: 72px; border-radius: var(--r-sm); object-fit: cover; flex: none; }
+  .pickcard .ph { background: linear-gradient(#fff, #ecece9); display: grid; place-items: center; color: #7a7a74; }
+  .pickcard .k { font-size: var(--text-xs); color: var(--fg-subtle); }
+  .pickcard .v { font-weight: 600; }
+  .pickcard .s { font-size: var(--text-xs); color: var(--fg-muted); }
+  .prow { display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; gap: var(--s-3); padding: var(--s-4); align-items: start; }
+  .prow + .prow { margin-top: var(--s-3); }
+  .prow .th { width: 56px; aspect-ratio: 3/4; border-radius: var(--r-sm); overflow: hidden; background: var(--bg-sunken); }
+  .prow .th img { width: 100%; height: 100%; object-fit: cover; }
+  .prow .opts { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+  .prow .opt { display: flex; flex-direction: column; gap: 6px; }
+  .prow .opt .lab { font-size: var(--text-xs); color: var(--fg-subtle); font-weight: 500; }
+  .prow .chips { gap: 4px; }
+  .prow .chip-sm { padding: 0 8px; font-size: 11px; }
+</style>
+
+<body data-nav="home" data-flow>
+<main class="main" id="main">
+  <header class="topbar">
+    <div class="flowbar grow">
+      <a class="btn btn-ghost btn-icon" href="create-scene.html" aria-label="Back"><i data-i="left"></i></a>
+      <div class="crumbs"><a href="home.html">New shoot</a><span class="sep">/</span><span class="here">Cobalt T-shirt</span></div>
+      <nav class="stepper" aria-label="Steps"><a class="step done" href="create-product.html"><span class="n"><i data-i="check" class="sm" style="width:12px;height:12px"></i></span>Product</a><span class="step-sep"></span><a class="step done" href="create-model.html"><span class="n"><i data-i="check" class="sm" style="width:12px;height:12px"></i></span>Model</a><span class="step-sep"></span><a class="step done" href="create-poses.html"><span class="n"><i data-i="check" class="sm" style="width:12px;height:12px"></i></span>Poses</a><span class="step-sep"></span><a class="step done" href="create-scene.html"><span class="n"><i data-i="check" class="sm" style="width:12px;height:12px"></i></span>Scene</a><span class="step-sep"></span><span class="step" aria-current="step"><span class="n">5</span>Review</span></nav>
+      <span class="saved" title="Drafts save automatically"><i data-i="check"></i>Saved</span>
+    </div>
+  </header>
+
+  <div class="page">
+    <div class="notice mockstrip" data-panels="state"><b>Mockup state:</b><div class="segmented" role="tablist" aria-label="Mockup state"><button role="tab" aria-selected="true" data-panel="ready">Ready</button><button role="tab" aria-selected="false" data-panel="nokey">No key</button></div></div>
+    <div class="split">
+      <section style="min-width:0">
+        <div class="page-head" style="margin-bottom:var(--s-5)"><div><span class="t-eyebrow">On a model · Tara</span><h1 class="t-page mt-2"><em class="italic">Review</em></h1><p class="lede">4 photos, one per pose. Each is usually ready in about a minute.</p></div></div>
+        <div data-panel-of="state" data-panel-id="ready"><div class="stack" style="--gap:var(--s-5)">
+          <div class="card card-row"><img src="../assets/img/results/real-ghost.webp" alt="" style="width:56px;height:56px;border-radius:var(--r-sm);object-fit:contain;background:#fff;border:1px solid var(--line)"><div class="grow"><div style="font-weight:600">Cobalt T-shirt</div><div class="t-caption">2 photos · T-shirt · Cobalt blue</div></div><a class="btn btn-secondary btn-sm" href="create-product.html">Change</a></div>
+          <div class="pair">
+            <div class="card pickcard"><img src="../assets/img/models/tara.webp" alt="Tara"><div class="grow"><div class="k">Model</div><div class="v">Tara</div><div class="s">Studio model · 26</div></div><a class="btn btn-secondary btn-sm" href="create-model.html">Change</a></div>
+            <div class="card pickcard"><span class="ph"><i data-i="sun"></i></span><div class="grow"><div class="k">Scene</div><div class="v">White studio</div><div class="s">Plain white</div></div><a class="btn btn-secondary btn-sm" href="create-scene.html">Change</a></div>
+          </div>
+          <div><div class="section-head"><h2 class="t-title">Poses</h2><a class="link" href="create-poses.html">Add or change poses</a></div>
+          <div class="card prow"><div class="th"><img src="../assets/img/poses/pose-11.webp" alt="Arms crossed, wide stance"></div>
+          <div style="min-width:0"><div style="font-weight:600">Arms crossed, wide stance</div><div class="t-caption">Full length · front</div>
+            <div class="opts"><div class="opt"><span class="lab">Frame</span><div class="chips" data-single><button class="chip chip-sm" aria-pressed="true">As posed</button><button class="chip chip-sm" aria-pressed="false">Full length</button><button class="chip chip-sm" aria-pressed="false">Head to knee</button><button class="chip chip-sm" aria-pressed="false">Waist up</button><button class="chip chip-sm" aria-pressed="false">Close-up</button></div></div><div class="opt"><span class="lab">Expression</span><div class="chips" data-single><button class="chip chip-sm" aria-pressed="true">As posed</button><button class="chip chip-sm" aria-pressed="false">Neutral</button><button class="chip chip-sm" aria-pressed="false">Soft smile</button><button class="chip chip-sm" aria-pressed="false">Big smile</button><button class="chip chip-sm" aria-pressed="false">Serious</button><button class="chip chip-sm" aria-pressed="false">Looking away</button></div></div></div></div>
+          <button class="btn btn-ghost btn-icon btn-sm" aria-label="Remove pose" title="Remove pose"><i data-i="x"></i></button></div><div class="card prow"><div class="th"><img src="../assets/img/poses/pose-4.webp" alt="Asymmetric stance"></div>
+          <div style="min-width:0"><div style="font-weight:600">Asymmetric stance</div><div class="t-caption">Full length · three-quarter</div>
+            <div class="opts"><div class="opt"><span class="lab">Frame</span><div class="chips" data-single><button class="chip chip-sm" aria-pressed="false">As posed</button><button class="chip chip-sm" aria-pressed="true">Full length</button><button class="chip chip-sm" aria-pressed="false">Head to knee</button><button class="chip chip-sm" aria-pressed="false">Waist up</button><button class="chip chip-sm" aria-pressed="false">Close-up</button></div></div><div class="opt"><span class="lab">Expression</span><div class="chips" data-single><button class="chip chip-sm" aria-pressed="false">As posed</button><button class="chip chip-sm" aria-pressed="false">Neutral</button><button class="chip chip-sm" aria-pressed="true">Soft smile</button><button class="chip chip-sm" aria-pressed="false">Big smile</button><button class="chip chip-sm" aria-pressed="false">Serious</button><button class="chip chip-sm" aria-pressed="false">Looking away</button></div></div></div></div>
+          <button class="btn btn-ghost btn-icon btn-sm" aria-label="Remove pose" title="Remove pose"><i data-i="x"></i></button></div><div class="card prow"><div class="th"><img src="../assets/img/poses/pose-5.webp" alt="One shoulder drop"></div>
+          <div style="min-width:0"><div style="font-weight:600">One shoulder drop</div><div class="t-caption">Waist up · three-quarter</div>
+            <div class="opts"><div class="opt"><span class="lab">Frame</span><div class="chips" data-single><button class="chip chip-sm" aria-pressed="false">As posed</button><button class="chip chip-sm" aria-pressed="false">Full length</button><button class="chip chip-sm" aria-pressed="false">Head to knee</button><button class="chip chip-sm" aria-pressed="true">Waist up</button><button class="chip chip-sm" aria-pressed="false">Close-up</button></div></div><div class="opt"><span class="lab">Expression</span><div class="chips" data-single><button class="chip chip-sm" aria-pressed="true">As posed</button><button class="chip chip-sm" aria-pressed="false">Neutral</button><button class="chip chip-sm" aria-pressed="false">Soft smile</button><button class="chip chip-sm" aria-pressed="false">Big smile</button><button class="chip chip-sm" aria-pressed="false">Serious</button><button class="chip chip-sm" aria-pressed="false">Looking away</button></div></div></div></div>
+          <button class="btn btn-ghost btn-icon btn-sm" aria-label="Remove pose" title="Remove pose"><i data-i="x"></i></button></div><div class="card prow"><div class="th"><img src="../assets/img/poses/pose-15.webp" alt="Peace sign"></div>
+          <div style="min-width:0"><div style="font-weight:600">Peace sign</div><div class="t-caption">Waist up · front</div>
+            <div class="opts"><div class="opt"><span class="lab">Frame</span><div class="chips" data-single><button class="chip chip-sm" aria-pressed="false">As posed</button><button class="chip chip-sm" aria-pressed="false">Full length</button><button class="chip chip-sm" aria-pressed="false">Head to knee</button><button class="chip chip-sm" aria-pressed="true">Waist up</button><button class="chip chip-sm" aria-pressed="false">Close-up</button></div></div><div class="opt"><span class="lab">Expression</span><div class="chips" data-single><button class="chip chip-sm" aria-pressed="false">As posed</button><button class="chip chip-sm" aria-pressed="false">Neutral</button><button class="chip chip-sm" aria-pressed="false">Soft smile</button><button class="chip chip-sm" aria-pressed="false">Big smile</button><button class="chip chip-sm" aria-pressed="false">Serious</button><button class="chip chip-sm" aria-pressed="true">Looking away</button></div></div></div></div>
+          <button class="btn btn-ghost btn-icon btn-sm" aria-label="Remove pose" title="Remove pose"><i data-i="x"></i></button></div>
+          <p class="t-caption mt-4">Frame and expression are free. Pick As posed to keep the pose photo exactly.</p></div>
+        </div></div>
+        <div data-panel-of="state" data-panel-id="nokey" hidden><div class="notice warning" style="margin-bottom:var(--s-4)"><i data-i="key"></i><span>Add your OpenAI key in Settings to make photos. You can still change everything here.</span><a class="btn btn-secondary btn-sm" href="settings.html">Add your key</a></div><div class="stack" style="--gap:var(--s-5)">
+          <div class="card card-row"><img src="../assets/img/results/real-ghost.webp" alt="" style="width:56px;height:56px;border-radius:var(--r-sm);object-fit:contain;background:#fff;border:1px solid var(--line)"><div class="grow"><div style="font-weight:600">Cobalt T-shirt</div><div class="t-caption">2 photos · T-shirt · Cobalt blue</div></div><a class="btn btn-secondary btn-sm" href="create-product.html">Change</a></div>
+          <div class="pair">
+            <div class="card pickcard"><img src="../assets/img/models/tara.webp" alt="Tara"><div class="grow"><div class="k">Model</div><div class="v">Tara</div><div class="s">Studio model · 26</div></div><a class="btn btn-secondary btn-sm" href="create-model.html">Change</a></div>
+            <div class="card pickcard"><span class="ph"><i data-i="sun"></i></span><div class="grow"><div class="k">Scene</div><div class="v">White studio</div><div class="s">Plain white</div></div><a class="btn btn-secondary btn-sm" href="create-scene.html">Change</a></div>
+          </div>
+          <div><div class="section-head"><h2 class="t-title">Poses</h2><a class="link" href="create-poses.html">Add or change poses</a></div>
+          <div class="card prow"><div class="th"><img src="../assets/img/poses/pose-11.webp" alt="Arms crossed, wide stance"></div>
+          <div style="min-width:0"><div style="font-weight:600">Arms crossed, wide stance</div><div class="t-caption">Full length · front</div>
+            <div class="opts"><div class="opt"><span class="lab">Frame</span><div class="chips" data-single><button class="chip chip-sm" aria-pressed="true">As posed</button><button class="chip chip-sm" aria-pressed="false">Full length</button><button class="chip chip-sm" aria-pressed="false">Head to knee</button><button class="chip chip-sm" aria-pressed="false">Waist up</button><button class="chip chip-sm" aria-pressed="false">Close-up</button></div></div><div class="opt"><span class="lab">Expression</span><div class="chips" data-single><button class="chip chip-sm" aria-pressed="true">As posed</button><button class="chip chip-sm" aria-pressed="false">Neutral</button><button class="chip chip-sm" aria-pressed="false">Soft smile</button><button class="chip chip-sm" aria-pressed="false">Big smile</button><button class="chip chip-sm" aria-pressed="false">Serious</button><button class="chip chip-sm" aria-pressed="false">Looking away</button></div></div></div></div>
+          <button class="btn btn-ghost btn-icon btn-sm" aria-label="Remove pose" title="Remove pose"><i data-i="x"></i></button></div><div class="card prow"><div class="th"><img src="../assets/img/poses/pose-4.webp" alt="Asymmetric stance"></div>
+          <div style="min-width:0"><div style="font-weight:600">Asymmetric stance</div><div class="t-caption">Full length · three-quarter</div>
+            <div class="opts"><div class="opt"><span class="lab">Frame</span><div class="chips" data-single><button class="chip chip-sm" aria-pressed="false">As posed</button><button class="chip chip-sm" aria-pressed="true">Full length</button><button class="chip chip-sm" aria-pressed="false">Head to knee</button><button class="chip chip-sm" aria-pressed="false">Waist up</button><button class="chip chip-sm" aria-pressed="false">Close-up</button></div></div><div class="opt"><span class="lab">Expression</span><div class="chips" data-single><button class="chip chip-sm" aria-pressed="false">As posed</button><button class="chip chip-sm" aria-pressed="false">Neutral</button><button class="chip chip-sm" aria-pressed="true">Soft smile</button><button class="chip chip-sm" aria-pressed="false">Big smile</button><button class="chip chip-sm" aria-pressed="false">Serious</button><button class="chip chip-sm" aria-pressed="false">Looking away</button></div></div></div></div>
+          <button class="btn btn-ghost btn-icon btn-sm" aria-label="Remove pose" title="Remove pose"><i data-i="x"></i></button></div><div class="card prow"><div class="th"><img src="../assets/img/poses/pose-5.webp" alt="One shoulder drop"></div>
+          <div style="min-width:0"><div style="font-weight:600">One shoulder drop</div><div class="t-caption">Waist up · three-quarter</div>
+            <div class="opts"><div class="opt"><span class="lab">Frame</span><div class="chips" data-single><button class="chip chip-sm" aria-pressed="false">As posed</button><button class="chip chip-sm" aria-pressed="false">Full length</button><button class="chip chip-sm" aria-pressed="false">Head to knee</button><button class="chip chip-sm" aria-pressed="true">Waist up</button><button class="chip chip-sm" aria-pressed="false">Close-up</button></div></div><div class="opt"><span class="lab">Expression</span><div class="chips" data-single><button class="chip chip-sm" aria-pressed="true">As posed</button><button class="chip chip-sm" aria-pressed="false">Neutral</button><button class="chip chip-sm" aria-pressed="false">Soft smile</button><button class="chip chip-sm" aria-pressed="false">Big smile</button><button class="chip chip-sm" aria-pressed="false">Serious</button><button class="chip chip-sm" aria-pressed="false">Looking away</button></div></div></div></div>
+          <button class="btn btn-ghost btn-icon btn-sm" aria-label="Remove pose" title="Remove pose"><i data-i="x"></i></button></div><div class="card prow"><div class="th"><img src="../assets/img/poses/pose-15.webp" alt="Peace sign"></div>
+          <div style="min-width:0"><div style="font-weight:600">Peace sign</div><div class="t-caption">Waist up · front</div>
+            <div class="opts"><div class="opt"><span class="lab">Frame</span><div class="chips" data-single><button class="chip chip-sm" aria-pressed="false">As posed</button><button class="chip chip-sm" aria-pressed="false">Full length</button><button class="chip chip-sm" aria-pressed="false">Head to knee</button><button class="chip chip-sm" aria-pressed="true">Waist up</button><button class="chip chip-sm" aria-pressed="false">Close-up</button></div></div><div class="opt"><span class="lab">Expression</span><div class="chips" data-single><button class="chip chip-sm" aria-pressed="false">As posed</button><button class="chip chip-sm" aria-pressed="false">Neutral</button><button class="chip chip-sm" aria-pressed="false">Soft smile</button><button class="chip chip-sm" aria-pressed="false">Big smile</button><button class="chip chip-sm" aria-pressed="false">Serious</button><button class="chip chip-sm" aria-pressed="true">Looking away</button></div></div></div></div>
+          <button class="btn btn-ghost btn-icon btn-sm" aria-label="Remove pose" title="Remove pose"><i data-i="x"></i></button></div>
+          <p class="t-caption mt-4">Frame and expression are free. Pick As posed to keep the pose photo exactly.</p></div>
+        </div></div>
+      </section>
+      <aside>
+        <div class="card price-card">
+          <div class="quality"><span class="t-small">Quality</span><div class="segmented" role="tablist" aria-label="Quality"><button role="tab" aria-selected="true" data-q-set="std">Standard</button><button role="tab" aria-selected="false" data-q-set="high">High</button></div></div>
+          <div class="price-line"><span><span data-q="std">4 photos × about $0.05</span><span data-q="high" hidden>4 photos × about $0.20</span></span><b><span data-q="std">about $0.20</span><span data-q="high" hidden>about $0.80</span></b></div>
+          <div class="price-total"><span class="t-small muted">Total</span><span class="v num"><span data-q="std">about $0.20</span><span data-q="high" hidden>about $0.80</span></span></div>
+          <div class="t-caption">Billed by OpenAI to your key. Nothing is sent until you press Make.</div>
+        </div>
+        <div class="card pad t-caption" style="padding:var(--s-4)"><b style="color:var(--fg)">A photo OpenAI refuses isn't charged.</b> Finished photos are saved to <span data-path>~/Pictures/Aaina</span>.</div>
+      </aside>
+    </div>
+  </div>
+
+  <div class="actionbar" data-panel-of="state" data-panel-id="ready">
+    <div class="summary"><div class="thumbs"><img src="../assets/img/poses/pose-11.webp" alt=""><img src="../assets/img/poses/pose-4.webp" alt=""><img src="../assets/img/poses/pose-5.webp" alt=""><img src="../assets/img/poses/pose-15.webp" alt=""></div><div class="txt"><b>4 photos</b><span class="num">Standard quality · about $0.20</span></div></div>
+    <a class="btn btn-secondary" href="create-scene.html">Back</a>
+    <a class="btn btn-primary" href="shoot.html">Make 4 photos <span class="cost"><span data-q="std">about $0.20</span><span data-q="high" hidden>about $0.80</span></span></a>
+  </div>
+  <div class="actionbar" data-panel-of="state" data-panel-id="nokey" hidden>
+    <div class="summary"><div class="thumbs"><img src="../assets/img/poses/pose-11.webp" alt=""><img src="../assets/img/poses/pose-4.webp" alt=""><img src="../assets/img/poses/pose-5.webp" alt=""><img src="../assets/img/poses/pose-15.webp" alt=""></div><div class="txt"><b>4 photos</b><span class="num">Add your key to continue</span></div></div>
+    <a class="btn btn-secondary" href="create-scene.html">Back</a>
+    <button class="btn btn-primary" disabled>Make 4 photos <span class="cost">about $0.20</span></button>
+  </div>
+
+</main>
+<script>
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-q-set]'); if (!b) return;
+    document.querySelectorAll('[data-q]').forEach(function (el) { el.hidden = el.dataset.q !== b.dataset.qSet; });
+    document.querySelectorAll('[data-q-set]').forEach(function (x) { x.setAttribute('aria-selected', String(x.dataset.qSet === b.dataset.qSet)); });
+  });
+</script>
+</body>
+</html>

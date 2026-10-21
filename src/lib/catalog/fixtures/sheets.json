@@ -1,0 +1,19 @@
+{
+ "schema": "aaina-sheets-v1",
+ "items": [
+  {
+   "modelId": "aaina",
+   "sha256": "7655ea54c8614a3c1000555dcb6572122564d3d4e4885b29151b6e7aa1809200",
+   "width": 1024,
+   "height": 1024,
+   "url": "sheets/7655ea54c8614a3c1000555dcb6572122564d3d4e4885b29151b6e7aa1809200.webp"
+  },
+  {
+   "modelId": "hana",
+   "sha256": "6f45b7f051add6d3466715353dbf4c4350c41ac02f3b07c6ea62a5617638a01e",
+   "width": 1024,
+   "height": 1024,
+   "url": "sheets/6f45b7f051add6d3466715353dbf4c4350c41ac02f3b07c6ea62a5617638a01e.webp"
+  }
+ ]
+}

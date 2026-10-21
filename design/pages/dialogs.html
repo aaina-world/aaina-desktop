@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Dialogs · Aaina Desktop</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../assets/ds.css">
+<link rel="stylesheet" href="../assets/desktop.css">
+<script src="../assets/shell.js"></script>
+<style>
+  .dgal { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s-3); }
+  .dg { display: flex; flex-direction: column; gap: 8px; padding: 14px; min-height: 148px; border-radius: var(--r-lg); background: var(--bg-raised); border: 1px solid var(--line); text-align: left; min-width: 0; transition: border-color var(--dur-1), box-shadow var(--dur-1); }
+  .dg:hover { border-color: var(--line-strong); box-shadow: var(--shadow-1); }
+  .dg .ti { width: 36px; height: 36px; border-radius: var(--r-sm); background: var(--bg-sunken); display: grid; place-items: center; }
+  .dg .t { font-size: var(--text-sm); font-weight: 600; }
+  .dg .d { font-size: var(--text-xs); color: var(--fg-subtle); line-height: 1.35; }
+  .dg .p { margin-top: auto; font: 500 var(--text-2xs)/1 var(--font-mono); color: var(--fg-muted); }
+  .dialog-foot .total { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+  .dthumb { width: 48px; height: 64px; object-fit: cover; border-radius: 6px; flex: none; }
+  .dicon { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; flex: none; background: var(--bg-sunken); }
+  .dicon.danger { background: var(--danger-soft); color: var(--danger); }
+  .dicon.accent { background: var(--accent-soft); color: var(--accent-fg); }
+  .dicon.info { background: var(--info-soft); color: var(--info); }
+
+  /* shape cards: previews are crops of one photo */
+  .shapes { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--s-3); }
+  .chip.shp { height: auto; width: 100%; flex-direction: column; align-items: stretch; gap: 0; padding: 8px 8px 10px; border-radius: var(--r-md); text-align: left; white-space: normal; border-color: var(--line-strong); background: var(--bg-raised); }
+  .chip.shp[aria-pressed="true"] { background: var(--bg-raised); color: var(--fg); border-color: var(--fg); box-shadow: 0 0 0 1px var(--fg); }
+  .shp .pv { height: 112px; display: grid; place-items: center; border-radius: var(--r-sm); background: var(--bg-sunken); margin-bottom: 8px; }
+  .shp .pv .im { max-height: 96px; max-width: 88%; height: 96px; overflow: hidden; border-radius: 3px; box-shadow: 0 1px 3px rgb(0 0 0 / .2); background: #fff; }
+  .shp .pv .im img { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; }
+  .shp .nm { font-size: var(--text-sm); font-weight: 600; }
+  .shp .s { font: 400 var(--text-2xs)/1.3 var(--font-mono); color: var(--fg-subtle); margin-top: 2px; }
+  .whereto { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--r-md); background: var(--bg-sunken); font-size: var(--text-sm); min-width: 0; }
+  .whereto .ico { color: var(--fg-muted); flex: none; }
+  .whereto .pth { font-family: var(--font-mono); font-size: var(--text-xs); }
+  .fname { display: flex; align-items: center; gap: 8px; }
+  .fname .input { flex: 1; }
+  .fname .ext { font: 500 var(--text-sm)/1 var(--font-mono); color: var(--fg-subtle); }
+  .taw { position: relative; }
+  .taw .count { position: absolute; right: 12px; bottom: 10px; font: 500 var(--text-2xs)/1 var(--font-mono); color: var(--fg-subtle); }
+  .taw .textarea { min-height: 96px; padding-bottom: 28px; }
+  .swgrid { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 6px; }
+  .chip.swt { height: auto; flex-direction: column; gap: 6px; padding: 8px 2px; border: 0; background: transparent; border-radius: var(--r-md); font-size: var(--text-2xs); font-weight: 500; color: var(--fg-muted); }
+  .chip.swt:hover { background: var(--bg-sunken); }
+  .chip.swt[aria-pressed="true"] { background: var(--bg-sunken); color: var(--fg); }
+  .chip.swt .sd { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; box-shadow: inset 0 0 0 1px rgb(0 0 0 / .14); color: transparent; }
+  .chip.swt[aria-pressed="true"] .sd { box-shadow: inset 0 0 0 1px rgb(0 0 0 / .14), 0 0 0 2px var(--bg-raised), 0 0 0 4px var(--fg); color: #fff; }
+  .chip.swt[data-light][aria-pressed="true"] .sd { color: #161615; }
+  .hexrow { display: flex; align-items: center; gap: 10px; }
+  .hexrow .dot { width: 36px; height: 36px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgb(0 0 0 / .14); flex: none; background: #c9552b; }
+  .hexrow .input { width: 150px; font-family: var(--font-mono); }
+  .minidrop { min-height: 132px; padding: var(--s-5); }
+  .reflist { display: flex; flex-direction: column; gap: 8px; }
+  .quiet-line { display: flex; gap: 8px; align-items: flex-start; font-size: var(--text-xs); color: var(--fg-subtle); }
+  .quiet-line .ico { width: 14px; height: 14px; flex: none; margin-top: 1px; }
+  .reasons { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .reasons li { display: flex; gap: 12px; padding: 12px 14px; border-radius: var(--r-md); background: var(--bg-sunken); font-size: var(--text-sm); }
+  .reasons li .ico { flex: none; color: var(--fg-muted); margin-top: 1px; }
+  .reasons li b { display: block; font-weight: 600; }
+  .reasons li span { color: var(--fg-muted); font-size: var(--text-xs); }
+  .notes { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: var(--text-sm); }
+  .notes li { display: flex; gap: 10px; align-items: flex-start; }
+  .notes li .ico { color: var(--success); flex: none; margin-top: 2px; }
+  .keys { display: grid; grid-template-columns: 1fr 1fr; gap: 0 var(--s-8); }
+  .keys .k { display: flex; align-items: center; justify-content: space-between; gap: 12px; height: 44px; border-bottom: 1px solid var(--line); font-size: var(--text-sm); }
+  .keys .k:nth-last-child(-n+2) { border-bottom: 0; }
+  .keys .kbd { flex: none; }
+  .coffee-art { width: 100%; height: 120px; border-radius: var(--r-lg); display: grid; place-items: center; background: var(--accent-soft); color: var(--accent-fg); margin-bottom: 4px; }
+  .coffee-art .ico { width: 44px; height: 44px; stroke-width: 1.3; }
+</style>
+
+<body data-nav="shoots">
+<main class="main" id="main">
+  <header class="topbar">
+    <div class="crumbs"><a href="shoots.html">Shoots</a><span class="sep">/</span><span class="here">Dialogs</span></div>
+  </header>
+  <div class="page">
+    <div class="page-head"><div><h1 class="t-page">Every <em class="italic">window</em> that opens</h1><p class="lede">Dialogs from a photo, a shoot, or the app itself. Each paid one shows its rough OpenAI cost before anything is made. Click a card to open it; Esc closes.</p></div></div>
+
+    <section class="section" style="margin-top:var(--s-6)">
+      <div class="section-head"><h2 class="t-section">From a photo</h2></div>
+      <div class="dgal">
+        <button class="dg" data-open="dlg-save"><span class="ti"><i data-i="download"></i></span><span class="t">Save photo</span><span class="d">File type, shape, name and folder</span><span class="p">Free</span></button>
+        <button class="dg" data-open="dlg-saveall"><span class="ti"><i data-i="folder"></i></span><span class="t">Save all</span><span class="d">Every photo of a shoot into one folder</span><span class="p">Free</span></button>
+        <button class="dg" data-open="dlg-fix"><span class="ti"><i data-i="wand"></i></span><span class="t">Fix something</span><span class="d">A small change that keeps the same photo</span><span class="p">about $0.05</span></button>
+        <button class="dg" data-open="dlg-colours"><span class="ti"><i data-i="palette"></i></span><span class="t">Other colours</span><span class="d">The same photo in up to 6 colours</span><span class="p">3 × about $0.05</span></button>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head"><h2 class="t-section">Your own poses and scenes</h2></div>
+      <div class="dgal">
+        <button class="dg" data-open="dlg-pose"><span class="ti"><i data-i="frame"></i></span><span class="t">Make a pose</span><span class="d">Describe it, or show one photo</span><span class="p">about $0.04</span></button>
+        <button class="dg" data-open="dlg-scene"><span class="ti"><i data-i="picture"></i></span><span class="t">Make a scene</span><span class="d">Describe a place, with an optional photo</span><span class="p">about $0.04</span></button>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head"><h2 class="t-section">Shoots and quitting</h2></div>
+      <div class="dgal">
+        <button class="dg" data-open="dlg-del"><span class="ti"><i data-i="trash"></i></span><span class="t">Delete shoot</span><span class="d">Removes its photos from this computer</span><span class="p">Can't be undone</span></button>
+        <button class="dg" data-open="dlg-quit"><span class="ti"><i data-i="logout"></i></span><span class="t">Quit while making</span><span class="d">Photos are still being made</span><span class="p">Asks first</span></button>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head"><h2 class="t-section">The app</h2></div>
+      <div class="dgal">
+        <button class="dg" data-open="dlg-update"><span class="ti"><i data-i="refresh"></i></span><span class="t">Update available</span><span class="d">A new version is ready to restart into</span><span class="p">Free</span></button>
+        <button class="dg" data-open="dlg-key"><span class="ti"><i data-i="key"></i></span><span class="t">Key problem</span><span class="d">OpenAI stopped accepting the key</span><span class="p">Stops photos</span></button>
+        <button class="dg" data-open="dlg-limit"><span class="ti"><i data-i="chatgpt"></i></span><span class="t">ChatGPT limit</span><span class="d">The plan's limit was reached for now</span><span class="p">Readings only</span></button>
+        <button class="dg" data-open="dlg-keys"><span class="ti"><i data-i="settings"></i></span><span class="t">Keyboard shortcuts</span><span class="d">Everything you can do without the mouse</span><span class="p">Free</span></button>
+        <button class="dg" data-open="dlg-coffee"><span class="ti"><i data-i="coffee"></i></span><span class="t">Buy me a coffee</span><span class="d">Opened from About, never during a flow</span><span class="p">Free</span></button>
+      </div>
+    </section>
+  </div>
+
+  <!-- Save photo -->
+  <div class="scrim" id="dlg-save" hidden>
+    <div class="dialog lg" role="dialog" aria-labelledby="dlg-save-t">
+      <div class="dialog-head"><img class="dthumb" src="../assets/img/results/real-onmodel.webp" alt=""><div><div class="t" id="dlg-save-t">Save photo</div><div class="d">Cobalt T-shirt · Photo 2 · Standing, hands in pockets</div></div><button class="btn btn-ghost btn-icon close" data-close aria-label="Close"><i data-i="x"></i></button></div>
+      <div class="dialog-body">
+        <div class="stack" style="--gap:20px">
+          <div class="field"><span class="label">File type</span><div class="segmented" role="tablist" style="align-self:flex-start"><button role="tab" aria-selected="true">High-quality JPEG</button><button role="tab" aria-selected="false">Original PNG</button></div><span class="hint">JPEG is smaller and fine for every marketplace. PNG keeps every pixel.</span></div>
+          <div class="field"><span class="label">Shape</span>
+            <div class="shapes" data-single>
+              <button class="chip shp" aria-pressed="true"><span class="pv"><span class="im" style="aspect-ratio:1/1"><img src="../assets/img/results/real-aaina.webp" alt=""></span></span><span class="nm">Square</span><span class="s">1:1 · 2048 px</span></button>
+              <button class="chip shp" aria-pressed="false"><span class="pv"><span class="im" style="aspect-ratio:4/5"><img src="../assets/img/results/real-aaina.webp" alt=""></span></span><span class="nm">Portrait</span><span class="s">4:5 · 1638 × 2048</span></button>
+              <button class="chip shp" aria-pressed="false"><span class="pv"><span class="im" style="aspect-ratio:3/4"><img src="../assets/img/results/real-aaina.webp" alt=""></span></span><span class="nm">Tall</span><span class="s">3:4 · 1536 × 2048</span></button>
+              <button class="chip shp" aria-pressed="false"><span class="pv"><span class="im" style="aspect-ratio:1/1"><img src="../assets/img/results/real-aaina.webp" alt="" style="filter:brightness(1.35) contrast(.8)"></span></span><span class="nm">Amazon</span><span class="s">1:1 · white background</span></button>
+              <button class="chip shp" aria-pressed="false"><span class="pv"><span class="im" style="aspect-ratio:4/3"><img src="../assets/img/results/real-aaina.webp" alt="" style="object-position:center 30%"></span></span><span class="nm">Etsy</span><span class="s">4:3 · 2000 × 1500</span></button>
+            </div>
+          </div>
+          <div class="two" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:var(--s-5)">
+            <div class="field"><label class="label" for="sv-name">File name</label><div class="fname"><input class="input" id="sv-name" value="cobalt-t-shirt-2"><span class="ext">.jpg</span></div></div>
+            <div class="field"><span class="label">Where</span><div class="whereto"><i data-i="folder"></i><span class="grow truncate">Save to <span class="pth" data-path>~/Pictures/Aaina</span></span><button class="btn btn-ghost btn-sm">Change</button></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="dialog-foot"><span class="total">About 1.8 MB · every photo is marked as AI-made</span><button class="btn btn-secondary" data-close>Cancel</button><button class="btn btn-primary" data-close><i data-i="download"></i>Save photo<span class="kbd" style="margin-left:6px;background:transparent;border-color:color-mix(in srgb,currentColor 35%,transparent);color:inherit"><span data-mod>⌘</span>S</span></button></div>
+    </div>
+  </div>
+
+  <!-- Save all -->
+  <div class="scrim" id="dlg-saveall" hidden>
+    <div class="dialog lg" role="dialog" aria-labelledby="dlg-saveall-t">
+      <div class="dialog-head"><span class="dicon"><i data-i="folder"></i></span><div><div class="t" id="dlg-saveall-t">Save all 6 photos</div><div class="d">Cobalt T-shirt · saved together in one new folder</div></div><button class="btn btn-ghost btn-icon close" data-close aria-label="Close"><i data-i="x"></i></button></div>
+      <div class="dialog-body">
+        <div class="stack" style="--gap:20px">
+          <div class="field"><span class="label">File type</span><div class="segmented" role="tablist" style="align-self:flex-start"><button role="tab" aria-selected="true">High-quality JPEG</button><button role="tab" aria-selected="false">Original PNG</button></div></div>
+          <div class="field"><span class="label">Shape</span>
+            <div class="shapes" data-single>
+              <button class="chip shp" aria-pressed="true"><span class="pv"><span class="im" style="aspect-ratio:1/1"><img src="../assets/img/results/real-aaina.webp" alt=""></span></span><span class="nm">Square</span><span class="s">1:1 · 2048 px</span></button>
+              <button class="chip shp" aria-pressed="false"><span class="pv"><span class="im" style="aspect-ratio:4/5"><img src="../assets/img/results/real-aaina.webp" alt=""></span></span><span class="nm">Portrait</span><span class="s">4:5 · 1638 × 2048</span></button>
+              <button class="chip shp" aria-pressed="false"><span class="pv"><span class="im" style="aspect-ratio:3/4"><img src="../assets/img/results/real-aaina.webp" alt=""></span></span><span class="nm">Tall</span><span class="s">3:4 · 1536 × 2048</span></button>
+              <button class="chip shp" aria-pressed="false"><span class="pv"><span class="im" style="aspect-ratio:1/1"><img src="../assets/img/results/real-aaina.webp" alt="" style="filter:brightness(1.35) contrast(.8)"></span></span><span class="nm">Amazon</span><span class="s">1:1 · white background</span></button>
+              <button class="chip shp" aria-pressed="false"><span class="pv"><span class="im" style="aspect-ratio:4/3"><img src="../assets/img/results/real-aaina.webp" alt="" style="object-position:center 30%"></span></span><span class="nm">Etsy</span><span class="s">4:3 · 2000 × 1500</span></button>
+            </div>
+          </div>
+          <div class="field"><span class="label">Where</span><div class="whereto"><i data-i="folder"></i><span class="grow truncate">Save to <span class="pth" data-path>~/Pictures/Aaina</span><span class="pth">/Cobalt T-shirt</span></span><button class="btn btn-ghost btn-sm">Change</button></div></div>
+        </div>
+      </div>
+      <div class="dialog-foot"><span class="total">6 photos · about 10.6 MB</span><button class="btn btn-secondary" data-close>Cancel</button><button class="btn btn-primary" data-close><i data-i="download"></i>Save 6 photos</button></div>
+    </div>
+  </div>
+
+  <!-- Fix something -->
+  <div class="scrim" id="dlg-fix" hidden>
+    <div class="dialog" role="dialog" aria-labelledby="dlg-fix-t">
+      <div class="dialog-head"><img class="dthumb" src="../assets/img/results/real-onmodel.webp" alt=""><div><div class="t" id="dlg-fix-t">Fix something</div><div class="d">Keeps the same photo, face and pose. Only this change is made.</div></div><button class="btn btn-ghost btn-icon close" data-close aria-label="Close"><i data-i="x"></i></button></div>
+      <div class="dialog-body">
+        <div class="stack" style="--gap:18px">
+          <div class="field"><label class="label" for="fx">What should change?</label><div class="taw"><textarea class="textarea" id="fx" placeholder="Tuck the left side of the T-shirt in" maxlength="500"></textarea><span class="count">0 / 500</span></div></div>
+          <div class="field"><span class="label">Or try an example</span><div class="chips"><button class="chip" aria-pressed="false">Remove the necklace</button><button class="chip" aria-pressed="false">Smooth the wrinkles</button><button class="chip" aria-pressed="false">Fix the hands</button><button class="chip" aria-pressed="false">Straighten the hem</button><button class="chip" aria-pressed="false">Brighter light</button></div></div>
+        </div>
+      </div>
+      <div class="dialog-foot"><span class="total cost">about $0.05</span><button class="btn btn-secondary" data-close>Cancel</button><button class="btn btn-primary" data-close><i data-i="wand"></i>Make the fix</button></div>
+    </div>
+  </div>
+
+  <!-- Other colours -->
+  <div class="scrim" id="dlg-colours" hidden>
+    <div class="dialog lg" role="dialog" aria-labelledby="dlg-colours-t">
+      <div class="dialog-head"><img class="dthumb" src="../assets/img/results/real-onmodel.webp" alt=""><div><div class="t" id="dlg-colours-t">Other colours</div><div class="d">The same photo in new colours. Pick up to 6.</div></div><button class="btn btn-ghost btn-icon close" data-close aria-label="Close"><i data-i="x"></i></button></div>
+      <div class="dialog-body">
+        <div class="stack" style="--gap:16px">
+          <div class="swgrid" id="swgrid"></div>
+          <div class="field"><label class="label" for="hx">Or type a colour</label><div class="hexrow"><span class="dot"></span><input class="input" id="hx" value="#c9552b" aria-label="Hex colour"><span class="t-caption">Named for you: Burnt sienna</span></div></div>
+          <div class="row spread"><span class="t-caption num">3 of 6 chosen</span><span class="t-caption">Each colour is a new photo in this shoot.</span></div>
+        </div>
+      </div>
+      <div class="dialog-foot"><span class="total cost">3 × about $0.05</span><button class="btn btn-secondary" data-close>Cancel</button><button class="btn btn-primary" data-close><i data-i="palette"></i>Make 3 colours</button></div>
+    </div>
+  </div>
+
+  <!-- Make a pose -->
+  <div class="scrim" id="dlg-pose" hidden>
+    <div class="dialog" role="dialog" aria-labelledby="dlg-pose-t">
+      <div class="dialog-head"><span class="dicon"><i data-i="frame"></i></span><div><div class="t" id="dlg-pose-t">Make a pose</div><div class="d">Describe it in words, or show one photo of the pose.</div></div><button class="btn btn-ghost btn-icon close" data-close aria-label="Close"><i data-i="x"></i></button></div>
+      <div class="dialog-body">
+        <div class="stack" style="--gap:16px">
+          <div class="field"><label class="label" for="pw">Describe the pose</label><div class="taw"><textarea class="textarea" id="pw" placeholder="Walking toward the camera, one hand in a pocket, looking away" maxlength="500"></textarea><span class="count">0 / 500</span></div></div>
+          <div class="row" style="--gap:12px"><span class="grow" style="height:1px;background:var(--line)"></span><span class="t-caption">or</span><span class="grow" style="height:1px;background:var(--line)"></span></div>
+          <div class="field"><span class="label">Show a pose <span class="opt">one photo</span></span>
+            <div class="drop minidrop"><span class="ico-ring"><i data-i="upload"></i></span><span class="t-small"><b>Drop a photo</b> or <u>choose from your files</u></span><span class="t-caption">A person in the pose you want</span></div>
+          </div>
+          <div class="quiet-line"><i data-i="lock"></i><span>The photo is only read for the pose and isn't kept.</span></div>
+        </div>
+      </div>
+      <div class="dialog-foot"><span class="total cost">about $0.04</span><button class="btn btn-secondary" data-close>Cancel</button><button class="btn btn-primary" data-close><i data-i="sparkle"></i>Make the pose</button></div>
+    </div>
+  </div>
+
+  <!-- Make a scene -->
+  <div class="scrim" id="dlg-scene" hidden>
+    <div class="dialog" role="dialog" aria-labelledby="dlg-scene-t">
+      <div class="dialog-head"><span class="dicon"><i data-i="picture"></i></span><div><div class="t" id="dlg-scene-t">Make a scene</div><div class="d">Describe the place. A reference photo is optional.</div></div><button class="btn btn-ghost btn-icon close" data-close aria-label="Close"><i data-i="x"></i></button></div>
+      <div class="dialog-body">
+        <div class="stack" style="--gap:16px">
+          <div class="field"><label class="label" for="sw">Describe the scene</label><div class="taw"><textarea class="textarea" id="sw" placeholder="A sunlit terrace with white walls and terracotta pots, soft morning light" maxlength="500"></textarea><span class="count">0 / 500</span></div><span class="hint">Scenes have no people in them. Models are added when you make photos.</span></div>
+          <div class="field"><span class="label">Reference photo <span class="opt">optional</span></span>
+            <div class="drop minidrop"><span class="ico-ring"><i data-i="upload"></i></span><span class="t-small"><b>Drop a photo</b> or <u>choose from your files</u></span><span class="t-caption">A place whose look you like</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="dialog-foot"><span class="total cost">about $0.04</span><button class="btn btn-secondary" data-close>Cancel</button><button class="btn btn-primary" data-close><i data-i="sparkle"></i>Make the scene</button></div>
+    </div>
+  </div>
+
+  <!-- Delete shoot -->
+  <div class="scrim" id="dlg-del" hidden>
+    <div class="dialog sm" role="alertdialog" aria-labelledby="dlg-del-t">
+      <div class="dialog-head"><span class="dicon danger"><i data-i="trash"></i></span><div><div class="t" id="dlg-del-t">Delete Cobalt T-shirt?</div><div class="d">Its 6 photos are removed from this computer. This can't be undone.</div></div></div>
+      <div class="dialog-foot" style="border-top:0;justify-content:flex-end"><button class="btn btn-secondary" data-close>Cancel</button><button class="btn btn-danger" data-close><i data-i="trash"></i>Delete</button></div>
+    </div>
+  </div>
+
+  <!-- Quit while making -->
+  <div class="scrim" id="dlg-quit" hidden>
+    <div class="dialog sm" role="alertdialog" aria-labelledby="dlg-quit-t">
+      <div class="dialog-head"><span class="dicon accent"><i data-i="clock"></i></span><div><div class="t" id="dlg-quit-t">2 photos are still being made</div><div class="d">If you quit now, they stop. OpenAI may still charge for photos already sent.</div></div></div>
+      <div class="dialog-foot" style="border-top:0;justify-content:flex-end"><button class="btn btn-secondary" data-close>Quit anyway</button><button class="btn btn-primary" data-close>Keep making</button></div>
+    </div>
+  </div>
+
+  <!-- Update available -->
+  <div class="scrim" id="dlg-update" hidden>
+    <div class="dialog sm" role="dialog" aria-labelledby="dlg-update-t">
+      <div class="dialog-head"><span class="dicon info"><i data-i="refresh"></i></span><div><div class="t" id="dlg-update-t">Aaina Desktop 1.1 is ready</div><div class="d">It installs in a few seconds and your shoots stay as they are.</div></div></div>
+      <div class="dialog-body"><ul class="notes"><li><i data-i="check" class="sm"></i>Save all photos of a shoot in one step</li><li><i data-i="check" class="sm"></i>Faster catalogue browsing, even offline</li><li><i data-i="check" class="sm"></i>Fixes for Windows high-DPI screens</li></ul></div>
+      <div class="dialog-foot" style="justify-content:flex-end"><button class="btn btn-secondary" data-close>Later</button><button class="btn btn-primary" data-close>Restart to update</button></div>
+    </div>
+  </div>
+
+  <!-- Key problem -->
+  <div class="scrim" id="dlg-key" hidden>
+    <div class="dialog" role="alertdialog" aria-labelledby="dlg-key-t">
+      <div class="dialog-head"><span class="dicon danger"><i data-i="key"></i></span><div><div class="t" id="dlg-key-t">OpenAI stopped accepting your key</div><div class="d">No photo was started, and nothing was charged. This is usually one of these.</div></div><button class="btn btn-ghost btn-icon close" data-close aria-label="Close"><i data-i="x"></i></button></div>
+      <div class="dialog-body"><ul class="reasons">
+        <li><i data-i="key"></i><div><b>The key was removed or changed</b><span>Make a new one in your OpenAI account and paste it in Settings.</span></div></li>
+        <li><i data-i="coin"></i><div><b>You are out of credit at OpenAI</b><span>Add credit at platform.openai.com, then try again.</span></div></li>
+      </ul></div>
+      <div class="dialog-foot" style="justify-content:flex-end"><button class="btn btn-secondary" data-close>Open OpenAI billing <i data-i="expand" class="sm"></i></button><button class="btn btn-primary" data-close>Change key</button></div>
+    </div>
+  </div>
+
+  <!-- ChatGPT limit -->
+  <div class="scrim" id="dlg-limit" hidden>
+    <div class="dialog sm" role="dialog" aria-labelledby="dlg-limit-t">
+      <div class="dialog-head"><span class="dicon"><i data-i="chatgpt"></i></span><div><div class="t" id="dlg-limit-t">You've reached your ChatGPT plan's limit for now</div><div class="d">Readings use your plan; try again later, or use your OpenAI key.</div></div></div>
+      <div class="dialog-foot" style="border-top:0;justify-content:flex-end"><button class="btn btn-secondary" data-close>OK</button><button class="btn btn-primary" data-close><i data-i="key"></i>Use my key</button></div>
+    </div>
+  </div>
+
+  <!-- Keyboard shortcuts -->
+  <div class="scrim" id="dlg-keys" hidden>
+    <div class="dialog" role="dialog" aria-labelledby="dlg-keys-t">
+      <div class="dialog-head"><div><div class="t" id="dlg-keys-t">Keyboard shortcuts</div><div class="d">Photos, shoots and the app.</div></div><button class="btn btn-ghost btn-icon close" data-close aria-label="Close"><i data-i="x"></i></button></div>
+      <div class="dialog-body">
+        <div class="keys">
+          <div class="k">New shoot<span class="kbd"><span data-mod>⌘</span>N</span></div>
+          <div class="k">Next or previous photo<span class="kbd">← →</span></div>
+          <div class="k">Search<span class="kbd"><span data-mod>⌘</span>K</span></div>
+          <div class="k">Zoom<span class="kbd">Space</span></div>
+          <div class="k">Save photo<span class="kbd"><span data-mod>⌘</span>S</span></div>
+          <div class="k">Delete<span class="kbd">⌫</span></div>
+          <div class="k">Copy<span class="kbd"><span data-mod>⌘</span>C</span></div>
+          <div class="k">Settings<span class="kbd"><span data-mod>⌘</span>,</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Buy me a coffee -->
+  <div class="scrim" id="dlg-coffee" hidden>
+    <div class="dialog" role="dialog" aria-labelledby="dlg-coffee-t">
+      <div class="dialog-body" style="padding-top:var(--s-5)">
+        <div class="coffee-art"><i data-i="coffee"></i></div>
+        <div class="stack" style="--gap:8px;margin-top:12px">
+          <div class="t" id="dlg-coffee-t" style="font:600 var(--text-lg)/1.3 var(--font-sans)">Aaina Desktop is free, and made by one person</div>
+          <p class="muted t-small" style="line-height:1.55">There are no accounts and no subscriptions, and your photos stay on your computer. If it saves you time, a coffee helps me keep fixing things and adding more. It's completely optional.</p>
+        </div>
+      </div>
+      <div class="dialog-foot" style="border-top:0;flex-wrap:wrap"><button class="btn btn-ghost" data-close>Not now</button><span class="grow"></span><button class="btn btn-secondary" data-close><i data-i="github"></i>Star on GitHub</button><button class="btn btn-primary" data-close><i data-i="coffee"></i>Open Buy Me a Coffee</button></div>
+    </div>
+  </div>
+</main>
+<script>
+(function(){
+  var sw=[['Black','#161615'],['Charcoal','#3d3d39'],['Grey','#9a9a95'],['Ivory','#f1ebdd',1],['White','#ffffff',1],['Navy','#1f2a4d'],['Cobalt','#1f3fbf'],['Sky','#8fb8e6'],
+    ['Forest','#2f5d3a'],['Sage','#9caf88'],['Olive','#6b6b2f'],['Mustard','#d9a321'],['Rust','#b4532a'],['Red','#c0272d'],['Blush','#e9b6b6',1],['Plum','#5a2a4a']];
+  var pressed={Navy:1,Cobalt:1,Rust:1};
+  document.getElementById('swgrid').innerHTML=sw.map(function(s){return '<button class="chip swt" aria-pressed="'+(pressed[s[0]]?'true':'false')+'"'+(s[2]?' data-light':'')+'><span class="sd" style="background:'+s[1]+'"><i data-i="check" class="sm"></i></span>'+s[0]+'</button>';}).join('');
+})();
+</script>
+</body>

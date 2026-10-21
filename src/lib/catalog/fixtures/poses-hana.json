@@ -1,0 +1,103 @@
+{
+ "schema": "aaina-catalog-v1",
+ "modelId": "pool:044f3d84140a9c40",
+ "looks": [],
+ "studio": [
+  {
+   "id": "community:dbd82dbb-9ef0-5d11-9613-feb02e6c6430",
+   "kind": "pose",
+   "service": "pose_creation",
+   "modelId": "zara",
+   "title": "Black halter maxi, walking camera-right, face to camera",
+   "prompt": "Walking toward camera-right in three-quarter view wearing the sunglasses, the raffia clutch in the near hand, head turned away toward camera-right. Halter maxi to the floor visible.",
+   "angle": "front",
+   "imageUrl": "img/424ee692a9523abb661ac75752b8759462da1f1b794df8c87074e513b5a47b5b-1080.webp",
+   "creativeTags": [
+    "party",
+    "editorial",
+    "studio"
+   ],
+   "bestFor": [
+    "maxi_dresses",
+    "sunglasses",
+    "clutches"
+   ],
+   "alsoWorksFor": [
+    "heels",
+    "sandals"
+   ],
+   "studio": true,
+   "crop": "head-feet",
+   "shownOn": {
+    "modelId": "zara",
+    "name": "Zara"
+   },
+   "mine": false,
+   "approvedAt": "2026-09-28T22:40:35.227Z"
+  },
+  {
+   "id": "community:9c66a0f3-6757-5384-9d3c-ed791a80e004",
+   "kind": "pose",
+   "service": "pose_creation",
+   "modelId": "zara",
+   "title": "Felt hat and camel coat, perched on stool",
+   "prompt": "Three-quarter crop from the head to just above the knee. Body turned about 45 degrees facing camera-left wearing the felt hat and the optical frames, one hand resting at the coat lapel. Face to the lens; hat, frames, coat and trouser front visible.",
+   "angle": "front",
+   "imageUrl": "img/ed912724d549068334b1a8ec3a0d50d8996cc46435608e4bfa1de3ac5cc1d389-1080.webp",
+   "creativeTags": [
+    "editorial",
+    "casual",
+    "studio"
+   ],
+   "bestFor": [
+    "bucket_hats",
+    "long_coats",
+    "optical_frames"
+   ],
+   "alsoWorksFor": [
+    "sweaters",
+    "jeans",
+    "straight_trousers"
+   ],
+   "studio": true,
+   "crop": "head-knees",
+   "shownOn": {
+    "modelId": "zara",
+    "name": "Zara"
+   },
+   "mine": false,
+   "approvedAt": "2026-09-28T22:40:33.148Z"
+  },
+  {
+   "id": "community:39d7a2e1-b719-5d44-aaa6-2ab91931266e",
+   "kind": "pose",
+   "service": "pose_creation",
+   "modelId": "zara",
+   "title": "Beanie, portrait 3/4",
+   "prompt": "Close portrait crop from the crown to mid-chest. Head and shoulders turned about 45 degrees facing camera-right, wearing the beanie, warm smile to the lens. Beanie cuff, the wool scarf and hoodie neckline visible.",
+   "angle": "front",
+   "imageUrl": "img/305636952af1daae08aa64a791e00c162e3d6d1dfe8d2390f776284a08d32f67-1080.webp",
+   "creativeTags": [
+    "casual",
+    "streetwear",
+    "studio"
+   ],
+   "bestFor": [
+    "beanies",
+    "scarves",
+    "hoodies"
+   ],
+   "alsoWorksFor": [
+    "sweatshirts"
+   ],
+   "studio": true,
+   "crop": "head-chest",
+   "shownOn": {
+    "modelId": "zara",
+    "name": "Zara"
+   },
+   "mine": false,
+   "approvedAt": "2026-09-28T22:40:31.745Z"
+  }
+ ]
+}

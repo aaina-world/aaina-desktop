@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>States · Aaina Desktop</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../assets/ds.css">
+<link rel="stylesheet" href="../assets/desktop.css">
+<script src="../assets/shell.js"></script>
+<style>
+  .sgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-5); align-items: stretch; }
+  .sgrid .wide { grid-column: 1 / -1; }
+  .scard { display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+  .scard .cap { padding: var(--s-4) var(--s-5) var(--s-3); display: flex; flex-direction: column; gap: 4px; }
+  .scard .cap .t { font-size: var(--text-md); font-weight: 600; }
+  .scard .cap .d { font-size: var(--text-sm); color: var(--fg-muted); line-height: 1.45; }
+  .frame { position: relative; flex: 1; margin: 0 var(--s-4) var(--s-4); border-radius: var(--r-md); background: var(--bg-sunken); border: 1px solid var(--line); overflow: hidden; display: flex; flex-direction: column; min-height: 200px; }
+  .frame .fbar { display: flex; align-items: center; gap: 10px; height: 52px; padding: 0 16px; background: var(--bg); border-bottom: 1px solid var(--line); flex: none; }
+  .frame .fbar .here { font-size: var(--text-sm); font-weight: 600; }
+  .frame .fbody { padding: var(--s-4); flex: 1; min-height: 0; }
+  .frame .fbody.center-it { display: flex; align-items: center; justify-content: center; }
+  .frame .fbar .notice { min-height: 32px; padding: 4px 12px; margin-left: auto; font-size: var(--text-xs); }
+  .frame .fbar .notice .ico { width: 14px; height: 14px; }
+
+  .dl { display: flex; flex-direction: column; gap: 12px; width: min(440px, 100%); padding: var(--s-5); background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--r-lg); }
+  .dl .top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .dl .mono { font: 500 var(--text-xs)/1 var(--font-mono); color: var(--fg-muted); }
+
+  .skgrid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+  .nmac .appi .brand-mark, .nwin .appi .brand-mark { width: 100% !important; height: 100% !important; color: var(--fg-inverse); }
+  .nmac .appi svg g, .nwin .appi svg g { stroke: none; }
+  .skgrid .sk { background: linear-gradient(90deg, var(--bg-raised) 0%, var(--bg) 50%, var(--bg-raised) 100%); background-size: 200% 100%; aspect-ratio: 3 / 4; border-radius: var(--r-md); }
+
+  .frame.dropf .fbody { opacity: .5; }
+  .frame.dropf .drop-overlay { position: absolute; inset: 0; z-index: 2; }
+  .frame.dropf .drop-overlay .box { padding: 28px 40px; }
+  .frame.dropf .drop-overlay .box .ico-ring { margin: 0 auto 10px; }
+
+  .toasts .toast { white-space: nowrap; }
+  .toasts { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .toasts .toast .ico { width: 18px; height: 18px; color: var(--success); flex: none; }
+  .toasts .toast .link-like { margin-left: 8px; font-weight: 600; color: var(--accent); }
+  .toasts .cap2 { font-size: var(--text-xs); color: var(--fg-subtle); }
+
+  .failed { display: flex; gap: 14px; align-items: stretch; width: min(520px, 100%); padding: 12px; border-radius: var(--r-lg); background: var(--bg-raised); border: 1px solid var(--line); }
+  .failed .th { width: 120px; aspect-ratio: 3 / 4; flex: none; border-radius: var(--r-md); background: var(--bg-sunken); display: grid; place-items: center; color: var(--fg-subtle); border: 1px dashed var(--line-strong); }
+  .failed .th .ico { width: 28px; height: 28px; stroke-width: 1.3; }
+  .failed .tx { display: flex; flex-direction: column; justify-content: center; gap: 8px; min-width: 0; }
+  .failed .tx .h { font-size: var(--text-md); font-weight: 600; }
+  .failed .tx .p { font-size: var(--text-sm); color: var(--fg-muted); line-height: 1.45; }
+
+  /* Native notifications, drawn to look like each system's */
+  .notifs { display: flex; flex-direction: column; gap: 18px; align-items: center; justify-content: center; width: 100%; }
+  .nlabel { font: 500 var(--text-2xs)/1 var(--font-mono); color: var(--fg-subtle); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 8px; }
+  .nmac { width: 360px; max-width: 100%; display: flex; gap: 10px; padding: 12px; border-radius: 16px; background: color-mix(in srgb, var(--bg-raised) 88%, transparent); border: 1px solid var(--line); box-shadow: var(--shadow-2); }
+  .nmac .appi, .nwin .appi { width: 38px; height: 38px; border-radius: 9px; background: var(--bg-inverse); color: var(--fg-inverse); display: grid; place-items: center; flex: none; }
+  .nmac .appi svg, .nwin .appi svg { width: 24px; height: 24px; color: var(--fg-inverse); }
+  .nmac .tx { min-width: 0; flex: 1; }
+  .nmac .tx .a { display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; }
+  .nmac .tx .a span { font-weight: 400; color: var(--fg-subtle); font-size: 12px; }
+  .nmac .tx .b { font-size: 13px; color: var(--fg); margin-top: 1px; }
+  .nmac .tx .c { font-size: 13px; color: var(--fg-muted); }
+  .nwin { width: 360px; max-width: 100%; padding: 12px 14px 14px; border-radius: 8px; background: var(--bg-raised); border: 1px solid var(--line-strong); box-shadow: var(--shadow-2); }
+  .nwin .h { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--fg-muted); margin-bottom: 8px; }
+  .nwin .h .appi { width: 16px; height: 16px; border-radius: 4px; }
+  .nwin .h .appi svg { width: 11px; height: 11px; }
+  .nwin .h .x { margin-left: auto; color: var(--fg-subtle); }
+  .nwin .h .x .ico { width: 14px; height: 14px; }
+  .nwin .b { font-size: 14px; font-weight: 600; }
+  .nwin .c { font-size: 13px; color: var(--fg-muted); margin-top: 2px; }
+
+  .childline { display: flex; flex-direction: column; gap: 14px; width: min(560px, 100%); }
+  .child-tabs { display: flex; gap: 10px; flex-wrap: wrap; }
+  .child-card { display: flex; align-items: center; gap: 10px; padding: 8px 12px 8px 8px; border-radius: var(--r-md); background: var(--bg-raised); border: 1px solid var(--line); font-size: var(--text-sm); font-weight: 500; opacity: .55; }
+  .child-card .i { width: 32px; height: 32px; border-radius: var(--r-sm); background: var(--bg-sunken); display: grid; place-items: center; color: var(--fg-subtle); }
+
+  .frame .empty { margin: 0; background: var(--bg); border-radius: var(--r-lg); padding: var(--s-10) var(--s-6); width: 100%; }
+</style>
+
+<body data-nav="home">
+<main class="main" id="main">
+  <header class="topbar">
+    <div class="crumbs"><a href="home.html">Home</a><span class="sep">/</span><span class="here">States</span></div>
+  </header>
+  <div class="page">
+    <div class="page-head"><div><h1 class="t-page">In-app <em class="italic">states</em></h1><p class="lede">What the app shows when something is missing, slow, or has just happened. Each one is drawn in a frame, with a note on when it appears.</p></div></div>
+
+    <div class="sgrid">
+
+      <div class="card scard">
+        <div class="cap"><span class="t">Offline</span><span class="d">The computer has no internet. Browsing the cached catalogue and every saved shoot still works. Making photos waits until it is back.</span></div>
+        <div class="frame">
+          <div class="fbar"><span class="here">Library</span><div class="notice warning"><i data-i="offline"></i><span>You're offline. Making photos is paused.</span></div></div>
+          <div class="fbody">
+            <div class="skgrid" style="grid-template-columns:repeat(5,minmax(0,1fr))">
+              <div class="tile"><div class="media"><img src="../assets/img/models/chloe.webp" alt=""></div></div>
+              <div class="tile"><div class="media"><img src="../assets/img/models/nia.webp" alt=""></div></div>
+              <div class="tile"><div class="media"><img src="../assets/img/models/tara.webp" alt=""></div></div>
+              <div class="tile"><div class="media"><img src="../assets/img/models/kabir.webp" alt=""></div></div>
+              <div class="tile"><div class="media"><img src="../assets/img/models/camille.webp" alt=""></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card scard">
+        <div class="cap"><span class="t">First download of the catalogue</span><span class="d">Only on the first open, or after a long time. Models, poses and scenes are saved on the computer so browsing is instant afterwards.</span></div>
+        <div class="frame"><div class="fbody center-it">
+          <div class="dl">
+            <div class="top"><span class="t-small" style="font-weight:600">Getting the studio catalogue</span><span class="mono">312 of 377 models</span></div>
+            <div class="progress"><i style="--p:83%"></i></div>
+            <span class="t-caption">About 140 MB in all. You can start a shoot while this finishes.</span>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="card scard">
+        <div class="cap"><span class="t">Loading</span><span class="d">Lists and grids keep their final shape while they load, so nothing jumps when the photos arrive.</span></div>
+        <div class="frame">
+          <div class="fbar"><span class="here">Shoots</span></div>
+          <div class="fbody"><div class="skgrid">
+            <div class="skeleton sk"></div><div class="skeleton sk"></div><div class="skeleton sk"></div><div class="skeleton sk"></div><div class="skeleton sk"></div>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="card scard">
+        <div class="cap"><span class="t">Dragging photos over the window</span><span class="d">Dropping product photos anywhere in the app starts a new shoot with them.</span></div>
+        <div class="frame dropf">
+          <div class="fbar"><span class="here">Home</span></div>
+          <div class="fbody"><div class="skgrid"><div class="skeleton sk" style="aspect-ratio:4/3"></div><div class="skeleton sk" style="aspect-ratio:4/3"></div><div class="skeleton sk" style="aspect-ratio:4/3"></div><div class="skeleton sk" style="aspect-ratio:4/3"></div><div class="skeleton sk" style="aspect-ratio:4/3"></div></div></div>
+          <div class="drop-overlay"><div class="box"><span class="ico-ring"><i data-i="upload" class="lg"></i></span><div class="t-title">Drop to start a new shoot</div><div class="t-caption mt-1">JPG, PNG or WebP · up to 6 photos</div></div></div>
+        </div>
+      </div>
+
+      <div class="card scard">
+        <div class="cap"><span class="t">Toasts</span><span class="d">A small confirmation after an action that has nothing else to show. They fade away by themselves.</span></div>
+        <div class="frame"><div class="fbody center-it"><div class="toasts">
+          <span class="toast"><i data-i="check"></i>Saved to <span data-path>~/Pictures/Aaina</span><span class="link-like"><span data-folder>Show in Finder</span></span></span>
+          <span class="toast"><i data-i="check"></i>Copied</span>
+        </div></div></div>
+      </div>
+
+      <div class="card scard">
+        <div class="cap"><span class="t">A photo that failed</span><span class="d">OpenAI could not make it. The photo stays in its place in the shoot, with one clear way forward.</span></div>
+        <div class="frame"><div class="fbody center-it">
+          <div class="failed">
+            <div class="th"><i data-i="alert"></i></div>
+            <div class="tx">
+              <span class="h">This photo wasn't made</span>
+              <span class="p">OpenAI couldn't finish it this time. OpenAI wasn't charged.</span>
+              <div class="row" style="--gap:8px"><button class="btn btn-primary btn-sm"><i data-i="refresh" class="sm"></i>Try again</button><button class="btn btn-ghost btn-sm">Remove</button></div>
+            </div>
+          </div>
+        </div></div>
+      </div>
+
+      <div class="card scard">
+        <div class="cap"><span class="t">System notification</span><span class="d">When a shoot finishes while the app is in the background. Clicking it opens that shoot.</span></div>
+        <div class="frame"><div class="fbody center-it"><div class="notifs">
+          <div><div class="nlabel">macOS</div>
+            <div class="nmac"><span class="appi" data-logo></span><div class="tx"><div class="a">Aaina Desktop<span>now</span></div><div class="b">4 photos are ready</div><div class="c">Cobalt T-shirt</div></div></div></div>
+          <div><div class="nlabel">Windows</div>
+            <div class="nwin"><div class="h"><span class="appi" data-logo></span>Aaina Desktop<span class="x"><i data-i="x"></i></span></div><div class="b">4 photos are ready</div><div class="c">Cobalt T-shirt</div></div></div>
+        </div></div></div>
+      </div>
+
+      
+
+      <div class="card scard wide">
+        <div class="cap"><span class="t">Empty library</span><span class="d">Before the first shoot. One action, no clutter.</span></div>
+        <div class="frame">
+          <div class="fbar"><span class="here">Library</span></div>
+          <div class="fbody center-it" style="padding:var(--s-6)">
+            <div class="empty"><span class="art"><i data-i="layers"></i></span><h3 class="t-title">Nothing here yet</h3><p>Products, photos and your own models will collect here as you make them.</p><a class="btn btn-primary" href="create-product.html"><i data-i="plus"></i>Start a shoot</a></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+</body>

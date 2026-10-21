@@ -1,0 +1,19 @@
+name: Bug report
+description: Something is not working
+labels: [bug]
+body:
+  - type: input
+    id: os
+    attributes: { label: Your system, placeholder: "macOS 15, Windows 11, Ubuntu 24.04" }
+    validations: { required: true }
+  - type: input
+    id: version
+    attributes: { label: Aaina Desktop version, placeholder: "0.1.0" }
+    validations: { required: true }
+  - type: textarea
+    id: steps
+    attributes: { label: Steps to see it, description: "What did you do, what did you expect, what happened?" }
+    validations: { required: true }
+  - type: textarea
+    id: extra
+    attributes: { label: Screenshots or anything else, description: "Please never paste your OpenAI key." }

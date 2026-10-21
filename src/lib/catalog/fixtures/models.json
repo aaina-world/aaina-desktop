@@ -1,0 +1,159 @@
+{
+ "schema": "aaina-catalog-v1",
+ "items": [
+  {
+   "id": "aaina",
+   "name": "Aaina",
+   "minor": false,
+   "sheet": true,
+   "previewImageUrl": "img/dd3101f1ee982e55fe488ca47c3e325451bb36c6f64b8905c90923b451c40c09-1080.webp",
+   "faceImageUrl": "img/3bb74ed42eb3e7ee7e8ac3289212d9bc43618270a5112dec20b9f29b6cbcf314-1080.webp",
+   "referencePhotoCount": 4,
+   "gender": "woman",
+   "ageGroup": "adult",
+   "age": 26,
+   "look": "south_asian",
+   "body": "slim",
+   "tags": [
+    "supermodel"
+   ],
+   "appearance": "young Indian woman, age 26, with long straight black hair",
+   "suits": {
+    "crewneck_tshirts": [
+     83,
+     297
+    ],
+    "straight_trousers": [
+     162,
+     195
+    ],
+    "oversized_tshirts": [
+     31,
+     63
+    ],
+    "shirts": [
+     25,
+     68
+    ],
+    "blouses": [
+     30,
+     114
+    ],
+    "sleeveless_tops": [
+     29,
+     73
+    ]
+   },
+   "photos": [
+    {
+     "id": "03f3517b-a0fe-4bf5-b182-838bc0f5abc0",
+     "modelId": "aaina",
+     "title": "Full length, three-quarter",
+     "angle": "three_quarter",
+     "sha256": "8297ca91dd263b8d68a68d50182924d423e34c39828dff9366ecfd3a25fcbd45",
+     "width": 900,
+     "height": 1200,
+     "status": "approved",
+     "imageUrl": "img/8297ca91dd263b8d68a68d50182924d423e34c39828dff9366ecfd3a25fcbd45-1080.webp",
+     "createdAt": "2026-09-28T23:18:17.512Z",
+     "isCover": false,
+     "galleryHidden": false,
+     "available": true
+    },
+    {
+     "id": "6e85c354-a5c1-4eec-bb78-bef5dba02075",
+     "modelId": "aaina",
+     "title": "Full length, front",
+     "angle": "front",
+     "sha256": "dd3101f1ee982e55fe488ca47c3e325451bb36c6f64b8905c90923b451c40c09",
+     "width": 900,
+     "height": 1200,
+     "status": "approved",
+     "imageUrl": "img/dd3101f1ee982e55fe488ca47c3e325451bb36c6f64b8905c90923b451c40c09-1080.webp",
+     "createdAt": "2026-09-28T23:18:16.067Z",
+     "isCover": false,
+     "galleryHidden": false,
+     "available": true
+    },
+    {
+     "id": "709cca4f-5240-40ad-a6f2-13fb407087a2",
+     "modelId": "aaina",
+     "title": "Card: head and shoulders",
+     "angle": "front",
+     "sha256": "615f5996c52b9aac936f0bfc2d6573d4f7f86edd1821698c32793d1c3b528a42",
+     "width": 900,
+     "height": 1200,
+     "status": "approved",
+     "imageUrl": "img/615f5996c52b9aac936f0bfc2d6573d4f7f86edd1821698c32793d1c3b528a42-1080.webp",
+     "createdAt": "2026-09-28T23:18:14.433Z",
+     "isCover": false,
+     "galleryHidden": false,
+     "available": true
+    }
+   ]
+  },
+  {
+   "id": "hana",
+   "name": "Hana",
+   "minor": false,
+   "sheet": true,
+   "sharedPoses": true,
+   "previewImageUrl": "img/8669f3bc5f115e1cddda7e62d2c1ec88d7d4e90111078c1c5dabd2ffdeba2886-1080.webp",
+   "faceImageUrl": "img/54b910402696d85d09f74d71936060711abb4248b852d49c5d4edd412fde3031-1080.webp",
+   "referencePhotoCount": 1,
+   "gender": "woman",
+   "ageGroup": "mature",
+   "age": 55,
+   "look": "east_asian",
+   "body": "slim",
+   "tags": [],
+   "appearance": "East Asian woman, 55, light warm skin, shoulder-length dark-brown hair with grey",
+   "poolKey": "044f3d84140a9c40",
+   "photos": [
+    {
+     "id": "0948d056-7aef-4c66-9e84-fa80e5cdeb3a",
+     "modelId": "hana",
+     "title": "Sheet Hana",
+     "angle": "sheet",
+     "sha256": "8669f3bc5f115e1cddda7e62d2c1ec88d7d4e90111078c1c5dabd2ffdeba2886",
+     "width": 1024,
+     "height": 1024,
+     "status": "approved",
+     "imageUrl": "img/8669f3bc5f115e1cddda7e62d2c1ec88d7d4e90111078c1c5dabd2ffdeba2886-1080.webp",
+     "createdAt": "2026-10-08T04:58:59.656Z",
+     "isCover": true,
+     "galleryHidden": false,
+     "available": true
+    }
+   ]
+  }
+ ],
+ "pools": {
+  "044f3d84140a9c40": {
+   "crewneck_tshirts": [
+    83,
+    297
+   ],
+   "straight_trousers": [
+    162,
+    195
+   ],
+   "oversized_tshirts": [
+    31,
+    63
+   ],
+   "shirts": [
+    25,
+    68
+   ],
+   "blouses": [
+    40,
+    114
+   ],
+   "sleeveless_tops": [
+    29,
+    73
+   ]
+  }
+ }
+}

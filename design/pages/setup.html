@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Set up · Aaina Desktop</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../assets/ds.css">
+<link rel="stylesheet" href="../assets/desktop.css">
+<script src="../assets/shell.js"></script>
+<style>
+  .ob { min-height: calc(100vh - var(--chrome-h)); display: flex; flex-direction: column; padding: 52px 0 32px; }
+  .ob-top { display: flex; align-items: center; gap: 10px; padding: 0 64px; color: var(--fg); }
+  .ob-top .brand-mark { width: 34px; height: 34px; }
+  .ob-top .prog { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+  .ob-top .prog .progress { width: 160px; }
+  .ob-body { width: 100%; max-width: 640px; margin: 0 auto; padding: var(--s-8) var(--s-6) var(--s-6); display: flex; flex-direction: column; gap: var(--s-5); flex: 1; }
+  .ob-foot { display: flex; align-items: center; gap: var(--s-4); width: 100%; max-width: 640px; margin: 0 auto; padding: 0 var(--s-6); }
+  .card-row .k { font-size: var(--text-sm); font-weight: 500; } .card-row .v { font-size: var(--text-xs); color: var(--fg-subtle); }
+  .card-row .ic { width: 36px; height: 36px; border-radius: var(--r-sm); background: var(--bg-sunken); display: grid; place-items: center; flex: none; color: var(--fg-muted); }
+  .path { font: 500 var(--text-xs)/1.3 var(--font-mono); color: var(--fg-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .priv { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--s-5); }
+  .priv h3 { font: 600 var(--text-sm)/1.3 var(--font-sans); display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .priv p { font-size: var(--text-xs); color: var(--fg-muted); line-height: 1.5; }
+</style>
+<body data-shell="bare">
+<main class="main" id="main">
+  <div class="ob">
+    <header class="ob-top"><span data-logo></span><span class="brand-stack"><span class="brand-word">AAINA</span><span class="brand-sub">Desktop</span></span>
+      <div class="prog"><span class="t-caption">Step 3 of 3</span><div class="progress" role="progressbar" aria-valuenow="3" aria-valuemin="1" aria-valuemax="3"><i style="--p:100%"></i></div></div></header>
+    <div class="ob-body">
+      <div>
+        <h1 class="t-page">Where should photos <em class="italic">go</em>?</h1>
+        <p class="muted" style="max-width:52ch;margin-top:10px">Your finished photos are saved as normal files in a folder you can open any time.</p>
+      </div>
+      <div class="card">
+        <div class="card-row"><span class="ic"><i data-i="folder"></i></span><div class="grow" style="min-width:0"><div class="k">Photos folder</div><div class="path mt-1" data-path>~/Pictures/Aaina</div></div><button class="btn btn-secondary btn-sm">Change…</button></div>
+        <div class="card-row"><span class="ic"><i data-i="offline"></i></span><div class="grow"><div class="k">Keep the studio catalogue for offline use</div><div class="v">Models, poses and scenes are saved here so you can browse without internet. <span class="t-mono">about 1.2 GB</span></div></div><button class="switch" role="switch" aria-checked="true" aria-label="Keep the studio catalogue for offline use"></button></div>
+        <div class="card-row"><span class="ic"><i data-i="bell"></i></span><div class="grow"><div class="k">Tell me when photos are ready</div><div class="v">A quiet notification from your computer.</div></div><button class="switch" role="switch" aria-checked="true" aria-label="Tell me when photos are ready"></button></div>
+      </div>
+      <div class="well">
+        <div class="priv">
+          <div><h3><i data-i="lock" class="sm"></i>Stays on this computer</h3><p>Your products, shoots, photos, own models, and your key.</p></div>
+          <div><h3><i data-i="upload" class="sm"></i>Sent to OpenAI</h3><p>Your product photos, plus the model, pose and scene for each photo you make.</p></div>
+          <div><h3><i data-i="shield" class="sm"></i>Sent to Aaina</h3><p>Nothing, except downloading the studio catalogue. No tracking.</p></div>
+        </div>
+      </div>
+    </div>
+    <footer class="ob-foot">
+      <a class="btn btn-ghost" href="connect.html"><i data-i="left" class="sm"></i>Back</a>
+      <div class="grow"></div>
+      <a class="btn btn-primary btn-lg" href="home.html">Start using Aaina</a>
+    </footer>
+  </div>
+</main>
+</body>

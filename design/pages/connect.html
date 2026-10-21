@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Connect OpenAI · Aaina Desktop</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../assets/ds.css">
+<link rel="stylesheet" href="../assets/desktop.css">
+<script src="../assets/shell.js"></script>
+<style>
+  .ob { min-height: calc(100vh - var(--chrome-h)); display: flex; flex-direction: column; padding: 52px 0 32px; }
+  .ob-top { display: flex; align-items: center; gap: 10px; padding: 0 64px; color: var(--fg); }
+  .ob-top .brand-mark { width: 34px; height: 34px; }
+  .ob-top .prog { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+  .ob-top .prog .progress { width: 160px; }
+  .ob-body { width: 100%; max-width: 640px; margin: 0 auto; padding: var(--s-8) var(--s-6) var(--s-6); display: flex; flex-direction: column; gap: var(--s-5); flex: 1; }
+  .opt { padding: var(--s-5); display: flex; flex-direction: column; gap: var(--s-4); }
+  .opt-head { display: flex; align-items: flex-start; gap: var(--s-4); }
+  .opt-head .ic { width: 40px; height: 40px; border-radius: var(--r-md); background: var(--bg-sunken); display: grid; place-items: center; flex: none; }
+  .opt-head .grow { min-width: 0; }
+  .opt-head .grow h2 { font: 600 var(--text-md)/1.3 var(--font-sans); }
+  .keyrow { display: flex; gap: var(--s-2); }
+  .keyrow .input-wrap { flex: 1; }
+  .keyrow .input { padding-right: 44px; padding-left: 14px; font-family: var(--font-mono); }
+  .keyrow .eye { position: absolute; right: 4px; }
+  .ok-line { display: flex; gap: 6px; align-items: center; font-size: var(--text-xs); color: var(--success); font-weight: 500; }
+  .facts { display: flex; flex-direction: column; gap: 6px; }
+  .ob-foot { display: flex; align-items: center; gap: var(--s-4); width: 100%; max-width: 640px; margin: 0 auto; padding: 0 var(--s-6); }
+</style>
+<body data-shell="bare">
+<main class="main" id="main">
+  <div class="ob">
+    <header class="ob-top"><span data-logo></span><span class="brand-stack"><span class="brand-word">AAINA</span><span class="brand-sub">Desktop</span></span>
+      <div class="prog"><span class="t-caption">Step 2 of 3</span><div class="progress" role="progressbar" aria-valuenow="2" aria-valuemin="1" aria-valuemax="3"><i style="--p:66%"></i></div></div></header>
+    <div class="ob-body">
+      <div>
+        <h1 class="t-page">Connect <em class="italic">OpenAI</em></h1>
+        <p class="muted" style="max-width:52ch;margin-top:10px">Aaina Desktop uses OpenAI to read your products and make the photos. You pay OpenAI directly; Aaina never sees your key.</p>
+      </div>
+      <div class="notice mockstrip" data-panels="st" style="flex-wrap:wrap;gap:8px"><b>Mockup state:</b><div class="segmented" role="tablist" aria-label="Mockup state" style="flex-basis:100%">
+        <button role="tab" aria-selected="true" data-panel="empty">Empty</button><button role="tab" aria-selected="false" data-panel="checking">Checking</button><button role="tab" aria-selected="false" data-panel="works">Works</button><button role="tab" aria-selected="false" data-panel="refused">Refused</button><button role="tab" aria-selected="false" data-panel="verify">Needs verification</button><button role="tab" aria-selected="false" data-panel="chatgpt">ChatGPT</button></div></div>
+
+      <section class="card opt">
+        <div class="opt-head"><span class="ic"><i data-i="chatgpt"></i></span><div class="grow"><h2>Sign in with ChatGPT</h2>
+          <p class="t-small muted mt-1" style="max-width:50ch">Uses your ChatGPT plan for product readings. OpenAI doesn't let ChatGPT plans make photos in other apps yet; we'll switch you over when it does.</p></div></div>
+        <div data-panel-of="st" data-panel-id="empty"><button class="btn btn-primary"><i data-i="chatgpt" class="sm"></i>Sign in with ChatGPT</button></div>
+        <div data-panel-of="st" data-panel-id="checking" hidden><button class="btn btn-primary"><i data-i="chatgpt" class="sm"></i>Sign in with ChatGPT</button></div>
+        <div data-panel-of="st" data-panel-id="works" hidden><button class="btn btn-primary"><i data-i="chatgpt" class="sm"></i>Sign in with ChatGPT</button></div>
+        <div data-panel-of="st" data-panel-id="refused" hidden><button class="btn btn-primary"><i data-i="chatgpt" class="sm"></i>Sign in with ChatGPT</button></div>
+        <div data-panel-of="st" data-panel-id="verify" hidden><button class="btn btn-primary"><i data-i="chatgpt" class="sm"></i>Sign in with ChatGPT</button></div>
+        <div data-panel-of="st" data-panel-id="chatgpt" hidden style="display:flex;align-items:center;gap:var(--s-3)" class="">
+          <span class="badge success dot">Connected</span><span class="t-small grow">Signed in as <b>you@example.com</b> · Plus plan</span><button class="btn btn-ghost btn-sm">Sign out</button></div>
+      </section>
+
+      <section class="card opt">
+        <div class="opt-head"><span class="ic"><i data-i="key"></i></span><div class="grow"><h2>Your OpenAI key</h2>
+          <p class="t-small muted mt-1">Needed for photos for now.</p></div></div>
+        <div class="field">
+          <label class="label" for="key">API key</label>
+          <div class="keyrow">
+            <div class="input-wrap" data-panel-of="st" data-panel-id="empty"><input class="input" id="key" type="password" placeholder="sk-…" autocomplete="off"><button class="btn btn-ghost btn-icon btn-sm eye" aria-label="Show key"><i data-i="eye" class="sm"></i></button></div>
+            <div class="input-wrap" data-panel-of="st" data-panel-id="checking" hidden><input class="input" type="password" value="sk-proj-example0000" autocomplete="off"><button class="btn btn-ghost btn-icon btn-sm eye" aria-label="Show key"><i data-i="eye" class="sm"></i></button></div>
+            <div class="input-wrap" data-panel-of="st" data-panel-id="works" hidden><input class="input" type="password" value="sk-proj-example0000" autocomplete="off"><button class="btn btn-ghost btn-icon btn-sm eye" aria-label="Show key"><i data-i="eye" class="sm"></i></button></div>
+            <div class="input-wrap field invalid" data-panel-of="st" data-panel-id="refused" hidden><input class="input" type="password" value="sk-proj-4f8e2a91c7d3b5" autocomplete="off"><button class="btn btn-ghost btn-icon btn-sm eye" aria-label="Show key"><i data-i="eye" class="sm"></i></button></div>
+            <div class="input-wrap" data-panel-of="st" data-panel-id="verify" hidden><input class="input" type="password" value="sk-proj-example0000" autocomplete="off"><button class="btn btn-ghost btn-icon btn-sm eye" aria-label="Show key"><i data-i="eye" class="sm"></i></button></div>
+            <div class="input-wrap" data-panel-of="st" data-panel-id="chatgpt" hidden><input class="input" type="password" placeholder="sk-…" autocomplete="off"><button class="btn btn-ghost btn-icon btn-sm eye" aria-label="Show key"><i data-i="eye" class="sm"></i></button></div>
+            <span data-panel-of="st" data-panel-id="empty"><button class="btn btn-secondary" style="height:var(--h,40px)">Check key</button></span>
+            <span data-panel-of="st" data-panel-id="checking" hidden><button class="btn btn-secondary" disabled><span class="spinner"></span>Checking</button></span>
+            <span data-panel-of="st" data-panel-id="works" hidden><button class="btn btn-secondary">Check key</button></span>
+            <span data-panel-of="st" data-panel-id="refused" hidden><button class="btn btn-secondary">Check key</button></span>
+            <span data-panel-of="st" data-panel-id="verify" hidden><button class="btn btn-secondary">Check key</button></span>
+            <span data-panel-of="st" data-panel-id="chatgpt" hidden><button class="btn btn-secondary">Check key</button></span>
+          </div>
+          <div data-panel-of="st" data-panel-id="works" hidden class="ok-line"><i data-i="check" class="sm"></i>Key works. You can make photos.</div>
+          <div data-panel-of="st" data-panel-id="refused" hidden class="field-error"><i data-i="alert" class="sm"></i>OpenAI didn't accept this key. Check it was copied in full.</div>
+          <a class="btn btn-link t-small" href="#" style="align-self:flex-start;margin-left:1px">Where do I get a key?</a>
+        </div>
+        <div data-panel-of="st" data-panel-id="verify" hidden class="notice warning"><i data-i="alert"></i><span>OpenAI asks new accounts to verify the organisation before making photos. Verify on platform.openai.com, then come back.</span><button class="btn btn-secondary btn-sm" style="margin-left:auto;flex:none">Open OpenAI settings</button></div>
+        <div class="facts">
+          <span class="local-note"><i data-i="lock"></i>Kept in your Mac's Keychain (Windows: Credential Manager) and sent only to OpenAI.</span>
+          <span class="local-note"><i data-i="coin"></i>About $0.05 a photo, billed by OpenAI.</span>
+        </div>
+      </section>
+    </div>
+    <footer class="ob-foot">
+      <a class="btn btn-ghost" href="welcome.html"><i data-i="left" class="sm"></i>Back</a>
+      <div class="grow"></div>
+      <a class="btn btn-link" href="home.html">Skip for now</a>
+      <a class="btn btn-primary" href="setup.html">Continue</a>
+    </footer>
+  </div>
+</main>
+</body>

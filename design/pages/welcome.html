@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Welcome · Aaina Desktop</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../assets/ds.css">
+<link rel="stylesheet" href="../assets/desktop.css">
+<script src="../assets/shell.js"></script>
+<style>
+  .wl { height: calc(100vh - var(--chrome-h)); min-height: 600px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); }
+  .wl-left { display: flex; flex-direction: column; padding: 52px 64px 40px; }
+  .wl-brand { display: flex; align-items: center; gap: 10px; color: var(--fg); }
+  .wl-brand .brand-mark { width: 34px; height: 34px; }
+  .wl-copy { margin: auto 0; display: flex; flex-direction: column; gap: var(--s-5); max-width: 460px; padding: var(--s-10) 0; }
+  .wl-copy .actions { display: flex; flex-direction: column; align-items: flex-start; gap: var(--s-3); margin-top: var(--s-2); }
+  .wl-right { padding: 52px 52px 40px 0; display: flex; }
+  .collage { flex: 1; display: grid; grid-template-columns: 1.15fr 1fr; grid-template-rows: 1.25fr 1fr; gap: 12px; min-height: 0; }
+  .collage figure { margin: 0; border-radius: var(--r-xl); overflow: hidden; background: var(--bg-sunken); position: relative; min-height: 0; }
+  .collage img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 20%; display: block; }
+  .collage .tall { grid-row: span 2; }
+  .collage figcaption { position: absolute; left: 12px; bottom: 12px; }
+</style>
+<body data-shell="bare">
+<main class="main" id="main">
+  <div class="wl">
+    <section class="wl-left">
+      <div class="wl-brand"><span data-logo></span><span class="brand-stack"><span class="brand-word">AAINA</span><span class="brand-sub">Desktop</span></span></div>
+      <div class="wl-copy">
+        <span class="t-eyebrow">Welcome</span>
+        <h1 class="t-display">Model photos of your products, made <em class="italic">here</em>.</h1>
+        <p class="muted" style="max-width:44ch">Add a product photo, pick a model, poses and a scene, and get photos ready for your store. Everything is made and kept on your computer. Free and open source.</p>
+        <div class="actions">
+          <a class="btn btn-primary btn-lg" href="connect.html">Get started<i data-i="right" class="sm"></i></a>
+          <span class="local-note"><i data-i="github"></i>Open source · No account needed</span>
+        </div>
+      </div>
+    </section>
+    <section class="wl-right" aria-hidden="true">
+      <div class="collage">
+        <figure class="tall"><img src="../assets/img/start/photoshoot-chloe-600.webp" alt=""></figure>
+        <figure><img src="../assets/img/library/model-tara-p.webp" alt=""></figure>
+        <figure><img src="../assets/img/library/model-nia-p.webp" alt=""></figure>
+      </div>
+    </section>
+  </div>
+</main>
+</body>

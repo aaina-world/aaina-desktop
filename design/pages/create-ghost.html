@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Choose angles · Aaina Desktop</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../assets/ds.css">
+<link rel="stylesheet" href="../assets/desktop.css">
+<script src="../assets/shell.js"></script>
+<style>
+  .flowbar { display: flex; align-items: center; gap: var(--s-3); min-width: 0; }
+  .flowbar .stepper { flex: 1; justify-content: center; }
+  @media (max-width: 1179px) { .flowbar .crumbs { display: none; } }
+  .saved { display: inline-flex; align-items: center; gap: 6px; font: 500 var(--text-2xs)/1 var(--font-mono); color: var(--fg-subtle); white-space: nowrap; }
+  .saved .ico { width: 14px; height: 14px; color: var(--success); }
+  .mockstrip { margin-bottom: var(--s-5); flex-wrap: wrap; }
+  .mockstrip .segmented { margin-left: auto; }
+  .summary-card .sum-row { display: flex; align-items: center; gap: 12px; padding: 12px 16px; }
+  .summary-card .sum-row + .sum-row { border-top: 1px solid var(--line); }
+  .summary-card .sum-row img { width: 40px; height: 52px; border-radius: var(--r-xs); object-fit: cover; background: #fff; flex: none; }
+  .summary-card .sum-row .ph { width: 40px; height: 52px; border-radius: var(--r-xs); background: var(--bg-sunken); flex: none; display: grid; place-items: center; color: var(--fg-subtle); }
+  .summary-card .sum-row .k { font-size: var(--text-xs); color: var(--fg-subtle); }
+  .summary-card .sum-row .v { font-size: var(--text-sm); font-weight: 500; }
+  .summary-card .sum-row .edit { margin-left: auto; font-size: var(--text-xs); font-weight: 500; color: var(--fg-muted); text-decoration: underline; text-underline-offset: 3px; }
+  .picked { display: flex; gap: 6px; flex-wrap: wrap; }
+  .picked img { width: 40px; height: 52px; border-radius: var(--r-xs); object-fit: cover; }
+  .picked .empty-slot { width: 40px; height: 52px; border-radius: var(--r-xs); border: 1px dashed var(--line-strong); }
+  .block { padding: var(--s-5); display: flex; flex-direction: column; gap: var(--s-4); }
+  .block + .block { margin-top: var(--s-4); }
+  .block-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s-3); }
+  .tile.contain .media { background: #fff; }
+  .quality { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); }
+  .quality .t-small { font-weight: 500; }
+  .price-card .cost { font-size: var(--text-xs); }
+  .keynote { flex: 1 1 200px; display: flex; gap: 8px; align-items: flex-start; font-size: var(--text-xs); color: var(--fg-subtle); line-height: 1.45; }
+  .keynote .ico { width: 14px; height: 14px; margin-top: 1px; }
+  .notice .btn { margin-left: auto; }
+  .readby { display: inline-flex; align-items: center; gap: 6px; font: 500 var(--text-2xs)/1 var(--font-mono); color: var(--fg-subtle); white-space: nowrap; }
+  .readby .ico { width: 14px; height: 14px; }
+
+  .styles { display: grid; gap: var(--s-4); grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  @media (max-width: 1279px) { .styles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .angles { display: grid; gap: var(--s-4); grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .tile .cap .m.wrap { white-space: normal; }
+  .tile .cost { display: block; margin-top: 6px; }
+  .tile.disabled { opacity: .62; cursor: not-allowed; }
+  .tile.disabled .media img { filter: grayscale(.6); }
+  .tile.disabled .lockmark { position: absolute; top: 8px; right: 8px; z-index: 2; width: 24px; height: 24px; border-radius: 50%; background: rgb(255 255 255 / .9); color: #161615; display: grid; place-items: center; }
+  .tile.disabled .lockmark .ico { width: 13px; height: 13px; }
+  .sidebar-row { display: flex; align-items: center; gap: var(--s-3); flex-wrap: wrap; }
+  .chip[disabled] { opacity: .45; pointer-events: none; }
+  .pcard { margin-top: var(--s-6); }
+  .pc-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .colrow { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); flex-wrap: wrap; }
+  .colrow .nm { width: 140px; font-size: var(--text-sm); font-weight: 500; flex: none; }
+  .dots { display: flex; gap: 8px; flex-wrap: wrap; }
+  .dots button { width: 26px; height: 26px; border-radius: 50%; outline: 2px solid transparent; outline-offset: 2px; box-shadow: inset 0 0 0 1px rgb(0 0 0 / .14); }
+  .dots button[aria-pressed="true"] { outline-color: var(--fg); }
+  .dots .match { background: linear-gradient(135deg, #1f4fd1 50%, #fff 50%); }
+  .own3 { display: grid; grid-template-columns: repeat(3, minmax(0, 120px)); gap: var(--s-3); }
+  .own3 .plus-disc { width: 32px; height: 32px; margin: 0 0 4px; }
+</style>
+
+<body data-nav="home" data-flow>
+<main class="main" id="main">
+  <header class="topbar">
+    <div class="flowbar grow">
+      <a class="btn btn-ghost btn-icon" href="create-product.html" aria-label="Back"><i data-i="left"></i></a>
+      <div class="crumbs"><a href="home.html">New shoot</a><span class="sep">/</span><span class="here">Ghost mannequin · Cobalt T-shirt</span></div>
+      <nav class="stepper" aria-label="Steps"><a class="step done" href="create-product.html"><span class="n"><i data-i="check" class="sm" style="width:12px;height:12px"></i></span>Product</a><span class="step-sep"></span><span class="step" aria-current="step"><span class="n">2</span>Angles</span><span class="step-sep"></span><a class="step" href="create-ghost.html#review"><span class="n">3</span>Review</a></nav>
+      <span class="saved" title="Drafts save automatically"><i data-i="check"></i>Saved</span>
+    </div>
+  </header>
+
+  <div class="page">
+    <div class="notice mockstrip" data-panels="state"><b>Mockup state:</b><div class="segmented" role="tablist" aria-label="Mockup state"><button role="tab" aria-selected="true" data-panel="noback">No back photo</button><button role="tab" aria-selected="false" data-panel="back">Back photo added</button></div></div>
+    <div class="split">
+      <section style="min-width:0">
+        <div class="page-head" style="margin-bottom:var(--s-5)"><div><span class="t-eyebrow">Ghost mannequin · Cobalt T-shirt</span><h1 class="t-page mt-2">Choose <em class="italic">angles</em></h1><p class="lede">The garment alone, with an invisible 3D fit. Pick the angles you need.</p></div></div>
+<div data-panel-of="state" data-panel-id="noback"><div class="angles"><button class="tile selectable contain" aria-selected="true"><div class="media" style="--ratio:1/1"><img src="../assets/img/ghost/pocket-front.webp" alt="Front example" style="object-fit:contain"><span class="sel-mark"><span class="order">1</span></span></div><div class="cap"><div class="grow"><div class="t">Front</div><div class="m wrap">Straight on</div><span class="cost">about $0.05</span></div></div></button><button class="tile selectable contain" aria-selected="true"><div class="media" style="--ratio:1/1"><img src="../assets/img/ghost/pocket-three-quarter.webp" alt="Three-quarter example" style="object-fit:contain"><span class="sel-mark"><span class="order">2</span></span></div><div class="cap"><div class="grow"><div class="t">Three-quarter</div><div class="m wrap">Turned 45°</div><span class="cost">about $0.05</span></div></div></button><button class="tile selectable contain" aria-selected="false"><div class="media" style="--ratio:1/1"><img src="../assets/img/ghost/pocket-side.webp" alt="Side example" style="object-fit:contain"><span class="sel-mark"><i data-i="check" class="sm"></i></span></div><div class="cap"><div class="grow"><div class="t">Side</div><div class="m wrap">Turned 90°</div><span class="cost">about $0.05</span></div></div></button><div class="tile disabled contain" aria-disabled="true"><div class="media" style="--ratio:1/1"><img src="../assets/img/ghost/pocket-back-three-quarter.webp" alt="Back three-quarter example" style="object-fit:contain"><span class="lockmark"><i data-i="lock"></i></span></div><div class="cap"><div class="grow"><div class="t">Back three-quarter</div><div class="m wrap">Add a back photo to get this angle</div></div></div></div><button class="tile selectable contain" aria-selected="true"><div class="media" style="--ratio:1/1"><img src="../assets/img/ghost/pocket-back.webp" alt="Back example" style="object-fit:contain"><span class="sel-mark"><span class="order">3</span></span></div><div class="cap"><div class="grow"><div class="t">Back</div><div class="m wrap">From behind</div><span class="cost">about $0.05</span></div></div></button></div>
+        <div class="row spread mt-4" style="flex-wrap:wrap"><div class="t-small"><b>One photo per angle</b> <span class="muted">· about $0.05 each</span></div><span class="t-caption">3 angles picked</span></div>
+        <div class="notice info mt-4"><i data-i="info"></i><span>Back three-quarter needs a back photo of your T-shirt.</span><a class="btn btn-secondary btn-sm" href="create-product.html">Add back photo</a></div>
+        <div class="notice mt-4"><i data-i="sun"></i><span>On a white background. Save on transparent or light grey later.</span></div>
+        <p class="t-caption mt-4">Examples show a plain T-shirt. Your photos show your own garment.</p></div>
+<div data-panel-of="state" data-panel-id="back" hidden><div class="angles"><button class="tile selectable contain" aria-selected="true"><div class="media" style="--ratio:1/1"><img src="../assets/img/ghost/pocket-front.webp" alt="Front example" style="object-fit:contain"><span class="sel-mark"><span class="order">1</span></span></div><div class="cap"><div class="grow"><div class="t">Front</div><div class="m wrap">Straight on</div><span class="cost">about $0.05</span></div></div></button><button class="tile selectable contain" aria-selected="true"><div class="media" style="--ratio:1/1"><img src="../assets/img/ghost/pocket-three-quarter.webp" alt="Three-quarter example" style="object-fit:contain"><span class="sel-mark"><span class="order">2</span></span></div><div class="cap"><div class="grow"><div class="t">Three-quarter</div><div class="m wrap">Turned 45°</div><span class="cost">about $0.05</span></div></div></button><button class="tile selectable contain" aria-selected="false"><div class="media" style="--ratio:1/1"><img src="../assets/img/ghost/pocket-side.webp" alt="Side example" style="object-fit:contain"><span class="sel-mark"><i data-i="check" class="sm"></i></span></div><div class="cap"><div class="grow"><div class="t">Side</div><div class="m wrap">Turned 90°</div><span class="cost">about $0.05</span></div></div></button><button class="tile selectable contain" aria-selected="false"><div class="media" style="--ratio:1/1"><img src="../assets/img/ghost/pocket-back-three-quarter.webp" alt="Back three-quarter example" style="object-fit:contain"><span class="sel-mark"><i data-i="check" class="sm"></i></span></div><div class="cap"><div class="grow"><div class="t">Back three-quarter</div><div class="m wrap">Turned 135°</div><span class="cost">about $0.05</span></div></div></button><button class="tile selectable contain" aria-selected="true"><div class="media" style="--ratio:1/1"><img src="../assets/img/ghost/pocket-back.webp" alt="Back example" style="object-fit:contain"><span class="sel-mark"><span class="order">3</span></span></div><div class="cap"><div class="grow"><div class="t">Back</div><div class="m wrap">From behind</div><span class="cost">about $0.05</span></div></div></button></div>
+        <div class="row spread mt-4" style="flex-wrap:wrap"><div class="t-small"><b>One photo per angle</b> <span class="muted">· about $0.05 each</span></div><span class="t-caption">3 angles picked</span></div>
+        <div class="notice mt-4"><i data-i="sun"></i><span>On a white background. Save on transparent or light grey later.</span></div>
+        <p class="t-caption mt-4">Examples show a plain T-shirt. Your photos show your own garment.</p></div>
+      </section>
+      <aside id="review">
+        <div class="card summary-card"><div class="sum-row"><img src="../assets/img/results/real-ghost.webp" alt="" style="object-fit:contain"><div class="grow"><div class="k">Product</div><div class="v">Cobalt T-shirt</div></div><a class="edit" href="create-product.html">Change</a></div><div class="sum-row" style="align-items:flex-start"><div class="grow"><div class="k" style="margin-bottom:8px">Angles · 3</div><div class="picked"><img src="../assets/img/ghost/pocket-front.webp" alt="" style="object-fit:contain"><img src="../assets/img/ghost/pocket-three-quarter.webp" alt="" style="object-fit:contain"><img src="../assets/img/ghost/pocket-back.webp" alt="" style="object-fit:contain"></div></div></div><div class="sum-row"><span class="ph" style=""><i data-i="sun" class="sm"></i></span><div class="grow"><div class="k">Background</div><div class="v subtle">White</div></div></div></div>
+        <div class="card price-card">
+          <div class="quality"><span class="t-small">Quality</span><div class="segmented" role="tablist" aria-label="Quality"><button role="tab" aria-selected="true" data-q-set="std">Standard</button><button role="tab" aria-selected="false" data-q-set="high">High</button></div></div>
+          <div class="price-line"><span><span data-q="std">3 angles × about $0.05</span><span data-q="high" hidden>3 angles × about $0.20</span></span><b><span data-q="std">about $0.15</span><span data-q="high" hidden>about $0.60</span></b></div>
+          <div class="price-total"><span class="t-small muted">Total</span><span class="v num"><span data-q="std">about $0.15</span><span data-q="high" hidden>about $0.60</span></span></div>
+          <div class="t-caption">Billed by OpenAI to your key. Nothing is sent until you press Make.</div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <div class="actionbar">
+    <div class="summary"><div class="thumbs"><img src="../assets/img/ghost/pocket-front.webp" alt="" style="object-fit:contain;background:#fff"><img src="../assets/img/ghost/pocket-three-quarter.webp" alt="" style="object-fit:contain;background:#fff"><img src="../assets/img/ghost/pocket-back.webp" alt="" style="object-fit:contain;background:#fff"></div><div class="txt"><b>3 angles</b><span class="num">3 photos · Standard quality</span></div></div>
+    <a class="btn btn-secondary" href="create-product.html">Back</a>
+    <a class="btn btn-primary" href="shoot.html">Make 3 photos <span class="cost"><span data-q="std">about $0.15</span><span data-q="high" hidden>about $0.60</span></span></a>
+  </div>
+
+</main>
+<script>
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-q-set]'); if (!b) return;
+    document.querySelectorAll('[data-q]').forEach(function (el) { el.hidden = el.dataset.q !== b.dataset.qSet; });
+    document.querySelectorAll('[data-q-set]').forEach(function (x) { x.setAttribute('aria-selected', String(x.dataset.qSet === b.dataset.qSet)); });
+  });
+</script>
+</body>
+</html>

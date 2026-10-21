@@ -1,0 +1,11 @@
+name: Feature request
+description: An idea that would help
+labels: [enhancement]
+body:
+  - type: textarea
+    id: need
+    attributes: { label: What do you want to do?, description: "Tell us the job, not only the button." }
+    validations: { required: true }
+  - type: textarea
+    id: idea
+    attributes: { label: Any idea how it could work? }

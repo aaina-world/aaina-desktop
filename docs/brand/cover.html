@@ -1,0 +1,56 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..600;1,6..96,400..500&family=Geist:wght@400..600&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+  /* Centred composition: everything that matters sits in the middle third, the photo fans on both sides only decorate,
+     so any crop of the sides (phone, tablet, wide screens) keeps the message whole. */
+  :root { --paper:#f7f7f5; --ink:#161615; --muted:#585853; --subtle:#7a7a74; --line:#e3e3df; --gold:#e09a1a; }
+  * { box-sizing: border-box; margin: 0; }
+  body { width: 1500px; height: 375px; overflow: hidden; background: var(--paper); font-family: Geist, system-ui, sans-serif; color: var(--ink); }
+  .stage { position: relative; width: 100%; height: 100%; }
+  .center { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 640px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 13px; z-index: 3; }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand svg { width: 30px; height: 30px; }
+  .brand .w { font: 600 13px/1 "Bodoni Moda", serif; letter-spacing: .24em; text-align: left; }
+  .brand .s { font: 500 9px/1 Geist, sans-serif; letter-spacing: .18em; color: var(--subtle); margin-top: 4px; text-align: left; }
+  h1 { font: 400 40px/1.06 "Bodoni Moda", serif; letter-spacing: -0.015em; }
+  h1 em { font-style: italic; }
+  .chips { display: flex; gap: 8px; justify-content: center; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--line); background: #fff; font: 500 12px/1 Geist, sans-serif; color: var(--muted); white-space: nowrap; }
+  .chip.oss { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .chip svg { width: 14px; height: 14px; }
+  .code { font: 500 11.5px/1 "Geist Mono", monospace; color: var(--subtle); }
+  .code b { color: var(--ink); font-weight: 500; }
+  .card { position: absolute; top: 50%; border-radius: 10px; overflow: hidden; border: 4px solid #fff; background: #fff; box-shadow: 0 18px 36px -16px rgba(22,22,21,.32); }
+  .card img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 18%; }
+  /* mirrored fans: inner cards largest, outer ones smaller and softer */
+  .l1 { width: 128px; height: 176px; left: 268px; margin-top: -92px; transform: rotate(-4deg); }
+  .l2 { width: 112px; height: 152px; left: 140px; margin-top: -70px; transform: rotate(-8deg); opacity: .9; }
+  .l3 { width: 96px;  height: 130px; left: 30px;  margin-top: -58px; transform: rotate(-12deg); opacity: .75; }
+  .r1 { width: 128px; height: 176px; right: 268px; margin-top: -84px; transform: rotate(4deg); }
+  .r2 { width: 112px; height: 152px; right: 140px; margin-top: -78px; transform: rotate(8deg); opacity: .9; }
+  .r3 { width: 96px;  height: 130px; right: 30px;  margin-top: -64px; transform: rotate(12deg); opacity: .75; }
+  .rec { position: absolute; left: 50%; top: 26px; transform: translateX(-50%); width: 7px; height: 7px; border-radius: 50%; background: var(--gold); }
+</style></head>
+<body><div class="stage">
+  <div class="card l3"><img src="real-flatlay.webp" alt=""></div>
+  <div class="card l2"><img src="model-tara-p.webp" alt=""></div>
+  <div class="card l1"><img src="photoshoot-chloe-600.webp" alt=""></div>
+  <div class="card r1"><img src="nia.webp" alt=""></div>
+  <div class="card r2"><img src="malik.webp" alt=""></div>
+  <div class="card r3"><img src="tara.webp" alt=""></div>
+  
+  <div class="center">
+    <div class="brand">
+      <svg viewBox="0 0 40 40"><g fill="none" stroke="#a6a6a0" stroke-width="1.1"><path d="M1.5 8.5V1.5h7"/><path d="M31.5 1.5h7v7"/><path d="M1.5 31.5v7h7"/><path d="M31.5 38.5h7v-7"/></g><path d="M12 21.5 20 7l8 14.5" fill="none" stroke="#161615" stroke-width="2.2"/><path d="M9 21.5h22" stroke="#161615" stroke-width=".9"/><path d="M12 21.5 20 36l8-14.5" fill="none" stroke="#161615" stroke-width="2.2" stroke-opacity=".2"/><circle cx="33.5" cy="6.5" r="1.6" fill="#e09a1a"/></svg>
+      <div><div class="w">AAINA</div><div class="s">DESKTOP</div></div>
+    </div>
+    <h1>Model photos of your products,<br><em>free</em> and open source.</h1>
+    <div class="chips">
+      <span class="chip oss"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 18 6-6-6-6M8 6l-6 6 6 6"/></svg>Open source · MIT</span>
+      <span class="chip">Mac · Windows · Linux</span>
+      <span class="chip">No account</span>
+    </div>
+    <div class="code">$ git clone <b>aaina-desktop</b> &nbsp;·&nbsp; made for everyone</div>
+  </div>
+</div></body></html>

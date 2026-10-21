@@ -1,0 +1,26 @@
+/* Library: styles ported from design/pages/library.html. */
+.tools { display: flex; align-items: center; gap: var(--s-2); margin: var(--s-5) 0; flex-wrap: wrap; }
+.tools .count { margin-right: auto; font-size: var(--text-sm); color: var(--fg-muted); }
+.tools .search-wrap { width: 240px; }
+.tools .input, .tools .select { height: 36px; font-size: var(--text-sm); }
+.tools .select { width: 132px; }
+.sec + .sec { margin-top: var(--s-12); }
+.sec .section-head { margin-bottom: var(--s-4); align-items: flex-end; }
+.tile .quick { position: absolute; left: 8px; right: 8px; bottom: 8px; z-index: 2; display: flex; }
+.tile .quick .btn { --h: 32px; flex: 1; font-size: var(--text-xs); background: rgb(255 255 255 / .92); color: #161615; backdrop-filter: blur(8px); border: 0; padding: 0 8px; min-width: 0; }
+.tile .cap .btn { margin: -4px -6px 0 0; color: var(--fg-subtle); flex: none; }
+.tile.contain .media img { object-fit: contain; }
+.tile.contain:hover .media img { transform: none; }
+.tile.own .media, .tile.studio .media { --ratio: 3 / 4; }
+.tile.add { text-align: center; }
+.tile.add .cost { color: var(--fg-subtle); }
+.tile.add:disabled { opacity: .5; cursor: not-allowed; }
+.filters { display: flex; align-items: center; gap: var(--s-2); flex-wrap: wrap; margin-bottom: var(--s-4); }
+.filters .chip { height: 32px; font-size: var(--text-xs); padding: 0 12px; }
+.filters .sp { width: 1px; height: 20px; background: var(--line-strong); margin: 0 4px; }
+.filters .search-wrap { margin-left: auto; width: 220px; }
+.filters .input { height: 36px; font-size: var(--text-sm); }
+.cap-line { display: inline-flex; align-items: center; gap: 6px; }
+.tile.studio .over-tl { left: 8px; }
+.more-row { display: flex; justify-content: center; margin-top: var(--s-6); }
+.tile .media .imglink { display: block; width: 100%; height: 100%; }

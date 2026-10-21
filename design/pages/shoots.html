@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Shoots · Aaina Desktop</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../assets/ds.css">
+<link rel="stylesheet" href="../assets/desktop.css">
+<script src="../assets/shell.js"></script>
+<style>
+  .tb { display: flex; align-items: center; gap: var(--s-3); flex-wrap: wrap; margin-bottom: var(--s-5); }
+  .tb-tools { display: flex; align-items: center; gap: var(--s-2); margin-left: auto; }
+  .tb-tools .search-wrap { width: 220px; }
+  .tb-tools .input, .tb-tools .select { height: 36px; font-size: var(--text-sm); }
+  .tb-tools .select { width: 132px; }
+  .tb-tools .input-wrap .kbd { right: 8px; }
+  .shoot .cap .btn { margin: -4px -6px 0 0; color: var(--fg-subtle); flex: none; }
+  .shoot.contain .media { background: #fff; }
+  .shoot.contain .media img { object-fit: contain; }
+  .shoot .sel-mark { left: 8px; right: auto; }
+  body[data-st="selecting"] .shoot .hover-only.sel-mark { opacity: 1; }
+  .shoot[data-sel] .sel-mark { background: var(--fg); border-color: var(--fg); color: var(--fg-inverse); opacity: 1; }
+  body[data-st="selecting"] .shoot[data-sel] .media { outline: 2px solid var(--fg); outline-offset: 2px; }
+  .shoot .over-tl { left: 40px; }
+  .shoot .ctx { position: absolute; z-index: 40; top: 96px; left: 50%; width: 236px; }
+  .shoot .ctx .menu-item { white-space: nowrap; }
+</style>
+
+<body data-nav="shoots" data-st="shoots">
+<main class="main" id="main">
+  <header class="topbar">
+    <div class="crumbs"><span class="here">Shoots</span></div>
+    <div class="grow"></div>
+    <a class="btn btn-ghost btn-sm" href="#"><i data-i="folder" class="sm"></i><span data-folder>Show in Finder</span></a>
+  </header>
+
+  <div class="page">
+    <div class="notice mockstrip" data-st-strip style="margin-bottom:var(--s-5);display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center"><b>Mockup state:</b><div class="segmented" role="tablist" aria-label="Mockup state" style="margin-left:auto"><button role="tab" aria-selected="true" data-st="shoots">Shoots</button><button role="tab" aria-selected="false" data-st="selecting">Selecting</button><button role="tab" aria-selected="false" data-st="menu">Right-click menu</button><button role="tab" aria-selected="false" data-st="loading">Loading</button><button role="tab" aria-selected="false" data-st="empty">Empty</button><button role="tab" aria-selected="false" data-st="error">Error</button></div></div>
+
+    <div class="page-head">
+      <div><h1 class="t-page">Shoots</h1><p class="lede" style="max-width:42ch">Kept on this computer, in <span class="t-mono" data-path>~/Pictures/Aaina</span>.</p></div>
+      <div class="page-tools" style="margin-left:auto"><button class="btn btn-secondary" data-hide="empty" data-st-go="selecting">Select<span class="kbd" style="margin-left:2px"><span data-mod>⌘</span>click</span></button><a class="btn btn-primary" href="create-product.html"><i data-i="plus"></i>New shoot<span class="kbd" style="background:transparent;border-color:currentColor;opacity:.6;color:inherit"><span data-mod>⌘</span>N</span></a></div>
+    </div>
+
+    <div class="tb" data-hide="empty">
+      <div class="segmented" id="kinds" role="tablist" aria-label="Kind"><button role="tab" aria-selected="true" data-k="all">All <span class="num subtle">38</span></button><button role="tab" aria-selected="false" data-k="model">On a model <span class="num subtle">21</span></button><button role="tab" aria-selected="false" data-k="flat">Flat-lay <span class="num subtle">4</span></button><button role="tab" aria-selected="false" data-k="ghost">Ghost mannequin <span class="num subtle">6</span></button><button role="tab" aria-selected="false" data-k="draft">Drafts <span class="num subtle">1</span></button></div>
+      <div class="tb-tools">
+        <label class="input-wrap search-wrap"><i data-i="search"></i><input class="input search" placeholder="Search shoots" aria-label="Search shoots"><span class="kbd"><span data-mod>⌘</span>F</span></label>
+        <select class="select" aria-label="Sort"><option>Newest</option><option>Oldest</option><option>Name</option></select>
+      </div>
+    </div>
+
+    <div data-show="shoots selecting menu" id="grid-wrap">
+      <div class="grid" id="grid">
+<article class="tile shoot" data-kind="model">
+  <div class="media"><a href="shoot.html" aria-label="Cobalt T-shirt"><img src="../assets/img/results/real-onmodel.webp" alt="" loading="lazy" style="filter:saturate(.7) blur(2px)"></a><span class="over-tl"><span class="badge info dot">Making</span></span><span class="sel-mark hover-only"><i data-i="check" class="sm"></i></span><div class="progress" style="position:absolute;left:10px;right:10px;bottom:10px"><i style="--p:62%"></i></div></div>
+  <div class="cap"><div class="grow"><div class="t">Cobalt T-shirt</div><div class="m">On a model · 3 of 5 photos</div><div class="m num">21 Oct 2026</div></div><button class="btn btn-ghost btn-icon btn-sm" aria-label="Shoot options"><i data-i="more" class="sm"></i></button></div>
+</article>
+<article class="tile shoot has-menu" data-kind="model">
+  <div class="media"><a href="shoot.html" aria-label="Camel coat"><img src="../assets/img/start/photoshoot-chloe-600.webp" alt="" loading="lazy"></a><span class="sel-mark hover-only"><i data-i="check" class="sm"></i></span></div>
+  <div class="cap"><div class="grow"><div class="t">Camel coat</div><div class="m">On a model · 4 photos</div><div class="m num">21 Oct 2026</div></div><button class="btn btn-ghost btn-icon btn-sm" aria-label="Shoot options"><i data-i="more" class="sm"></i></button></div><div class="menu ctx" data-show="menu" hidden role="menu" aria-label="Shoot">
+    <button class="menu-item" role="menuitem"><i data-i="eye"></i>Open<span class="r">↵</span></button>
+    <button class="menu-item" role="menuitem"><i data-i="edit"></i>Rename<span class="r">F2</span></button>
+    <button class="menu-item" role="menuitem"><i data-i="versions"></i>Duplicate settings</button>
+    <div class="menu-sep"></div>
+    <button class="menu-item" role="menuitem"><i data-i="download"></i>Save all photos…<span class="r"><span data-mod>⌘</span>S</span></button>
+    <button class="menu-item" role="menuitem"><i data-i="folder"></i><span data-folder>Show in Finder</span></button>
+    <div class="menu-sep"></div>
+    <button class="menu-item danger" role="menuitem"><i data-i="trash"></i>Delete shoot<span class="r">⌫</span></button>
+  </div>
+</article>
+<article class="tile shoot" data-kind="ghost">
+  <div class="media"><a href="shoot.html" aria-label="Sage linen blazer"><img src="../assets/img/start/ghost-600.webp" alt="" loading="lazy"></a><span class="sel-mark hover-only"><i data-i="check" class="sm"></i></span></div>
+  <div class="cap"><div class="grow"><div class="t">Sage linen blazer</div><div class="m">Ghost mannequin · 3 photos</div><div class="m num">20 Oct 2026</div></div><button class="btn btn-ghost btn-icon btn-sm" aria-label="Shoot options"><i data-i="more" class="sm"></i></button></div>
+</article>
+<article class="tile shoot" data-kind="draft">
+  <div class="media"><a href="shoot.html" aria-label="Linen shirt"><img src="../assets/img/templates/sample-model.webp" alt="" loading="lazy"></a><span class="over-tl"><span class="badge glass">Draft</span></span><span class="sel-mark hover-only"><i data-i="check" class="sm"></i></span></div>
+  <div class="cap"><div class="grow"><div class="t">Linen shirt</div><div class="m">Draft · Step 3 of 5, Poses</div><div class="m num">20 Oct 2026</div></div><button class="btn btn-ghost btn-icon btn-sm" aria-label="Shoot options"><i data-i="more" class="sm"></i></button></div>
+</article>
+<article class="tile shoot" data-kind="model">
+  <div class="media"><a href="shoot.html" aria-label="Denim jacket"><img src="../assets/img/results/real-aaina.webp" alt="" loading="lazy"></a><span class="over-tl"><span class="badge danger dot">1 photo failed</span></span><span class="sel-mark hover-only"><i data-i="check" class="sm"></i></span></div>
+  <div class="cap"><div class="grow"><div class="t">Denim jacket</div><div class="m">On a model · 2 photos</div><div class="m num">19 Oct 2026</div></div><button class="btn btn-ghost btn-icon btn-sm" aria-label="Shoot options"><i data-i="more" class="sm"></i></button></div>
+</article>
+<article class="tile shoot" data-kind="flat">
+  <div class="media"><a href="shoot.html" aria-label="Summer kurta"><img src="../assets/img/start/flatlay-600.webp" alt="" loading="lazy"></a><span class="sel-mark hover-only"><i data-i="check" class="sm"></i></span></div>
+  <div class="cap"><div class="grow"><div class="t">Summer kurta</div><div class="m">Flat-lay · 4 photos</div><div class="m num">19 Oct 2026</div></div><button class="btn btn-ghost btn-icon btn-sm" aria-label="Shoot options"><i data-i="more" class="sm"></i></button></div>
+</article>
+<article class="tile shoot" data-kind="model">
+  <div class="media"><a href="shoot.html" aria-label="Cream kurta set"><img src="../assets/img/start/photoshoot-600.webp" alt="" loading="lazy"></a><span class="sel-mark hover-only"><i data-i="check" class="sm"></i></span></div>
+  <div class="cap"><div class="grow"><div class="t">Cream kurta set</div><div class="m">On a model · 6 photos</div><div class="m num">17 Oct 2026</div></div><button class="btn btn-ghost btn-icon btn-sm" aria-label="Shoot options"><i data-i="more" class="sm"></i></button></div>
+</article>
+<article class="tile shoot contain" data-kind="ghost">
+  <div class="media"><a href="shoot.html" aria-label="Wool blazer"><img src="../assets/img/results/real-ghost.webp" alt="" loading="lazy"></a><span class="sel-mark hover-only"><i data-i="check" class="sm"></i></span></div>
+  <div class="cap"><div class="grow"><div class="t">Wool blazer</div><div class="m">Ghost mannequin · 5 photos</div><div class="m num">14 Oct 2026</div></div><button class="btn btn-ghost btn-icon btn-sm" aria-label="Shoot options"><i data-i="more" class="sm"></i></button></div>
+</article>
+<article class="tile shoot" data-kind="model">
+  <div class="media"><a href="shoot.html" aria-label="Sage block-print kurta"><img src="../assets/img/start/picture-600.webp" alt="" loading="lazy"></a><span class="sel-mark hover-only"><i data-i="check" class="sm"></i></span></div>
+  <div class="cap"><div class="grow"><div class="t">Sage block-print kurta</div><div class="m">On a model · 6 photos</div><div class="m num">12 Oct 2026</div></div><button class="btn btn-ghost btn-icon btn-sm" aria-label="Shoot options"><i data-i="more" class="sm"></i></button></div>
+</article>
+<article class="tile shoot" data-kind="flat">
+  <div class="media"><a href="shoot.html" aria-label="Linen shirt set"><img src="../assets/img/flatlay/styled.webp" alt="" loading="lazy"></a><span class="sel-mark hover-only"><i data-i="check" class="sm"></i></span></div>
+  <div class="cap"><div class="grow"><div class="t">Linen shirt set</div><div class="m">Flat-lay · 3 photos</div><div class="m num">9 Oct 2026</div></div><button class="btn btn-ghost btn-icon btn-sm" aria-label="Shoot options"><i data-i="more" class="sm"></i></button></div>
+</article>
+      </div>
+      <div class="empty compact" id="nomatch" hidden style="margin-top:var(--s-6);padding:var(--s-12) var(--s-6)"><div class="art" style="width:88px;height:88px"><i data-i="search"></i></div><h2 class="t-section">Nothing here</h2><p>No shoots of this kind yet.</p></div>
+    </div>
+
+    <div data-show="loading" hidden><div class="grid" aria-busy="true" aria-label="Loading shoots"><div class="tile"><div class="media skeleton"></div><div class="stack" style="--gap:6px"><div class="skeleton" style="height:12px;width:70%"></div><div class="skeleton" style="height:10px;width:45%"></div></div></div><div class="tile"><div class="media skeleton"></div><div class="stack" style="--gap:6px"><div class="skeleton" style="height:12px;width:70%"></div><div class="skeleton" style="height:10px;width:45%"></div></div></div><div class="tile"><div class="media skeleton"></div><div class="stack" style="--gap:6px"><div class="skeleton" style="height:12px;width:70%"></div><div class="skeleton" style="height:10px;width:45%"></div></div></div><div class="tile"><div class="media skeleton"></div><div class="stack" style="--gap:6px"><div class="skeleton" style="height:12px;width:70%"></div><div class="skeleton" style="height:10px;width:45%"></div></div></div><div class="tile"><div class="media skeleton"></div><div class="stack" style="--gap:6px"><div class="skeleton" style="height:12px;width:70%"></div><div class="skeleton" style="height:10px;width:45%"></div></div></div><div class="tile"><div class="media skeleton"></div><div class="stack" style="--gap:6px"><div class="skeleton" style="height:12px;width:70%"></div><div class="skeleton" style="height:10px;width:45%"></div></div></div><div class="tile"><div class="media skeleton"></div><div class="stack" style="--gap:6px"><div class="skeleton" style="height:12px;width:70%"></div><div class="skeleton" style="height:10px;width:45%"></div></div></div><div class="tile"><div class="media skeleton"></div><div class="stack" style="--gap:6px"><div class="skeleton" style="height:12px;width:70%"></div><div class="skeleton" style="height:10px;width:45%"></div></div></div></div></div>
+
+    <div data-show="empty" hidden>
+      <div class="empty"><div class="art"><i data-i="images"></i></div>
+        <h2 class="t-section">No shoots yet</h2>
+        <p>Add a product photo and pick a model. Your first photos take about a minute each, and you see the price before anything is made.</p>
+        <a class="btn btn-primary mt-2" href="create-product.html"><i data-i="plus"></i>New shoot<span class="kbd" style="background:transparent;border-color:currentColor;opacity:.6;color:inherit"><span data-mod>⌘</span>N</span></a>
+        <span class="local-note mt-2"><i data-i="lock"></i>You can also drop product photos anywhere in this window.</span></div>
+    </div>
+
+    <div data-show="error" hidden>
+      <div class="notice danger"><i data-i="alert"></i>We couldn't read your shoots from this computer.<button class="action">Try again</button></div>
+    </div>
+  </div>
+
+  <div class="actionbar selbar" data-show="selecting" hidden>
+    <div class="summary"><div class="txt"><b><span id="selN">3</span> <span id="selW">shoots</span> selected</b><span>Shift-click for a range, <span data-mod>⌘</span>click to add one</span></div></div>
+    <button class="btn btn-ghost" data-st-go="shoots">Cancel<span class="kbd" style="margin-left:6px">Esc</span></button>
+    <button class="btn btn-secondary"><i data-i="download"></i>Save photos</button>
+    <button class="btn btn-danger"><i data-i="trash"></i><span>Delete <span id="selN2">3</span> <span id="selW2">shoots</span></span></button>
+  </div>
+</main>
+<script>
+(function () {
+  var strip = document.querySelector('[data-st-strip]'), cards = [].slice.call(document.querySelectorAll('.shoot'));
+  function count() { var n = cards.filter(function (c) { return c.hasAttribute('data-sel'); }).length; var w = n === 1 ? 'shoot' : 'shoots';
+    ['selN','selN2'].forEach(function (i) { document.getElementById(i).textContent = n; }); ['selW','selW2'].forEach(function (i) { document.getElementById(i).textContent = w; }); }
+  function set(s) {
+    document.body.dataset.st = s;
+    document.querySelectorAll('[data-show]').forEach(function (e) { e.hidden = e.dataset.show.split(' ').indexOf(s) < 0; });
+    document.querySelectorAll('[data-hide]').forEach(function (e) { e.hidden = e.dataset.hide.split(' ').indexOf(s) >= 0; });
+    strip.querySelectorAll('[role=tab]').forEach(function (t) { t.setAttribute('aria-selected', t.dataset.st === s); });
+    if (s === 'selecting') { cards.forEach(function (c, i) { c.toggleAttribute('data-sel', i === 1 || i === 2 || i === 5); }); count(); }
+  }
+  strip.addEventListener('click', function (e) { var t = e.target.closest('[data-st]'); if (t) set(t.dataset.st); });
+  document.addEventListener('click', function (e) { var g = e.target.closest('[data-st-go]'); if (g) set(g.dataset.stGo); });
+  document.getElementById('grid').addEventListener('click', function (e) {
+    if (document.body.dataset.st !== 'selecting') return;
+    var c = e.target.closest('.shoot'); if (!c) return; e.preventDefault(); c.toggleAttribute('data-sel'); count();
+  });
+  document.getElementById('kinds').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-k]'); if (!b) return; var k = b.dataset.k, any = 0;
+    cards.forEach(function (c) { var show = k === 'all' || c.dataset.kind === k; c.hidden = !show; if (show) any++; });
+    document.getElementById('nomatch').hidden = any > 0;
+  });
+  set('shoots');
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Add your product · Aaina Desktop</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../assets/ds.css">
+<link rel="stylesheet" href="../assets/desktop.css">
+<script src="../assets/shell.js"></script>
+<style>
+  .flowbar { display: flex; align-items: center; gap: var(--s-3); min-width: 0; }
+  .flowbar .stepper { flex: 1; justify-content: center; }
+  @media (max-width: 1179px) { .flowbar .crumbs { display: none; } }
+  .saved { display: inline-flex; align-items: center; gap: 6px; font: 500 var(--text-2xs)/1 var(--font-mono); color: var(--fg-subtle); white-space: nowrap; }
+  .saved .ico { width: 14px; height: 14px; color: var(--success); }
+  .mockstrip { margin-bottom: var(--s-5); flex-wrap: wrap; }
+  .mockstrip .segmented { margin-left: auto; }
+  .summary-card .sum-row { display: flex; align-items: center; gap: 12px; padding: 12px 16px; }
+  .summary-card .sum-row + .sum-row { border-top: 1px solid var(--line); }
+  .summary-card .sum-row img { width: 40px; height: 52px; border-radius: var(--r-xs); object-fit: cover; background: #fff; flex: none; }
+  .summary-card .sum-row .ph { width: 40px; height: 52px; border-radius: var(--r-xs); background: var(--bg-sunken); flex: none; display: grid; place-items: center; color: var(--fg-subtle); }
+  .summary-card .sum-row .k { font-size: var(--text-xs); color: var(--fg-subtle); }
+  .summary-card .sum-row .v { font-size: var(--text-sm); font-weight: 500; }
+  .summary-card .sum-row .edit { margin-left: auto; font-size: var(--text-xs); font-weight: 500; color: var(--fg-muted); text-decoration: underline; text-underline-offset: 3px; }
+  .picked { display: flex; gap: 6px; flex-wrap: wrap; }
+  .picked img { width: 40px; height: 52px; border-radius: var(--r-xs); object-fit: cover; }
+  .picked .empty-slot { width: 40px; height: 52px; border-radius: var(--r-xs); border: 1px dashed var(--line-strong); }
+  .block { padding: var(--s-5); display: flex; flex-direction: column; gap: var(--s-4); }
+  .block + .block { margin-top: var(--s-4); }
+  .block-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s-3); }
+  .tile.contain .media { background: #fff; }
+  .quality { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); }
+  .quality .t-small { font-weight: 500; }
+  .price-card .cost { font-size: var(--text-xs); }
+  .keynote { display: flex; gap: 8px; align-items: flex-start; font-size: var(--text-xs); color: var(--fg-subtle); line-height: 1.45; }
+  .keynote .ico { width: 14px; height: 14px; margin-top: 1px; }
+  .notice .btn { margin-left: auto; }
+  .readby { display: inline-flex; align-items: center; gap: 6px; font: 500 var(--text-2xs)/1 var(--font-mono); color: var(--fg-subtle); white-space: nowrap; }
+  .readby .ico { width: 14px; height: 14px; }
+
+  .modebar { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
+  .tips3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-3); margin-top: var(--s-4); }
+  .tip { display: flex; gap: 12px; align-items: flex-start; padding: var(--s-4); }
+  .tip .ico-ring { width: 36px; height: 36px; border-radius: 50%; background: var(--bg-sunken); display: grid; place-items: center; flex: none; }
+  .photos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-4); }
+  .photos .tile .media { --ratio: 1/1; }
+  .photos .tile:not(.add) .media { background: #fff; }
+  .photos .tile .media img { object-fit: contain; }
+  .roles { display: grid; grid-template-columns: repeat(auto-fill, minmax(52px, 1fr)); gap: 4px; }
+  .roles .chip { height: 28px; padding: 0 6px; justify-content: center; font-size: 11px; }
+  .roles.ghosted { visibility: hidden; }
+  .photos .tile.zoomed .media img { position: absolute; max-width: none; width: 260%; height: 260%; object-fit: cover; left: -80%; top: -46%; }
+  .photos .tile.zoomed:hover .media img { transform: none; }
+  .tile.add .media .plus-disc { width: 36px; height: 36px; margin-bottom: 6px; }
+  .fgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-3) var(--s-4); }
+  .dot-sw { position: absolute; left: 14px; width: 18px; height: 18px; border-radius: 50%; background: #1f4fd1; box-shadow: inset 0 0 0 1px rgb(0 0 0 / .12); }
+  .input-wrap.has-sw .input { padding-left: 42px; }
+  .reading-line { display: flex; align-items: center; gap: 10px; font-size: var(--text-sm); color: var(--fg-muted); }
+  .sk-field { height: 44px; border-radius: var(--r-md); }
+  .drop { min-height: 340px; }
+</style>
+
+<body data-nav="home" data-flow>
+<main class="main" id="main">
+  <header class="topbar">
+    <div class="flowbar grow">
+      <a class="btn btn-ghost btn-icon" href="home.html" aria-label="Back"><i data-i="left"></i></a>
+      <div class="crumbs"><a href="home.html">New shoot</a><span class="sep">/</span><span class="here">Add your product</span></div>
+      <nav class="stepper" aria-label="Steps"><span class="step" aria-current="step"><span class="n">1</span>Product</span><span class="step-sep"></span><a class="step" href="create-model.html"><span class="n">2</span>Model</a><span class="step-sep"></span><a class="step" href="create-poses.html"><span class="n">3</span>Poses</a><span class="step-sep"></span><a class="step" href="create-scene.html"><span class="n">4</span>Scene</a><span class="step-sep"></span><a class="step" href="create-review.html"><span class="n">5</span>Review</a></nav>
+      <span class="saved" title="Drafts save automatically"><i data-i="check"></i>Saved</span>
+    </div>
+  </header>
+
+  <div class="page">
+    <div class="notice mockstrip" data-panels="state"><b>Mockup state:</b><div class="segmented" role="tablist" aria-label="Mockup state"><button role="tab" aria-selected="true" data-panel="empty">Empty</button><button role="tab" aria-selected="false" data-panel="reading">Reading</button><button role="tab" aria-selected="false" data-panel="read">Read</button><button role="tab" aria-selected="false" data-panel="noconn">Not connected</button></div></div>
+    <div class="split">
+      <section style="min-width:0">
+        <div class="page-head" style="margin-bottom:var(--s-5)">
+          <div>
+            <span class="t-eyebrow">New shoot</span>
+            <h1 class="t-page mt-2">Add your <em class="italic">product</em></h1>
+            <p class="lede">One clear photo is enough. Add the back or a close-up for a better result.</p>
+          </div>
+          <div class="modebar"><span class="t-eyebrow">What are you making?</span><div class="segmented" role="tablist" aria-label="What are you making?"><a role="tab" aria-selected="true" href="create-product.html"><i data-i="user" class="sm"></i>On a model</a><a role="tab" aria-selected="false" href="create-ghost.html"><i data-i="hanger" class="sm"></i>Ghost mannequin</a><a role="tab" aria-selected="false" href="create-flatlay.html"><i data-i="flatlay" class="sm"></i>Flat-lay</a></div></div>
+        </div>
+        <div data-panel-of="state" data-panel-id="empty"><div class="drop">
+          <span class="ico-ring"><i data-i="upload" class="lg"></i></span>
+          <h2 class="t-section">Drop product photos here</h2>
+          <p class="t-body muted" style="max-width:44ch">Drag them in from your files, anywhere in this window, or choose them. JPG, PNG or WebP, up to 6 photos.</p>
+          <div class="row wrap" style="justify-content:center;margin-top:6px"><button class="btn btn-primary btn-lg"><i data-i="upload"></i>Choose photos</button></div>
+          <div class="row" style="--gap:16px;margin-top:6px"><button class="btn btn-link t-small" data-open="dlg-past">Use a past product</button><span class="vr" style="height:14px"></span><span class="local-note"><i data-i="lock"></i>Photos stay on this computer</span></div>
+        </div>
+        <div class="tips3">
+          <div class="card tip"><span class="ico-ring"><i data-i="shirt" class="sm"></i></span><div><div class="t-small" style="font-weight:600">Whole product in view</div><div class="t-caption">Lay it flat or hang it, nothing cut off.</div></div></div>
+          <div class="card tip"><span class="ico-ring"><i data-i="sun" class="sm"></i></span><div><div class="t-small" style="font-weight:600">Even light</div><div class="t-caption">Plain background, no strong shadows.</div></div></div>
+          <div class="card tip"><span class="ico-ring"><i data-i="copy" class="sm"></i></span><div><div class="t-small" style="font-weight:600">Add the back</div><div class="t-caption">If there is a print on the back, show it.</div></div></div>
+        </div></div>
+        <div data-panel-of="state" data-panel-id="reading" hidden><div class="stack" style="--gap:var(--s-4)">
+          <div class="photos"><div class="tile"><div class="media"><img src="../assets/img/results/real-ghost.webp" alt="Cobalt T-shirt, front"><span class="over-tr"><span class="icon-btn-glass hover-only" title="Remove" style="width:28px;height:28px"><i data-i="x"></i></span></span></div><div class="roles" data-single><button class="chip" aria-pressed="true">Front</button><button class="chip" aria-pressed="false">Back</button><button class="chip" aria-pressed="false">Close-up</button></div></div><div class="tile zoomed"><div class="media"><img src="../assets/img/results/audit-shirt.webp" alt="Print close-up"><span class="over-tr"><span class="icon-btn-glass hover-only" title="Remove" style="width:28px;height:28px"><i data-i="x"></i></span></span></div><div class="roles" data-single><button class="chip" aria-pressed="false">Front</button><button class="chip" aria-pressed="false">Back</button><button class="chip" aria-pressed="true">Close-up</button></div></div><button class="tile add"><div class="media"><div><span class="plus-disc"><i data-i="plus"></i></span><div class="t-small" style="font-weight:600;color:var(--fg)">Add a photo</div><div class="t-caption mt-1">4 more allowed</div></div></div><div class="roles ghosted"><span class="chip">x</span></div></button></div>
+          <p class="t-caption mt-3">You can also drag photos in from your files, anywhere in this window. Up to 6 photos.</p>
+          <div class="card block"><div class="field"><label class="label" for="pname">Product name</label><input class="input" id="pname" value="Cobalt T-shirt" placeholder="e.g. Cobalt T-shirt"></div></div>
+          <div class="card block">
+            <div class="block-head"><div><h2 class="t-title">What we see</h2></div><span class="readby"><i data-i="chatgpt"></i>Read by ChatGPT</span></div>
+            <div class="reading-line"><span class="spinner"></span><span>Reading your product… usually 20 to 40 seconds</span></div>
+            <div class="progress"><i style="--p:58%"></i></div>
+            <div class="fgrid">
+              <div class="field"><label class="label">Type</label><div class="skeleton sk-field"></div></div>
+              <div class="field"><label class="label">Who it's for</label><div class="skeleton sk-field"></div></div>
+              <div class="field"><label class="label">Colour</label><div class="skeleton sk-field"></div></div>
+              <div class="field"><label class="label">Fabric</label><div class="skeleton sk-field"></div></div>
+            </div>
+          </div>
+        </div></div>
+        <div data-panel-of="state" data-panel-id="read" hidden><div class="stack" style="--gap:var(--s-4)">
+          <div class="photos"><div class="tile"><div class="media"><img src="../assets/img/results/real-ghost.webp" alt="Cobalt T-shirt, front"><span class="over-tr"><span class="icon-btn-glass hover-only" title="Remove" style="width:28px;height:28px"><i data-i="x"></i></span></span></div><div class="roles" data-single><button class="chip" aria-pressed="true">Front</button><button class="chip" aria-pressed="false">Back</button><button class="chip" aria-pressed="false">Close-up</button></div></div><div class="tile zoomed"><div class="media"><img src="../assets/img/results/audit-shirt.webp" alt="Print close-up"><span class="over-tr"><span class="icon-btn-glass hover-only" title="Remove" style="width:28px;height:28px"><i data-i="x"></i></span></span></div><div class="roles" data-single><button class="chip" aria-pressed="false">Front</button><button class="chip" aria-pressed="false">Back</button><button class="chip" aria-pressed="true">Close-up</button></div></div><button class="tile add"><div class="media"><div><span class="plus-disc"><i data-i="plus"></i></span><div class="t-small" style="font-weight:600;color:var(--fg)">Add a photo</div><div class="t-caption mt-1">4 more allowed</div></div></div><div class="roles ghosted"><span class="chip">x</span></div></button></div>
+          <p class="t-caption mt-3">You can also drag photos in from your files, anywhere in this window. Up to 6 photos.</p>
+          <div class="card block"><div class="field"><label class="label" for="pname">Product name</label><input class="input" id="pname" value="Cobalt T-shirt" placeholder="e.g. Cobalt T-shirt"></div></div>
+          <div class="card block">
+            <div class="block-head"><div><h2 class="t-title">What we see</h2><p class="t-caption mt-1">Check it, or change anything that is wrong.</p></div><span class="readby"><i data-i="chatgpt"></i>Read by ChatGPT</span></div>
+            <div class="fgrid">
+              <div class="field"><label class="label">Type</label><input class="input" value="T-shirt" aria-label="Type"></div>
+              <div class="field"><label class="label">Who it's for</label><select class="select" aria-label="Who it's for"><option>Women</option><option>Men</option><option>Everyone</option><option>Girls</option><option>Boys</option></select></div>
+              <div class="field"><label class="label">Colour</label><div class="input-wrap has-sw"><span class="dot-sw"></span><input class="input" value="Cobalt blue" aria-label="Colour"></div></div>
+              <div class="field"><label class="label">Fabric</label><input class="input" value="Cotton jersey" aria-label="Fabric"></div>
+            </div>
+          </div>
+        </div></div>
+        <div data-panel-of="state" data-panel-id="noconn" hidden><div class="notice warning" style="margin-bottom:var(--s-4)"><i data-i="alert"></i><span>Connect OpenAI in Settings to read products and make photos. You can still look around.</span><a class="btn btn-secondary btn-sm" href="settings.html">Settings</a></div><div class="stack" style="--gap:var(--s-4)">
+          <div class="photos"><div class="tile"><div class="media"><img src="../assets/img/results/real-ghost.webp" alt="Cobalt T-shirt, front"><span class="over-tr"><span class="icon-btn-glass hover-only" title="Remove" style="width:28px;height:28px"><i data-i="x"></i></span></span></div><div class="roles" data-single><button class="chip" aria-pressed="true">Front</button><button class="chip" aria-pressed="false">Back</button><button class="chip" aria-pressed="false">Close-up</button></div></div><div class="tile zoomed"><div class="media"><img src="../assets/img/results/audit-shirt.webp" alt="Print close-up"><span class="over-tr"><span class="icon-btn-glass hover-only" title="Remove" style="width:28px;height:28px"><i data-i="x"></i></span></span></div><div class="roles" data-single><button class="chip" aria-pressed="false">Front</button><button class="chip" aria-pressed="false">Back</button><button class="chip" aria-pressed="true">Close-up</button></div></div><button class="tile add"><div class="media"><div><span class="plus-disc"><i data-i="plus"></i></span><div class="t-small" style="font-weight:600;color:var(--fg)">Add a photo</div><div class="t-caption mt-1">4 more allowed</div></div></div><div class="roles ghosted"><span class="chip">x</span></div></button></div>
+          <p class="t-caption mt-3">You can also drag photos in from your files, anywhere in this window. Up to 6 photos.</p>
+          <div class="card block"><div class="field"><label class="label" for="pname">Product name</label><input class="input" id="pname" value="" placeholder="e.g. Cobalt T-shirt"></div></div>
+          <div class="card block">
+            <div class="block-head"><div><h2 class="t-title">What we see</h2><p class="t-caption mt-1">Fill this in yourself. It helps us suggest poses and keep your product exact.</p></div></div>
+            <div class="fgrid">
+              <div class="field"><label class="label">Type</label><input class="input" value="" placeholder="e.g. T-shirt" aria-label="Type"></div>
+              <div class="field"><label class="label">Who it's for</label><select class="select" aria-label="Who it's for"><option>Choose…</option><option>Women</option><option>Men</option><option>Everyone</option><option>Girls</option><option>Boys</option></select></div>
+              <div class="field"><label class="label">Colour</label><input class="input" value="" placeholder="e.g. Cobalt blue" aria-label="Colour"></div>
+              <div class="field"><label class="label">Fabric</label><input class="input" value="" placeholder="e.g. Cotton jersey" aria-label="Fabric"></div>
+            </div>
+          </div>
+        </div></div>
+      </section>
+      <aside>
+        <div data-panel-of="state" data-panel-id="empty" class="stack" style="--gap:var(--s-4)">
+          <div class="card summary-card"><div class="sum-row"><span class="ph" style=""><i data-i="shirt" class="sm"></i></span><div class="grow"><div class="k">Product</div><div class="v subtle">Add photos</div></div></div><div class="sum-row"><span class="ph" style=""><i data-i="user" class="sm"></i></span><div class="grow"><div class="k">Model</div><div class="v subtle">Next step</div></div></div><div class="sum-row"><span class="ph" style=""><i data-i="people" class="sm"></i></span><div class="grow"><div class="k">Poses</div><div class="v subtle">Next step</div></div></div><div class="sum-row"><span class="ph" style=""><i data-i="picture" class="sm"></i></span><div class="grow"><div class="k">Scene</div><div class="v subtle">Next step</div></div></div></div>
+          <div class="card price-card">
+          <div class="price-line"><span>Standard quality</span><b>about $0.05 a photo</b></div>
+          <div class="price-line"><span>High quality</span><b>about $0.20 a photo</b></div>
+          <div class="price-total"><span class="t-small muted">From</span><span class="v num">about $0.05</span></div>
+          <div class="t-caption">Pick poses and a scene next. Billed by OpenAI to your key. Nothing is sent until you press Make.</div>
+        </div>
+        </div>
+        <div data-panel-of="state" data-panel-id="reading" hidden class="stack" style="--gap:var(--s-4)">
+          <div class="card summary-card"><div class="sum-row"><img src="../assets/img/results/real-ghost.webp" alt="" style="object-fit:contain"><div class="grow"><div class="k">Product</div><div class="v">Reading…</div></div><a class="edit" href="#">Replace</a></div><div class="sum-row"><span class="ph" style=""><i data-i="user" class="sm"></i></span><div class="grow"><div class="k">Model</div><div class="v subtle">Next step</div></div></div><div class="sum-row"><span class="ph" style=""><i data-i="people" class="sm"></i></span><div class="grow"><div class="k">Poses</div><div class="v subtle">Next step</div></div></div><div class="sum-row"><span class="ph" style=""><i data-i="picture" class="sm"></i></span><div class="grow"><div class="k">Scene</div><div class="v subtle">Next step</div></div></div></div>
+          <div class="card price-card">
+          <div class="price-line"><span>Standard quality</span><b>about $0.05 a photo</b></div>
+          <div class="price-line"><span>High quality</span><b>about $0.20 a photo</b></div>
+          <div class="price-total"><span class="t-small muted">From</span><span class="v num">about $0.05</span></div>
+          <div class="t-caption">Pick poses and a scene next. Billed by OpenAI to your key. Nothing is sent until you press Make.</div>
+        </div>
+        </div>
+        <div data-panel-of="state" data-panel-id="read" hidden class="stack" style="--gap:var(--s-4)">
+          <div class="card summary-card"><div class="sum-row"><img src="../assets/img/results/real-ghost.webp" alt="" style="object-fit:contain"><div class="grow"><div class="k">Product</div><div class="v">Cobalt T-shirt</div></div><a class="edit" href="#">Replace</a></div><div class="sum-row"><span class="ph" style=""><i data-i="user" class="sm"></i></span><div class="grow"><div class="k">Model</div><div class="v subtle">Next step</div></div></div><div class="sum-row"><span class="ph" style=""><i data-i="people" class="sm"></i></span><div class="grow"><div class="k">Poses</div><div class="v subtle">Next step</div></div></div><div class="sum-row"><span class="ph" style=""><i data-i="picture" class="sm"></i></span><div class="grow"><div class="k">Scene</div><div class="v subtle">Next step</div></div></div></div>
+          <div class="card price-card">
+          <div class="price-line"><span>Standard quality</span><b>about $0.05 a photo</b></div>
+          <div class="price-line"><span>High quality</span><b>about $0.20 a photo</b></div>
+          <div class="price-total"><span class="t-small muted">From</span><span class="v num">about $0.05</span></div>
+          <div class="t-caption">Pick poses and a scene next. Billed by OpenAI to your key. Nothing is sent until you press Make.</div>
+        </div>
+        </div>
+        <div data-panel-of="state" data-panel-id="noconn" hidden class="stack" style="--gap:var(--s-4)">
+          <div class="card summary-card"><div class="sum-row"><img src="../assets/img/results/real-ghost.webp" alt="" style="object-fit:contain"><div class="grow"><div class="k">Product</div><div class="v">Your product</div></div><a class="edit" href="#">Replace</a></div><div class="sum-row"><span class="ph" style=""><i data-i="user" class="sm"></i></span><div class="grow"><div class="k">Model</div><div class="v subtle">Next step</div></div></div><div class="sum-row"><span class="ph" style=""><i data-i="people" class="sm"></i></span><div class="grow"><div class="k">Poses</div><div class="v subtle">Next step</div></div></div><div class="sum-row"><span class="ph" style=""><i data-i="picture" class="sm"></i></span><div class="grow"><div class="k">Scene</div><div class="v subtle">Next step</div></div></div></div>
+          <div class="card price-card">
+          <div class="price-line"><span>Standard quality</span><b>about $0.05 a photo</b></div>
+          <div class="price-line"><span>High quality</span><b>about $0.20 a photo</b></div>
+          <div class="price-total"><span class="t-small muted">From</span><span class="v num">about $0.05</span></div>
+          <div class="t-caption">Pick poses and a scene next. Billed by OpenAI to your key. Nothing is sent until you press Make.</div>
+        </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <div class="actionbar" data-panel-of="state" data-panel-id="empty">
+    <div class="summary"><div class="txt"><b>Add a product photo</b><span class="num">to continue</span></div></div>
+    <button class="btn btn-primary" disabled>Next: model <i data-i="right"></i></button>
+  </div>
+  <div class="actionbar" data-panel-of="state" data-panel-id="reading" hidden>
+    <div class="summary"><div class="thumbs"><img src="../assets/img/results/real-ghost.webp" alt="" style="object-fit:contain;background:#fff"></div><div class="txt"><b>Reading your product…</b><span class="num">about 30 seconds</span></div></div>
+    <button class="btn btn-primary" disabled>Next: model <i data-i="right"></i></button>
+  </div>
+  <div class="actionbar" data-panel-of="state" data-panel-id="read" hidden>
+    <div class="summary"><div class="thumbs"><img src="../assets/img/results/real-ghost.webp" alt="" style="object-fit:contain;background:#fff"></div><div class="txt"><b>Cobalt T-shirt</b><span class="num">2 photos · T-shirt · Cobalt blue</span></div></div>
+    <a class="btn btn-primary" href="create-model.html">Next: model <i data-i="right"></i></a>
+  </div>
+  <div class="actionbar" data-panel-of="state" data-panel-id="noconn" hidden>
+    <div class="summary"><div class="thumbs"><img src="../assets/img/results/real-ghost.webp" alt="" style="object-fit:contain;background:#fff"></div><div class="txt"><b>Your product</b><span class="num">2 photos · details to fill in</span></div></div>
+    <a class="btn btn-primary" href="create-model.html">Next: model <i data-i="right"></i></a>
+  </div>
+
+  <div class="scrim" id="dlg-past" hidden><div class="dialog lg" role="dialog" aria-label="Use a past product">
+    <div class="dialog-head"><div><div class="t">Use a past product</div><div class="d">Pick a product you have already added. Its photos and details come with it.</div></div><button class="btn btn-ghost btn-icon close" data-close aria-label="Close"><i data-i="x"></i></button></div>
+    <div class="dialog-body">
+      <label class="input-wrap search-wrap" style="margin-bottom:var(--s-4)"><i data-i="search"></i><input class="input search" placeholder="Search your products" aria-label="Search your products"></label>
+      <div class="grid c3" data-single>
+        <button class="tile selectable contain" aria-selected="true"><div class="media" style="--ratio:1/1"><img src="../assets/img/results/real-ghost.webp" alt="" style="object-fit:contain"><span class="sel-mark"><i data-i="check" class="sm"></i></span></div><div class="cap"><div class="grow"><div class="t">Cobalt T-shirt</div><div class="m">3 shoots</div></div></div></button>
+        <button class="tile selectable contain" aria-selected="false"><div class="media" style="--ratio:1/1"><img src="../assets/img/templates/sample-garment.webp" alt="" style="object-fit:contain"><span class="sel-mark"><i data-i="check" class="sm"></i></span></div><div class="cap"><div class="grow"><div class="t">Sage linen blazer</div><div class="m">1 shoot</div></div></div></button>
+        <button class="tile selectable contain" aria-selected="false"><div class="media" style="--ratio:1/1"><img src="../assets/img/ghost/pocket-front.webp" alt="" style="object-fit:contain"><span class="sel-mark"><i data-i="check" class="sm"></i></span></div><div class="cap"><div class="grow"><div class="t">Grey pocket T-shirt</div><div class="m">2 shoots</div></div></div></button>
+        <button class="tile selectable contain" aria-selected="false"><div class="media" style="--ratio:1/1"><img src="../assets/img/results/real-flatlay.webp" alt="" style="object-fit:contain"><span class="sel-mark"><i data-i="check" class="sm"></i></span></div><div class="cap"><div class="grow"><div class="t">Cobalt T-shirt, flat</div><div class="m">1 shoot</div></div></div></button>
+        <button class="tile selectable contain" aria-selected="false"><div class="media" style="--ratio:1/1"><img src="../assets/img/flatlay/clean.webp" alt="" style="object-fit:contain"><span class="sel-mark"><i data-i="check" class="sm"></i></span></div><div class="cap"><div class="grow"><div class="t">Black T-shirt</div><div class="m">1 shoot</div></div></div></button>
+        <button class="tile selectable contain" aria-selected="false"><div class="media" style="--ratio:1/1"><img src="../assets/img/results/audit-shirt.webp" alt="" style="object-fit:contain"><span class="sel-mark"><i data-i="check" class="sm"></i></span></div><div class="cap"><div class="grow"><div class="t">Cobalt T-shirt, front</div><div class="m">4 shoots</div></div></div></button>
+      </div>
+    </div>
+    <div class="dialog-foot"><span class="total">1 product picked</span><button class="btn btn-secondary" data-close>Cancel</button><button class="btn btn-primary" data-close>Use this product</button></div>
+  </div></div>
+
+</main>
+<script>
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-q-set]'); if (!b) return;
+    document.querySelectorAll('[data-q]').forEach(function (el) { el.hidden = el.dataset.q !== b.dataset.qSet; });
+    document.querySelectorAll('[data-q-set]').forEach(function (x) { x.setAttribute('aria-selected', String(x.dataset.qSet === b.dataset.qSet)); });
+  });
+</script>
+</body>
+</html>

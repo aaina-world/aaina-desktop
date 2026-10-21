@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Cobalt T-shirt · Aaina Desktop</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../assets/ds.css">
+<link rel="stylesheet" href="../assets/desktop.css">
+<script src="../assets/shell.js"></script>
+<style>
+  .name-btn { display: inline-flex; align-items: center; gap: 6px; color: var(--fg); font-weight: 500; border-radius: var(--r-sm); padding: 3px 6px; margin: -3px -6px; }
+  .name-btn:hover { background: var(--bg-sunken); }
+  .name-btn .ico { width: 14px; height: 14px; color: var(--fg-subtle); }
+  .name-input { height: 30px; width: 200px; padding: 0 10px; font-size: var(--text-sm); border-radius: var(--r-sm); }
+  .topbar .menu-pop { position: absolute; top: calc(100% - 6px); right: var(--page-inset); z-index: 60; min-width: 230px; }
+  .strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: var(--s-5); }
+  .strip .cell { display: flex; align-items: center; gap: 12px; padding: 14px 16px; min-width: 0; min-height: 76px; }
+  .strip .cell + .cell { border-left: 1px solid var(--line); }
+  .strip .cell img { width: 48px; height: 48px; flex: none; border-radius: var(--r-sm); object-fit: cover; background: #fff; border: 1px solid var(--line); }
+  .strip .cell img.round { border-radius: 50%; object-position: top; }
+  .strip .cell .v { font-size: var(--text-sm); font-weight: 600; }
+  .strip .cell .t-eyebrow { display: block; margin-bottom: 3px; }
+  .titlerow { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .photo .quick { position: absolute; left: 8px; right: 8px; bottom: 8px; z-index: 2; display: flex; gap: 6px; }
+  .photo .quick .btn { --h: 32px; flex: 1; font-size: var(--text-xs); padding: 0 10px; background: rgb(255 255 255 / .92); color: #161615; backdrop-filter: blur(8px); border: 0; }
+  .photo .quick .btn { min-width: 0; padding: 0 6px; }
+  .photo .quick .btn.dark { background: #161615; color: #fff; flex: 0 0 32px; width: 32px; padding: 0; }
+  .photo .cap .btn { margin: -4px -6px 0 0; color: var(--fg-subtle); flex: none; }
+  .photo.failed .media { display: grid; place-items: center; text-align: center; padding: 14px; background: var(--bg-sunken); }
+  .photo.failed .btn-sm { margin-top: 2px; max-width: 100%; }
+  .photo.failed .stack { min-width: 0; width: 100%; text-wrap: balance; }
+  @media (max-width: 1100px) { .strip .cell { gap: 10px; padding: 12px; } .strip .cell img, .strip .cell .ico-ring { width: 36px !important; height: 36px !important; } }
+  .photo .sel-mark { left: 8px; right: auto; }
+  .photo .over-tr { top: 8px; right: 8px; }
+  body[data-st="selecting"] .photo .hover-only.sel-mark { opacity: 1; }
+  .photo[data-sel] .sel-mark { background: var(--fg); border-color: var(--fg); color: var(--fg-inverse); opacity: 1; }
+  body[data-st="selecting"] .photo[data-sel] .media { outline: 2px solid var(--fg); outline-offset: 2px; }
+  .photo .ctx { position: absolute; z-index: 40; top: 100px; left: 46%; width: 268px; }
+  .photo .ctx .menu-item { white-space: nowrap; }
+  .photo .ctx .r.cost { font-size: var(--text-2xs); }
+  .domore { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s-3); }
+  .dm { display: flex; flex-direction: column; gap: 10px; padding: 14px; border-radius: var(--r-lg); background: var(--bg-raised); border: 1px solid var(--line); text-align: left; min-width: 0; transition: border-color var(--dur-1), box-shadow var(--dur-1); }
+  .dm:hover { border-color: var(--line-strong); box-shadow: var(--shadow-1); }
+  .dm .ti { width: 36px; height: 36px; border-radius: var(--r-sm); background: var(--bg-sunken); display: grid; place-items: center; }
+  .dm .t { font-size: var(--text-sm); font-weight: 600; }
+  .dm .d { font-size: var(--text-xs); color: var(--fg-subtle); line-height: 1.35; }
+  .dm .p { margin-top: auto; padding-top: 2px; }
+  .aaina-line { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: var(--s-12); padding-top: var(--s-5); border-top: 1px solid var(--line); font-size: var(--text-xs); color: var(--fg-subtle); }
+  .aaina-line a { color: var(--fg-muted); text-decoration: underline; text-underline-offset: 3px; }
+  .hintline { display: inline-flex; align-items: center; gap: 6px; font-size: var(--text-xs); color: var(--fg-subtle); }
+</style>
+
+<body data-nav="shoots" data-st="photos">
+<main class="main" id="main">
+  <header class="topbar">
+    <a class="btn btn-ghost btn-icon" href="shoots.html" aria-label="Back to Shoots"><i data-i="left"></i></a>
+    <div class="crumbs"><a href="shoots.html">Shoots</a><span class="sep">/</span>
+      <button class="name-btn here" data-hide="renaming" data-st-go="renaming" title="Rename">Cobalt T-shirt<i data-i="edit"></i></button>
+      <input class="input name-input" data-show="renaming" hidden value="Cobalt T-shirt" aria-label="Shoot name">
+    </div>
+    <div class="grow"></div>
+    <button class="btn btn-primary btn-sm"><i data-i="download" class="sm"></i>Save all<span class="kbd" style="background:transparent;border-color:currentColor;opacity:.6;color:inherit;margin-left:4px"><span data-mod>⌘</span>S</span></button>
+    <button class="btn btn-secondary btn-sm"><i data-i="folder" class="sm"></i><span data-folder>Show in Finder</span></button>
+    <button class="btn btn-secondary btn-sm btn-icon" aria-label="More" data-st-go="more"><i data-i="more" class="sm"></i></button>
+    <div class="menu menu-pop" data-show="more" hidden role="menu">
+      <button class="menu-item" role="menuitem" data-st-go="renaming"><i data-i="edit"></i>Rename<span class="r">F2</span></button>
+      <button class="menu-item" role="menuitem"><i data-i="versions"></i>Duplicate settings</button>
+      <div class="menu-sep"></div>
+      <button class="menu-item danger" role="menuitem" data-open="dlg-delete"><i data-i="trash"></i>Delete shoot</button>
+    </div>
+  </header>
+
+  <div class="page">
+    <div class="notice mockstrip" data-st-strip style="margin-bottom:var(--s-5);display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center"><b>Mockup state:</b><div class="segmented" role="tablist" aria-label="Mockup state" style="margin-left:auto"><button role="tab" aria-selected="true" data-st="photos">Photos</button><button role="tab" aria-selected="false" data-st="menu">Right-click menu</button><button role="tab" aria-selected="false" data-st="selecting">Selecting</button><button role="tab" aria-selected="false" data-st="renaming">Renaming</button><button role="tab" aria-selected="false" data-st="more">More menu</button></div></div>
+
+    <div class="titlerow"><h1 class="t-page">Cobalt T-shirt</h1><span class="badge">On a model</span><span class="t-small muted num">8 photos · 1 making · 1 couldn't be made</span></div>
+    <section class="card strip" aria-label="What this shoot used">
+      <div class="cell"><img src="../assets/img/results/real-ghost.webp" alt=""><div><span class="t-eyebrow">Product</span><span class="v">Cobalt T-shirt</span></div></div>
+      <div class="cell"><img class="round" src="../assets/img/models/tara.webp" alt=""><div><span class="t-eyebrow">Model</span><span class="v">Tara</span></div></div>
+      <div class="cell"><img src="../assets/img/scenes/arched-arcade-poolside.webp" alt=""><div><span class="t-eyebrow">Scene</span><span class="v">Plaster arches</span></div></div>
+      <div class="cell"><span class="ico-ring" style="width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:var(--bg-sunken);flex:none"><i data-i="calendar"></i></span><div><span class="t-eyebrow">Made</span><span class="v num">21 Oct 2026, 9:58 pm</span></div></div>
+    </section>
+
+    <section class="section" style="margin-top:var(--s-8)">
+      <div class="section-head">
+        <h2 class="t-section">Photos <span class="subtle num" style="font-weight:400">8</span></h2>
+        <div class="row" style="--gap:12px"><span class="hintline"><span class="kbd">Shift</span> or <span class="kbd"><span data-mod>⌘</span></span> click to select several</span><button class="btn btn-ghost btn-sm" data-st-go="selecting">Select</button></div>
+      </div>
+      <div class="grid c4" id="grid">
+<article class="tile photo">
+  <div class="media"><a href="viewer.html" aria-label="Arms crossed, wide stance"><img src="../assets/img/results/real-onmodel.webp" alt="Arms crossed, wide stance" loading="lazy"></a><span class="over-tr"><span class="badge glass"><i data-i="versions" class="sm" style="width:12px;height:12px"></i>2 versions</span></span><span class="sel-mark hover-only"><i data-i="check" class="sm"></i></span><div class="quick"><button class="btn"><i data-i="wand" class="sm"></i>Fix something</button><button class="btn dark" aria-label="Save photo"><i data-i="download" class="sm"></i></button></div></div>
+  <div class="cap"><div class="grow"><div class="t">Arms crossed, wide stance</div><div class="m">Ready</div></div><button class="btn btn-ghost btn-icon btn-sm" aria-label="Photo options"><i data-i="more" class="sm"></i></button></div>
+</article>
+<article class="tile photo has-menu">
+  <div class="media"><a href="viewer.html" aria-label="Asymmetric stance"><img src="../assets/img/results/real-aaina.webp" alt="Asymmetric stance" loading="lazy"></a><span class="sel-mark hover-only"><i data-i="check" class="sm"></i></span><div class="quick hover-only"><button class="btn"><i data-i="wand" class="sm"></i>Fix something</button><button class="btn dark" aria-label="Save photo"><i data-i="download" class="sm"></i></button></div></div>
+  <div class="cap"><div class="grow"><div class="t">Asymmetric stance</div><div class="m">Ready</div></div><button class="btn btn-ghost btn-icon btn-sm" aria-label="Photo options"><i data-i="more" class="sm"></i></button></div><div class="menu ctx" data-show="menu" hidden role="menu" aria-label="Photo">
+    <button class="menu-item" role="menuitem"><i data-i="eye"></i>Open<span class="r">↵</span></button>
+    <div class="menu-sep"></div>
+    <button class="menu-item" role="menuitem"><i data-i="refresh"></i>Make again<span class="r cost">about $0.05</span></button>
+    <button class="menu-item" role="menuitem"><i data-i="wand"></i>Fix something<span class="r cost">about $0.05</span></button>
+    <button class="menu-item" role="menuitem"><i data-i="palette"></i>Other colours<span class="r cost">about $0.05 each</span></button>
+    <div class="menu-sep"></div>
+    <button class="menu-item" role="menuitem"><i data-i="download"></i>Save photo…<span class="r"><span data-mod>⌘</span>S</span></button>
+    <button class="menu-item" role="menuitem"><i data-i="copy"></i>Copy<span class="r"><span data-mod>⌘</span>C</span></button>
+    <button class="menu-item" role="menuitem"><i data-i="folder"></i><span data-folder>Show in Finder</span></button>
+    <div class="menu-sep"></div>
+    <button class="menu-item danger" role="menuitem"><i data-i="trash"></i>Delete<span class="r">⌫</span></button>
+  </div>
+</article>
+<article class="tile photo">
+  <div class="media"><img src="../assets/img/results/real-ansh.webp" alt="" style="filter:blur(10px) saturate(.6);transform:scale(1.1)"><div class="making"><span class="t-small" style="color:var(--fg);font-weight:500">Making your photo</span><div class="progress"><i style="--p:64%"></i></div><span>About 40 s</span></div></div>
+  <div class="cap"><div class="grow"><div class="t">One shoulder drop</div><div class="m">Making…</div></div></div>
+</article>
+<article class="tile photo failed">
+  <div class="media"><div class="stack" style="--gap:10px;align-items:center"><span class="center" style="width:44px;height:44px;border-radius:50%;background:var(--danger-soft);color:var(--danger)"><i data-i="alert"></i></span><span class="t-small" style="font-weight:500">This photo couldn't be made.</span><span class="t-caption">OpenAI wasn't charged.</span><button class="btn btn-secondary btn-sm"><i data-i="refresh" class="sm"></i>Try again</button><span class="cost">about $0.05</span></div></div>
+  <div class="cap"><div class="grow"><div class="t">Peace sign</div><div class="m" style="color:var(--danger)">Couldn't be made</div></div></div>
+</article>
+<article class="tile photo">
+  <div class="media"><a href="viewer.html" aria-label="Walking, hand in pocket"><img src="../assets/img/results/real-onmodel.webp" alt="Walking, hand in pocket" loading="lazy"></a><span class="over-tr"><span class="badge glass"><i data-i="versions" class="sm" style="width:12px;height:12px"></i>2 versions</span></span><span class="sel-mark hover-only"><i data-i="check" class="sm"></i></span><div class="quick hover-only"><button class="btn"><i data-i="wand" class="sm"></i>Fix something</button><button class="btn dark" aria-label="Save photo"><i data-i="download" class="sm"></i></button></div></div>
+  <div class="cap"><div class="grow"><div class="t">Walking, hand in pocket</div><div class="m">Ready · 2 versions</div></div><button class="btn btn-ghost btn-icon btn-sm" aria-label="Photo options"><i data-i="more" class="sm"></i></button></div>
+</article>
+<article class="tile photo">
+  <div class="media"><a href="viewer.html" aria-label="Seated, leaning forward"><img src="../assets/img/results/real-aaina.webp" alt="Seated, leaning forward" loading="lazy"></a><span class="sel-mark hover-only"><i data-i="check" class="sm"></i></span><div class="quick hover-only"><button class="btn"><i data-i="wand" class="sm"></i>Fix something</button><button class="btn dark" aria-label="Save photo"><i data-i="download" class="sm"></i></button></div></div>
+  <div class="cap"><div class="grow"><div class="t">Seated, leaning forward</div><div class="m">Ready</div></div><button class="btn btn-ghost btn-icon btn-sm" aria-label="Photo options"><i data-i="more" class="sm"></i></button></div>
+</article>
+<article class="tile photo">
+  <div class="media"><a href="viewer.html" aria-label="Over the shoulder"><img src="../assets/img/results/real-onmodel.webp" alt="Over the shoulder" loading="lazy"></a><span class="sel-mark hover-only"><i data-i="check" class="sm"></i></span><div class="quick hover-only"><button class="btn"><i data-i="wand" class="sm"></i>Fix something</button><button class="btn dark" aria-label="Save photo"><i data-i="download" class="sm"></i></button></div></div>
+  <div class="cap"><div class="grow"><div class="t">Over the shoulder</div><div class="m">Ready</div></div><button class="btn btn-ghost btn-icon btn-sm" aria-label="Photo options"><i data-i="more" class="sm"></i></button></div>
+</article>
+<article class="tile photo">
+  <div class="media"><div class="making"><span class="t-small" style="color:var(--fg);font-weight:500">In the queue</span><div class="progress"><i style="--p:6%"></i></div><span>Starts in a moment</span></div></div>
+  <div class="cap"><div class="grow"><div class="t">True rear</div><div class="m">Waiting</div></div></div>
+</article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head"><div><h2 class="t-section">More from this shoot</h2><p class="t-caption mt-1">Same product, with the price before anything starts</p></div></div>
+      <div class="domore">
+        <button class="dm"><span class="ti"><i data-i="plus"></i></span><span class="t">More poses</span><span class="d">The same model and scene in new poses</span><span class="p cost">about $0.05 a photo</span></button>
+        <button class="dm"><span class="ti"><i data-i="flatlay"></i></span><span class="t">Flat-lay</span><span class="d">Shot from above: clean, folded or styled</span><span class="p cost">about $0.05 a style</span></button>
+        <button class="dm"><span class="ti"><i data-i="mannequin"></i></span><span class="t">Ghost mannequin</span><span class="d">The T-shirt alone, front, side and back</span><span class="p cost">about $0.05 an angle</span></button>
+        <button class="dm"><span class="ti"><i data-i="palette"></i></span><span class="t">Other colours</span><span class="d">The same photo in up to 6 colours</span><span class="p cost">about $0.05 a colour</span></button>
+      </div>
+    </section>
+
+    <p class="aaina-line"><i data-i="globe" class="sm"></i>Videos and listings for this product are on Aaina. <a href="#">Open aaina.world</a></p>
+  </div>
+
+  <div class="actionbar selbar" data-show="selecting" hidden>
+    <div class="summary"><div class="txt"><b><span id="selN">2</span> <span id="selW">photos</span> selected</b><span>Shift-click for a range, <span data-mod>⌘</span>click to add one</span></div></div>
+    <button class="btn btn-ghost" data-st-go="photos">Cancel<span class="kbd" style="margin-left:6px">Esc</span></button>
+    <button class="btn btn-secondary"><i data-i="folder"></i><span data-folder>Show in Finder</span></button>
+    <button class="btn btn-secondary"><i data-i="download"></i>Save photos…</button>
+    <button class="btn btn-danger"><i data-i="trash"></i><span>Delete <span id="selN2">2</span> <span id="selW2">photos</span></span></button>
+  </div>
+
+  <div class="scrim" id="dlg-delete" hidden>
+    <div class="dialog sm" role="alertdialog" aria-labelledby="del-t">
+      <div class="dialog-head"><div><div class="t" id="del-t">Delete this shoot?</div><div class="d">Cobalt T-shirt and its 8 photos are deleted from this computer. This can't be undone.</div></div></div>
+      <div class="dialog-foot"><span class="grow"></span><button class="btn btn-secondary" data-close>Keep it</button><button class="btn btn-danger" data-close>Delete shoot</button></div>
+    </div>
+  </div>
+</main>
+<script>
+(function () {
+  var strip = document.querySelector('[data-st-strip]'), tiles = [].slice.call(document.querySelectorAll('.photo'));
+  function count() { var n = tiles.filter(function (c) { return c.hasAttribute('data-sel'); }).length, w = n === 1 ? 'photo' : 'photos';
+    ['selN','selN2'].forEach(function (i) { document.getElementById(i).textContent = n; }); ['selW','selW2'].forEach(function (i) { document.getElementById(i).textContent = w; }); }
+  function set(s) {
+    document.body.dataset.st = s;
+    document.querySelectorAll('[data-show]').forEach(function (e) { e.hidden = e.dataset.show.split(' ').indexOf(s) < 0; });
+    document.querySelectorAll('[data-hide]').forEach(function (e) { e.hidden = e.dataset.hide.split(' ').indexOf(s) >= 0; });
+    strip.querySelectorAll('[role=tab]').forEach(function (t) { t.setAttribute('aria-selected', t.dataset.st === s); });
+    if (s === 'selecting') { tiles.forEach(function (c, i) { c.toggleAttribute('data-sel', i === 0 || i === 1); }); count(); }
+    if (s === 'renaming') { var i = document.querySelector('.name-input'); i.focus(); i.select(); }
+  }
+  strip.addEventListener('click', function (e) { var t = e.target.closest('[data-st]'); if (t) set(t.dataset.st); });
+  document.addEventListener('click', function (e) { var g = e.target.closest('[data-st-go]'); if (g) set(g.dataset.stGo); });
+  document.getElementById('grid').addEventListener('click', function (e) {
+    if (document.body.dataset.st !== 'selecting') return;
+    var c = e.target.closest('.photo'); if (!c) return; e.preventDefault(); c.toggleAttribute('data-sel'); count();
+  });
+  document.querySelector('.name-input').addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === 'Escape') set('photos'); });
+  set('photos');
+})();
+</script>
+</body>
+</html>

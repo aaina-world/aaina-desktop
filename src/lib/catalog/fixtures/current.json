@@ -1,0 +1,12 @@
+{
+ "schema": "aaina-catalog-v1",
+ "publishedAt": "2026-10-20T03:51:55.620Z",
+ "lists": {
+  "models": "lists/models.78cafe3db8a62998.json",
+  "scenes": "lists/scenes.e99f3d5b4cbf9cb6.json",
+  "poses": {
+   "aaina": "lists/poses-aaina.dcd802bc3a1dac0e.json",
+   "hana": "lists/poses-pool-044f3d84140a9c40.58a9b62e6c8d7e7a.json"
+  }
+ }
+}

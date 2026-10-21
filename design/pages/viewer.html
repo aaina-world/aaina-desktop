@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Photo viewer · Aaina Desktop</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../assets/ds.css">
+<link rel="stylesheet" href="../assets/desktop.css">
+<script src="../assets/shell.js"></script>
+<style>
+  body { overflow: hidden; background: #0c0c0b; }
+  .viewer-stage { min-height: 0; overflow: hidden; grid-template-rows: minmax(0, 1fr); }
+  .viewer-stage .photo { height: 100%; width: 100%; display: grid; place-items: center; min-height: 0; position: relative; }
+  .viewer-stage .photo img { position: absolute; inset: 0; width: 100%; height: 100%; max-height: none; object-fit: contain; transition: transform var(--dur-3) var(--ease-out); }
+  .viewer-stage.zoomed .photo img { transform: scale(1.7); cursor: zoom-out; }
+  .viewer-stage .cmpwrap { height: 100%; width: 100%; display: grid; place-items: center; min-height: 0; }
+  .viewer .compare { height: 100%; max-width: 100%; aspect-ratio: 3 / 4; border-radius: 6px; touch-action: none; cursor: ew-resize; background: #1b1b19; }
+  .viewer .compare .lab { position: absolute; top: 12px; z-index: 2; padding: 5px 10px; border-radius: var(--r-pill); background: rgb(12 12 11 / .72); color: #f3f3f0; font-size: var(--text-xs); font-weight: 500; backdrop-filter: blur(8px); }
+  .viewer .compare .lab.l { left: 12px; } .viewer .compare .lab.r { right: 12px; }
+  .viewer .compare img { object-fit: cover; }
+  .viewer .compare .before { object-fit: contain; background: #fff; }
+  .viewer-top .count { font-size: var(--text-sm); color: #b8b8b2; padding: 0 6px; }
+  .viewer .vbtn[aria-pressed="true"] { background: rgb(255 255 255 / .92); color: #0c0c0b; }
+  .viewer .vbtn .kbd { margin-left: 2px; }
+  .viewer .kbd { background: rgb(255 255 255 / .08); border-color: #3a3a36; color: #b8b8b2; }
+  .viewer .vbtn.primary .kbd { background: rgb(0 0 0 / .06); border-color: rgb(0 0 0 / .2); color: #4a4a46; }
+  .viewer .cost { color: #8a8a84; }
+  .viewer-filmstrip button { padding: 0; border-radius: 4px; display: block; }
+  .viewer-filmstrip img { display: block; width: 44px; height: 58px; }
+  .vnav { position: absolute; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: rgb(255 255 255 / .08); color: #f3f3f0; }
+  .vnav:hover { background: rgb(255 255 255 / .16); }
+  .vnav.l { left: 16px; } .vnav.r { right: 16px; }
+  .viewer-panel h1 { font: 600 var(--text-lg)/1.3 var(--font-sans); }
+  .viewer-panel h2 { font: 600 var(--text-lg)/1.3 var(--font-sans); }
+  .viewer-panel .sub { font-size: var(--text-xs); color: #8a8a84; margin-top: 4px; }
+  .viewer-panel { gap: 20px; }
+  .vchips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+  .vchip { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px 0 3px; border-radius: var(--r-pill); background: rgb(255 255 255 / .07); font-size: var(--text-xs); color: #e4e4de; }
+  .vchip img { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; object-position: top; }
+  .vchip .ico { width: 14px; height: 14px; margin-left: 7px; color: #8a8a84; }
+  .vchip.noimg { padding-left: 0; }
+  .vchip .k { color: #8a8a84; }
+  .vgroup { display: flex; flex-direction: column; gap: 2px; }
+  .vgroup .t-eyebrow { margin-bottom: 6px; padding: 0 2px; }
+  .tool .tt { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+  .tool > span:not(.ti):not(.tc) { min-width: 0; }
+  .tool .td { display: block; }
+  .tool.danger .tt { color: #ef7e70; } .tool.danger .ti { color: #ef7e70; background: rgb(239 126 112 / .1); }
+  .viewer .segmented { background: rgb(255 255 255 / .06); border-color: #2a2a27; }
+  .viewer .segmented button { color: #b8b8b2; padding: 0 10px; height: 28px; font-size: var(--text-xs); }
+  .viewer .segmented [aria-selected="true"] { background: #f3f3f0; color: #0c0c0b; box-shadow: none; }
+  .mockrow { display: flex; flex-direction: column; gap: 6px; padding-bottom: 16px; border-bottom: 1px dashed #2a2a27; }
+  .vback { display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 8px 0 4px; margin-left: -4px; border-radius: var(--r-sm); color: #b8b8b2; font-size: var(--text-sm); align-self: flex-start; }
+  .vback:hover { background: rgb(255 255 255 / .06); color: #f3f3f0; }
+  .vtext { width: 100%; min-height: 128px; padding: 12px 14px; border-radius: var(--r-md); background: rgb(255 255 255 / .05); border: 1px solid #3a3a36; color: #f3f3f0; font-size: var(--text-sm); line-height: 1.5; resize: none; }
+  .vtext:focus { outline: none; border-color: #f3f3f0; }
+  .vtext::placeholder { color: #8a8a84; }
+  .vcounter { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; font: 500 var(--text-2xs)/1 var(--font-mono); color: #8a8a84; }
+  .vchips2 { display: flex; flex-wrap: wrap; gap: 6px; }
+  .vchip2 { height: 28px; padding: 0 10px; border-radius: var(--r-pill); border: 1px solid #3a3a36; color: #d4d4ce; font-size: var(--text-xs); }
+  .vchip2:hover { border-color: #8a8a84; color: #fff; }
+  .vgo { width: 100%; height: 44px; border-radius: var(--r-md); background: #f3f3f0; color: #0c0c0b; font-weight: 600; font-size: var(--text-sm); display: flex; align-items: center; justify-content: center; gap: 10px; }
+  .vgo .cost { color: #55554f; padding-left: 10px; border-left: 1px solid rgb(0 0 0 / .2); }
+  .vnote { font-size: var(--text-xs); color: #8a8a84; line-height: 1.5; }
+  .vsw-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  .vsw { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 4px 8px; border-radius: var(--r-md); border: 1px solid #3a3a36; font-size: 11px; color: #d4d4ce; position: relative; }
+  .vsw .dot { width: 32px; height: 32px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgb(255 255 255 / .18); }
+  .vsw[aria-pressed="true"] { border-color: #f3f3f0; box-shadow: 0 0 0 1px #f3f3f0; color: #fff; }
+  .vsw[aria-pressed="true"]::after { content: ""; position: absolute; top: 5px; right: 5px; width: 8px; height: 8px; border-radius: 50%; background: #f3f3f0; }
+  .vsw.off { opacity: .4; }
+  .vhints { display: flex; flex-wrap: wrap; gap: 8px 14px; margin-top: auto; padding-top: 16px; border-top: 1px solid #262624; font-size: var(--text-xs); color: #8a8a84; }
+  .vhints span { display: inline-flex; align-items: center; gap: 6px; }
+  .viewer-top .vbtn { flex: none; }
+  .viewer-top .closebtn { padding: 0 10px 0 12px; }
+  .viewer-top .count { white-space: nowrap; }
+  @media (max-width: 1180px) { .viewer-top .vbtn .kbd { display: none; } .viewer-top #zoom { padding: 0 10px; } .viewer-top #zoom span.lbl { display: none; } }
+  @media (max-height: 860px) { .viewer-panel { gap: 14px; } .tool { padding: 7px 10px; } }
+</style>
+
+<body data-shell="bare" data-st="photo">
+<main class="main" id="main">
+<div class="viewer" role="dialog" aria-label="Photo viewer" aria-modal="true">
+  <div class="viewer-stage" id="stage">
+    <div class="viewer-top">
+      <a class="vbtn closebtn" href="shoot.html" aria-label="Close viewer"><i data-i="x"></i>Close<span class="kbd">Esc</span></a>
+      <span class="count num">1 of 5</span>
+      <span class="grow"></span>
+      <button class="vbtn" id="zoom" aria-label="Zoom" aria-pressed="false"><i data-i="zoom"></i><span class="lbl">Zoom</span><span class="kbd">Space</span></button>
+      <button class="vbtn" id="cmp" aria-pressed="false" aria-label="Compare with my product photo"><i data-i="compare"></i>Compare</button>
+      <button class="vbtn primary"><i data-i="download"></i>Save photo<span class="kbd"><span data-mod>⌘</span>S</span></button>
+    </div>
+    <button class="vnav l" aria-label="Previous photo"><i data-i="left"></i></button>
+    <button class="vnav r" aria-label="Next photo"><i data-i="right"></i></button>
+    <div class="photo" id="photo"><img src="../assets/img/results/real-onmodel.webp" alt="Tara in the Cobalt T-shirt, arms crossed, wide stance"></div>
+    <div class="cmpwrap" id="cmpwrap" hidden>
+      <div class="compare" id="cmpbox" style="--x:50%">
+        <img class="before" src="../assets/img/results/real-ghost.webp" alt="Your product photo">
+        <img class="after" src="../assets/img/results/real-onmodel.webp" alt="Made photo">
+        <span class="lab l">Your product photo</span><span class="lab r">Made photo</span>
+        <div class="handle"></div>
+      </div>
+    </div>
+    <div class="viewer-filmstrip" role="tablist" aria-label="Photos in this shoot">
+      <button aria-label="Photo 1" aria-selected="true"><img class="on" src="../assets/img/results/real-onmodel.webp" alt=""></button>
+      <button aria-label="Photo 2"><img src="../assets/img/results/real-aaina.webp" alt=""></button>
+      <button aria-label="Photo 3"><img src="../assets/img/results/real-ansh.webp" alt=""></button>
+      <button aria-label="Photo 4"><img src="../assets/img/poses/pose-4.webp" alt=""></button>
+      <button aria-label="Photo 5"><img src="../assets/img/poses/pose-7.webp" alt=""></button>
+    </div>
+  </div>
+
+  <aside class="viewer-panel" aria-label="Photo tools">
+    <div class="mockrow" data-st-strip>
+      <span class="t-eyebrow">Mockup state</span>
+      <div class="segmented" role="tablist" aria-label="Mockup state"><button role="tab" aria-selected="true" data-st="photo">Photo</button><button role="tab" aria-selected="false" data-st="fix">Fix something</button><button role="tab" aria-selected="false" data-st="colours">Colours</button><button role="tab" aria-selected="false" data-st="compare">Compare</button></div>
+    </div>
+
+    <div>
+      <h1>Arms crossed, wide stance</h1>
+      <div class="sub">Cobalt T-shirt · Version 2 · 21 Oct 2026, 9:58 pm</div>
+      <div class="vchips">
+        <span class="vchip"><img src="../assets/img/library/model-tara-p.webp" alt=""><span><span class="k">Model</span> Tara</span></span>
+        <span class="vchip"><img src="../assets/img/scenes/arched-arcade-poolside.webp" alt=""><span><span class="k">Scene</span> Plaster arches</span></span>
+        <span class="vchip noimg"><i data-i="user"></i><span><span class="k">Pose</span> Arms crossed</span></span>
+      </div>
+    </div>
+
+    <!-- Tools -->
+    <div class="vgroup" data-show="photo compare"><div class="t-eyebrow">Change this photo</div>
+      <button class="tool"><span class="ti"><i data-i="refresh"></i></span><span><span class="tt">Make again</span><span class="td">A new version of this photo</span></span><span class="tc">about $0.05</span></button>
+      <button class="tool" data-go="fix"><span class="ti"><i data-i="wand"></i></span><span><span class="tt">Fix something</span><span class="td">Change one small thing</span></span><span class="tc">about $0.05</span></button>
+      <button class="tool" data-go="colours"><span class="ti"><i data-i="palette"></i></span><span><span class="tt">Other colours</span><span class="td">Same photo, new colours</span></span><span class="tc">about $0.05 each</span></button>
+      <button class="tool"><span class="ti"><i data-i="frame"></i></span><span><span class="tt">Frame and expression</span><span class="td">Crop closer, change the smile</span></span><span class="tc">about $0.05</span></button>
+    </div>
+    <div class="vgroup" data-show="photo compare"><div class="t-eyebrow">Keep</div>
+      <button class="tool"><span class="ti"><i data-i="download"></i></span><span><span class="tt">Save photo…</span><span class="td">JPEG or original PNG</span></span><span class="tc"><span class="kbd"><span data-mod>⌘</span>S</span></span></button>
+      <button class="tool"><span class="ti"><i data-i="copy"></i></span><span><span class="tt">Copy photo</span><span class="td">Paste it into any app</span></span><span class="tc"><span class="kbd"><span data-mod>⌘</span>C</span></span></button>
+      <button class="tool"><span class="ti"><i data-i="folder"></i></span><span><span class="tt" data-folder>Show in Finder</span><span class="td" data-path>~/Pictures/Aaina</span></span></button>
+      <button class="tool"><span class="ti"><i data-i="versions"></i></span><span><span class="tt">Versions</span><span class="td">2 versions of this photo</span></span><span class="tc">2</span></button>
+      <button class="tool" id="cmp2"><span class="ti"><i data-i="compare"></i></span><span><span class="tt">Compare</span><span class="td">Slide against your product photo</span></span></button>
+    </div>
+    <div class="vgroup" data-show="photo compare"><div class="t-eyebrow">Delete</div>
+      <button class="tool danger"><span class="ti"><i data-i="trash"></i></span><span><span class="tt">Delete photo</span><span class="td">Removes it from this computer</span></span><span class="tc">⌫</span></button>
+    </div>
+
+    <!-- Fix something -->
+    <div class="stack" style="--gap:16px" data-show="fix" hidden>
+      <button class="vback" data-go="photo"><i data-i="left" class="sm"></i>All tools</button>
+      <div><h2>Fix something</h2><p class="vnote" style="margin-top:6px;font-size:var(--text-sm)">Describe one small change. The rest of the photo stays as it is, and the fix is saved as a new version.</p></div>
+      <div><textarea class="vtext" aria-label="What to fix" maxlength="500">Straighten the sleeve hem on the left arm and remove the loose thread at the collar.</textarea>
+        <div class="vcounter"><span>Plain words work best</span><span>84 / 500</span></div></div>
+      <div class="vchips2"><button class="vchip2">Smooth the wrinkles</button><button class="vchip2">Fix the hands</button><button class="vchip2">Straighten the hem</button><button class="vchip2">Remove a stray hair</button></div>
+      <button class="vgo">Make the fix<span class="cost">about $0.05</span></button>
+      <p class="vnote">OpenAI bills the fix to your connection. <span class="kbd"><span data-mod>⌘</span>↵</span> to make it.</p>
+    </div>
+
+    <!-- Other colours -->
+    <div class="stack" style="--gap:16px" data-show="colours" hidden>
+      <button class="vback" data-go="photo"><i data-i="left" class="sm"></i>All tools</button>
+      <div><h2>Other colours</h2><p class="vnote" style="margin-top:6px;font-size:var(--text-sm)">Pick up to 6. Each colour is made as its own photo in this shoot.</p></div>
+      <div class="row spread"><span class="t-eyebrow">Colours</span><span class="vcounter" style="margin:0"><span>6 of 6 chosen</span></span></div>
+      <div class="vsw-grid" data-multi>
+        <button class="vsw" aria-pressed="true"><span class="dot" style="background:#161615"></span>Black</button>
+        <button class="vsw" aria-pressed="true"><span class="dot" style="background:#1d2a4d"></span>Navy</button>
+        <button class="vsw" aria-pressed="true"><span class="dot" style="background:#2c4a3a"></span>Forest</button>
+        <button class="vsw" aria-pressed="true"><span class="dot" style="background:#a4491f"></span>Rust</button>
+        <button class="vsw" aria-pressed="true"><span class="dot" style="background:#d6c3a1"></span>Sand</button>
+        <button class="vsw" aria-pressed="true"><span class="dot" style="background:#d98a9b"></span>Rose</button>
+        <button class="vsw off" aria-pressed="false"><span class="dot" style="background:#f4f4f1"></span>White</button>
+        <button class="vsw off" aria-pressed="false"><span class="dot" style="background:#8fb7e0"></span>Sky</button>
+      </div>
+      <button class="vgo">Make 6 photos<span class="cost">6 × about $0.05</span></button>
+      <p class="vnote">The product keeps its shape and print. Only the colour changes.</p>
+    </div>
+
+    <div class="vhints" aria-label="Keyboard shortcuts"><span><span class="kbd">←</span><span class="kbd">→</span>Move</span><span><span class="kbd">Space</span>Zoom</span><span><span class="kbd"><span data-mod>⌘</span>S</span>Save</span><span><span class="kbd">Esc</span>Close</span></div>
+  </aside>
+</div>
+</main>
+<script>
+(function () {
+  var $ = function (i) { return document.getElementById(i); };
+  var strip = document.querySelector('[data-st-strip]');
+  function setCmp(v) { $('cmp').setAttribute('aria-pressed', v); $('photo').hidden = v; $('cmpwrap').hidden = !v; $('stage').classList.remove('zoomed'); $('zoom').setAttribute('aria-pressed', 'false'); }
+  function set(s) {
+    document.body.dataset.st = s;
+    document.querySelectorAll('[data-show]').forEach(function (e) {
+      var on = e.dataset.show.split(' ').indexOf(s) >= 0; e.hidden = !on;
+    });
+    strip.querySelectorAll('[role=tab]').forEach(function (t) { t.setAttribute('aria-selected', t.dataset.st === s); });
+    setCmp(s === 'compare');
+  }
+  strip.addEventListener('click', function (e) { var t = e.target.closest('[data-st]'); if (t) set(t.dataset.st); });
+  document.addEventListener('click', function (e) { var g = e.target.closest('[data-go]'); if (g) set(g.dataset.go); });
+  $('cmp').onclick = function () { set(document.body.dataset.st === 'compare' ? 'photo' : 'compare'); };
+  $('cmp2').onclick = function () { set('compare'); };
+  $('zoom').onclick = function () { if (document.body.dataset.st === 'compare') return; var z = $('stage').classList.toggle('zoomed'); this.setAttribute('aria-pressed', z); };
+  var box = $('cmpbox'), drag = false;
+  function mv(e) { var r = box.getBoundingClientRect(); var x = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)); box.style.setProperty('--x', (x * 100) + '%'); }
+  box.addEventListener('pointerdown', function (e) { drag = true; mv(e); });
+  addEventListener('pointermove', function (e) { if (drag) mv(e); });
+  addEventListener('pointerup', function () { drag = false; });
+  set('photo');
+})();
+</script>
+</body>
+</html>

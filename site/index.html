@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aaina Desktop: model photos of your products, on your computer</title>
+<meta name="description" content="Free, open source app for Mac, Windows and Linux. Make model photos of what you sell. No account, and your photos stay on your computer.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="/"><img src="favicon.svg" alt="" width="28" height="28">Aaina Desktop</a>
+    <nav><a href="#" data-github>GitHub</a></nav>
+  </header>
+
+  <div class="hero">
+    <div>
+      <span class="eyebrow"><i></i>Free and open source</span>
+      <h1>Model photos of your products, made on <em>your</em> computer.</h1>
+      <p class="lead">Add a photo of what you sell, pick a studio model, choose poses and a scene, and make photos for your shop. There is no account to make, and your work never leaves your computer.</p>
+      <div class="cta">
+        <a class="btn primary" id="dl" href="#" data-release>Download</a>
+        <a class="btn" id="dl2" href="#" data-release>All downloads</a>
+      </div>
+      <p class="small" id="dl-note">For Mac, Windows and Linux. Photos are made with your own OpenAI key, about <span class="mono">$0.05</span> a photo.</p>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <img src="img/photoshoot-chloe-600.webp" alt="" width="520" height="693">
+      <img src="img/tara.webp" alt="" width="520" height="693">
+    </div>
+  </div>
+</div>
+
+<section class="alt">
+  <div class="wrap">
+    <h2>Four steps to <em>finished</em> photos</h2>
+    <ol class="steps">
+      <li><b>01</b><h3>Add your product</h3><p>Drop in a photo of what you sell. The app reads what it is.</p></li>
+      <li><b>02</b><h3>Pick a model</h3><p>Choose from Aaina's studio models, or make your own.</p></li>
+      <li><b>03</b><h3>Poses and a scene</h3><p>Choose the poses you want and where the photo is set.</p></li>
+      <li><b>04</b><h3>Make photos</h3><p>Review them, make again, fix something, and save.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section>
+  <div class="wrap two">
+    <div>
+      <h2>What stays on <em>your</em> computer</h2>
+      <p>Your shoots, product photos, finished photos and own models are kept on your computer. Your OpenAI key lives in your system keychain.</p>
+    </div>
+    <ul class="facts">
+      <li><i></i><span><b>OpenAI</b> gets your product photos, plus the model, pose and scene for each photo, so it can make the photo.</span></li>
+      <li><i></i><span><b>Aaina</b> gets nothing from you. The app only downloads the public catalogue of models, poses and scenes.</span></li>
+      <li><i></i><span><b>The app has no account and no tracking,</b> no ads. The code is open for anyone to read.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="wrap">
+    <h2>Studio models, <em>ready</em> to wear your products</h2>
+    <div class="strip">
+      <img src="img/tara.webp" alt="" loading="lazy" width="300" height="400">
+      <img src="img/kabir.webp" alt="" loading="lazy" width="300" height="400">
+      <img src="img/nia.webp" alt="" loading="lazy" width="300" height="400">
+      <img src="img/ethan.webp" alt="" loading="lazy" width="300" height="400">
+      <img src="img/chloe.webp" alt="" loading="lazy" width="300" height="400">
+      <img src="img/camille.webp" alt="" loading="lazy" width="300" height="400">
+    </div>
+  </div>
+</section>
+
+<p class="note note-top">Videos, try-ons and listings are on Aaina. <a href="https://aaina.world">Open aaina.world</a></p>
+
+<section class="alt support">
+  <div class="wrap">
+    <h2>Keep it <em>free</em></h2>
+    <p>Aaina Desktop costs nothing. If it saves you time, a coffee or a star helps a lot.</p>
+    <div class="cta">
+      <a class="btn primary" href="#" data-coffee>Buy me a coffee</a>
+      <a class="btn" href="#" data-github>Star on GitHub</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>MIT licensed code. &copy; 2026 Aaina</span>
+    <nav>
+      <a href="#" data-repo-path="LICENSE">Licence</a>
+      <a href="#" data-repo-path="CATALOGUE-TERMS.md">Catalogue terms</a>
+      <a href="#" data-repo-path="PRIVACY.md">Privacy</a>
+      <a href="#" data-github>GitHub</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var CONFIG={repo:"https://github.com/aaina-world/aaina-desktop",coffee:"https://buymeacoffee.com/aaina.world",released:false};
+  var q=function(s){return document.querySelectorAll(s)};
+  q("[data-release]").forEach(function(a){a.href=CONFIG.repo+"/releases/latest"});
+  q("[data-github]").forEach(function(a){a.href=CONFIG.repo});
+  q("[data-repo-path]").forEach(function(a){a.href=CONFIG.repo+"/blob/main/"+a.getAttribute("data-repo-path")});
+  q("[data-coffee]").forEach(function(a){a.href=CONFIG.coffee});
+  var ua=navigator.userAgent||'',p=(navigator.userAgentData&&navigator.userAgentData.platform)||navigator.platform||'';
+  var os=/android|iphone|ipad/i.test(ua)?'':/mac/i.test(p+ua)?'Mac':/win/i.test(p+ua)?'Windows':/linux|x11/i.test(p+ua)?'Linux':'';
+  var b=document.getElementById('dl');
+  if(os){b.textContent='Download for '+os;document.getElementById('dl2').textContent='Other systems'}
+  else{b.textContent='Download';}
+  if(!CONFIG.released){
+    // Until the first release is on GitHub: no links that would lead nowhere.
+    q("[data-github],[data-repo-path],#dl2").forEach(function(a){a.hidden=true});
+    b.textContent='Downloads coming soon';b.removeAttribute('href');b.setAttribute('aria-disabled','true');
+  }
+})();
+</script>
+</body>
+</html>

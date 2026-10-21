@@ -1,0 +1,73 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Capability for the main window",
+  "windows": [
+    "main"
+  ],
+  "permissions": [
+    "core:default",
+    "core:window:allow-start-dragging",
+    "opener:default",
+    "opener:allow-reveal-item-in-dir",
+    "opener:allow-open-url",
+    "sql:default",
+    "sql:allow-execute",
+    "dialog:default",
+    "notification:default",
+    "process:default",
+    "clipboard-manager:allow-write-image",
+    "clipboard-manager:allow-write-text",
+    "window-state:default",
+    {
+      "identifier": "fs:scope",
+      "allow": [
+        {
+          "path": "$APPDATA/**"
+        },
+        {
+          "path": "$PICTURE/**"
+        },
+        {
+          "path": "$HOME/**"
+        },
+        {
+          "path": "$APPCONFIG/**"
+        },
+        {
+          "path": "$APPLOCALDATA/**"
+        }
+      ]
+    },
+    "fs:default",
+    "fs:allow-read-file",
+    "fs:allow-write-file",
+    "fs:allow-mkdir",
+    "fs:allow-remove",
+    "fs:allow-exists",
+    "fs:allow-read-dir",
+    "fs:allow-copy-file",
+    "fs:allow-rename",
+    "fs:allow-stat",
+    {
+      "identifier": "http:default",
+      "allow": [
+        {
+          "url": "https://static.aaina.world/*"
+        },
+        {
+          "url": "https://api.openai.com/*"
+        },
+        {
+          "url": "https://auth.openai.com/*"
+        },
+        {
+          "url": "https://chatgpt.com/*"
+        },
+        {
+          "url": "https://api.github.com/*"
+        }
+      ]
+    }
+  ]
+}

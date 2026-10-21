@@ -1,0 +1,137 @@
+{
+ "schema": "aaina-catalog-v1",
+ "items": [
+  {
+   "id": "loc_pose_bank_white_room",
+   "title": "White Studio",
+   "mood": "clean",
+   "bestFor": [
+    "crewneck_tshirts",
+    "shirts",
+    "jeans",
+    "kurtas",
+    "midi_dresses",
+    "sneakers"
+   ],
+   "alsoWorksFor": [
+    "straight_trousers",
+    "coordinated_sets",
+    "structured_handbags",
+    "watches",
+    "necklaces",
+    "sunglasses",
+    "hoodies",
+    "flats"
+   ],
+   "group": "studio",
+   "region": "anywhere",
+   "audience": null,
+   "tags": [
+    "Studio",
+    "Clean",
+    "Catalogue",
+    "T-shirts",
+    "Shirts",
+    "Jeans",
+    "Kurtas",
+    "Midi dresses",
+    "Sneakers"
+   ],
+   "creativeTags": [
+    "catalogue",
+    "studio"
+   ],
+   "imageUrl": "img/f6d9f0548f6e6fa163256d215051a94f6c7328614636db3ac77fb82c6425cdaf-1080.webp",
+   "sha256": "f6d9f0548f6e6fa163256d215051a94f6c7328614636db3ac77fb82c6425cdaf",
+   "selectionAvailable": true,
+   "unavailableReason": null
+  },
+  {
+   "id": "loc_warm_beige_paper_sweep",
+   "title": "Warm Beige Studio",
+   "mood": "clean",
+   "bestFor": [
+    "shirts",
+    "straight_trousers",
+    "kurtas",
+    "cardigans",
+    "shapewear",
+    "flats"
+   ],
+   "alsoWorksFor": [
+    "crewneck_tshirts",
+    "midi_dresses",
+    "coordinated_sets",
+    "sandals",
+    "scarves",
+    "belts",
+    "chinos",
+    "casual_shirts"
+   ],
+   "group": "studio",
+   "region": "anywhere",
+   "audience": null,
+   "tags": [
+    "Studio",
+    "Clean",
+    "Catalogue",
+    "Shirts",
+    "Trousers",
+    "Kurtas",
+    "Cardigans",
+    "Shapewear",
+    "Flats"
+   ],
+   "creativeTags": [
+    "catalogue",
+    "studio"
+   ],
+   "imageUrl": "img/41aa695a3df6e6c06d61ea8b946cedfb50af257bb5290ffe3a566d9399ea8e13-1080.webp",
+   "sha256": "41aa695a3df6e6c06d61ea8b946cedfb50af257bb5290ffe3a566d9399ea8e13",
+   "selectionAvailable": true,
+   "unavailableReason": null
+  },
+  {
+   "id": "loc_sage_green_studio",
+   "title": "Sage Green Studio",
+   "mood": "calm",
+   "bestFor": [
+    "kurtas",
+    "kurta_sets",
+    "shirts",
+    "midi_dresses",
+    "sandals",
+    "kurta_pajama_sets"
+   ],
+   "alsoWorksFor": [
+    "coordinated_sets",
+    "wide_leg_trousers",
+    "tote_bags",
+    "earrings",
+    "scarves"
+   ],
+   "group": "studio",
+   "region": "anywhere",
+   "audience": null,
+   "tags": [
+    "Studio",
+    "Calm",
+    "Catalogue",
+    "Kurtas",
+    "Kurta sets",
+    "Shirts",
+    "Midi dresses",
+    "Sandals",
+    "Kurta pajama sets"
+   ],
+   "creativeTags": [
+    "catalogue",
+    "studio"
+   ],
+   "imageUrl": "img/7a0d42a3efe7f0ea29a0bfc2dde9f1b34885d88bf904f992f1176bcc685142a5-1080.webp",
+   "sha256": "7a0d42a3efe7f0ea29a0bfc2dde9f1b34885d88bf904f992f1176bcc685142a5",
+   "selectionAvailable": true,
+   "unavailableReason": null
+  }
+ ]
+}

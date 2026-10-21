@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>All screens · Aaina Desktop</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="assets/ds.css">
+<link rel="stylesheet" href="assets/desktop.css">
+<script src="assets/shell.js"></script>
+<style>
+  body { background: var(--bg); }
+  .gal { max-width: 1120px; margin: 0 auto; padding: 72px 32px 120px; }
+  .gal-head { display: flex; flex-direction: column; gap: var(--s-4); max-width: 68ch; }
+  .gal-head .mk { width: 44px; height: 44px; color: var(--fg); }
+  .facts { display: flex; gap: var(--s-6); margin-top: var(--s-6); padding: var(--s-4) var(--s-5); border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--bg-raised); }
+  .facts > div { flex: 1; min-width: 0; font-size: var(--text-sm); color: var(--fg-muted); line-height: 1.5; }
+  .facts b { display: block; color: var(--fg); font-weight: 600; margin-bottom: 2px; }
+  .hint-note { display: flex; align-items: center; gap: 10px; margin-top: var(--s-4); }
+  .grp { margin-top: var(--s-10); }
+  .grp h2 { margin-bottom: var(--s-4); display: flex; align-items: baseline; gap: 12px; }
+  .grp h2 .n { font: 500 var(--text-xs)/1 var(--font-mono); color: var(--fg-subtle); }
+  .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-3); }
+  .sc { display: flex; flex-direction: column; gap: 6px; padding: 16px 18px; min-height: 96px; border-radius: var(--r-lg); background: var(--bg-raised); border: 1px solid var(--line); min-width: 0; transition: border-color var(--dur-1), box-shadow var(--dur-1); }
+  .sc:hover { border-color: var(--line-strong); box-shadow: var(--shadow-1); }
+  .sc .t { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: var(--text-md); font-weight: 600; }
+  .sc .t .ico { color: var(--fg-subtle); width: 16px; height: 16px; }
+  .sc .d { font-size: var(--text-sm); color: var(--fg-muted); line-height: 1.4; }
+  @media (max-width: 960px) { .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } .facts { flex-direction: column; gap: var(--s-3); } }
+</style>
+
+<body data-shell="gallery">
+<main class="gal" id="main">
+  <header class="gal-head">
+    <span class="mk" data-logo></span>
+    <span class="t-eyebrow">Design mockups</span>
+    <h1 class="t-display">Aaina <em class="italic">Desktop</em></h1>
+    <p class="muted" style="font-size:var(--text-md);line-height:1.55">A free, open-source app for Mac, Windows and Linux that makes model photos of your products. Everything is made and kept on your computer. These screens are static mockups of every step.</p>
+  </header>
+
+  <div class="facts">
+    <div><b>Kept on the computer</b>Shoots, photos, your own models, poses and scenes, and settings. Your OpenAI key lives in the system keychain.</div>
+    <div><b>Fetched from Aaina</b>Only the studio catalogue: models, poses and scenes. It is cached, so browsing works offline.</div>
+  </div>
+  <div class="notice accent hint-note"><i data-i="info"></i><span>Use the switcher at the bottom right of any screen to change between Mac, Windows and Linux, and between Light and Dark.</span></div>
+
+  <section class="grp"><h2 class="t-section">First open <span class="n">3</span></h2><div class="cards">
+    <a class="sc" href="pages/welcome.html"><span class="t">Welcome<i data-i="chev"></i></span><span class="d">The first screen: what the app is and does.</span></a>
+    <a class="sc" href="pages/connect.html"><span class="t">Connect<i data-i="chev"></i></span><span class="d">Sign in with ChatGPT or add an OpenAI key.</span></a>
+    <a class="sc" href="pages/setup.html"><span class="t">Setup<i data-i="chev"></i></span><span class="d">Choose the photos folder and download the catalogue.</span></a>
+  </div></section>
+
+  <section class="grp"><h2 class="t-section">Main <span class="n">5</span></h2><div class="cards">
+    <a class="sc" href="pages/home.html"><span class="t">Home<i data-i="chev"></i></span><span class="d">Start a shoot, pick up where you left off.</span></a>
+    <a class="sc" href="pages/shoots.html"><span class="t">Shoots<i data-i="chev"></i></span><span class="d">Every shoot, with search, rename and delete.</span></a>
+    <a class="sc" href="pages/shoot.html"><span class="t">Shoot<i data-i="chev"></i></span><span class="d">One shoot: its photos, versions and next steps.</span></a>
+    <a class="sc" href="pages/viewer.html"><span class="t">Viewer<i data-i="chev"></i></span><span class="d">A full photo, with save, copy, fix and colours.</span></a>
+    <a class="sc" href="pages/library.html"><span class="t">Library<i data-i="chev"></i></span><span class="d">Products, models, poses and scenes in one place.</span></a>
+  </div></section>
+
+  <section class="grp"><h2 class="t-section">Create <span class="n">7</span></h2><div class="cards">
+    <a class="sc" href="pages/create-product.html"><span class="t">Product<i data-i="chev"></i></span><span class="d">Add the product photos to shoot.</span></a>
+    <a class="sc" href="pages/create-model.html"><span class="t">Model<i data-i="chev"></i></span><span class="d">Pick a studio model or one of your own.</span></a>
+    <a class="sc" href="pages/create-poses.html"><span class="t">Poses<i data-i="chev"></i></span><span class="d">Studio poses, or make your own.</span></a>
+    <a class="sc" href="pages/create-scene.html"><span class="t">Scene<i data-i="chev"></i></span><span class="d">Pick a scene, a plain colour, or make your own.</span></a>
+    <a class="sc" href="pages/create-review.html"><span class="t">Review<i data-i="chev"></i></span><span class="d">Check everything and see the rough cost.</span></a>
+    <a class="sc" href="pages/create-flatlay.html"><span class="t">Flat-lay<i data-i="chev"></i></span><span class="d">Laid-flat photos in a few styles.</span></a>
+    <a class="sc" href="pages/create-ghost.html"><span class="t">Ghost mannequin<i data-i="chev"></i></span><span class="d">The garment alone, in its worn shape.</span></a>
+  </div></section>
+
+  <section class="grp"><h2 class="t-section">Your own models <span class="n">2</span></h2><div class="cards">
+    <a class="sc" href="pages/model-create.html"><span class="t">Make a model<i data-i="chev"></i></span><span class="d">From a description or from photos of a real adult.</span></a>
+    <a class="sc" href="pages/model-own.html"><span class="t">One of your models<i data-i="chev"></i></span><span class="d">Its sheet, details and poses.</span></a>
+  </div></section>
+
+  <section class="grp"><h2 class="t-section">App <span class="n">2</span></h2><div class="cards">
+    <a class="sc" href="pages/settings.html"><span class="t">Settings<i data-i="chev"></i></span><span class="d">Connection, folder, shapes, updates and about.</span></a>
+    <a class="sc" href="pages/about.html"><span class="t">About<i data-i="chev"></i></span><span class="d">Version, licence, and a coffee if you like.</span></a>
+  </div></section>
+
+  <section class="grp"><h2 class="t-section">Dialogs and states <span class="n">2</span></h2><div class="cards">
+    <a class="sc" href="pages/dialogs.html"><span class="t">Dialogs<i data-i="chev"></i></span><span class="d">Save, fix, colours, delete, quit, updates and key problems.</span></a>
+    <a class="sc" href="pages/states.html"><span class="t">States<i data-i="chev"></i></span><span class="d">Offline, loading, drop, toasts, failed and empty.</span></a>
+  </div></section>
+</main>
+</body>

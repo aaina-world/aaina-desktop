@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Choose a model · Aaina Desktop</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../assets/ds.css">
+<link rel="stylesheet" href="../assets/desktop.css">
+<script src="../assets/shell.js"></script>
+<style>
+  .flowbar { display: flex; align-items: center; gap: var(--s-3); min-width: 0; }
+  .flowbar .stepper { flex: 1; justify-content: center; }
+  @media (max-width: 1179px) { .flowbar .crumbs { display: none; } }
+  .saved { display: inline-flex; align-items: center; gap: 6px; font: 500 var(--text-2xs)/1 var(--font-mono); color: var(--fg-subtle); white-space: nowrap; }
+  .saved .ico { width: 14px; height: 14px; color: var(--success); }
+  .mockstrip { margin-bottom: var(--s-5); flex-wrap: wrap; }
+  .mockstrip .segmented { margin-left: auto; }
+  .summary-card .sum-row { display: flex; align-items: center; gap: 12px; padding: 12px 16px; }
+  .summary-card .sum-row + .sum-row { border-top: 1px solid var(--line); }
+  .summary-card .sum-row img { width: 40px; height: 52px; border-radius: var(--r-xs); object-fit: cover; background: #fff; flex: none; }
+  .summary-card .sum-row .ph { width: 40px; height: 52px; border-radius: var(--r-xs); background: var(--bg-sunken); flex: none; display: grid; place-items: center; color: var(--fg-subtle); }
+  .summary-card .sum-row .k { font-size: var(--text-xs); color: var(--fg-subtle); }
+  .summary-card .sum-row .v { font-size: var(--text-sm); font-weight: 500; }
+  .summary-card .sum-row .edit { margin-left: auto; font-size: var(--text-xs); font-weight: 500; color: var(--fg-muted); text-decoration: underline; text-underline-offset: 3px; }
+  .picked { display: flex; gap: 6px; flex-wrap: wrap; }
+  .picked img { width: 40px; height: 52px; border-radius: var(--r-xs); object-fit: cover; }
+  .picked .empty-slot { width: 40px; height: 52px; border-radius: var(--r-xs); border: 1px dashed var(--line-strong); }
+  .block { padding: var(--s-5); display: flex; flex-direction: column; gap: var(--s-4); }
+  .block + .block { margin-top: var(--s-4); }
+  .block-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s-3); }
+  .tile.contain .media { background: #fff; }
+  .quality { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); }
+  .quality .t-small { font-weight: 500; }
+  .price-card .cost { font-size: var(--text-xs); }
+  .keynote { display: flex; gap: 8px; align-items: flex-start; font-size: var(--text-xs); color: var(--fg-subtle); line-height: 1.45; }
+  .keynote .ico { width: 14px; height: 14px; margin-top: 1px; }
+  .notice .btn { margin-left: auto; }
+  .readby { display: inline-flex; align-items: center; gap: 6px; font: 500 var(--text-2xs)/1 var(--font-mono); color: var(--fg-subtle); white-space: nowrap; }
+  .readby .ico { width: 14px; height: 14px; }
+
+  .mtile .media { --ratio: 3 / 4; }
+  .pill-yours { height: 24px; padding: 0 10px; font-size: 11px; }
+  .fgroup { display: flex; flex-direction: column; gap: 10px; }
+  .fgroup + .fgroup { margin-top: var(--s-5); }
+  .filters-active { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: var(--s-5); }
+  .catline { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; font: 500 var(--text-2xs)/1 var(--font-mono); color: var(--fg-subtle); }
+  .catline .ico { width: 14px; height: 14px; }
+  .empty.offline { padding: var(--s-16) var(--s-6); }
+</style>
+
+<body data-nav="home" data-flow>
+<main class="main" id="main">
+  <header class="topbar">
+    <div class="flowbar grow">
+      <a class="btn btn-ghost btn-icon" href="create-product.html" aria-label="Back"><i data-i="left"></i></a>
+      <div class="crumbs"><a href="home.html">New shoot</a><span class="sep">/</span><span class="here">Cobalt T-shirt</span></div>
+      <nav class="stepper" aria-label="Steps"><a class="step done" href="create-product.html"><span class="n"><i data-i="check" class="sm" style="width:12px;height:12px"></i></span>Product</a><span class="step-sep"></span><span class="step" aria-current="step"><span class="n">2</span>Model</span><span class="step-sep"></span><a class="step" href="create-poses.html"><span class="n">3</span>Poses</a><span class="step-sep"></span><a class="step" href="create-scene.html"><span class="n">4</span>Scene</a><span class="step-sep"></span><a class="step" href="create-review.html"><span class="n">5</span>Review</a></nav>
+      <span class="saved" title="Drafts save automatically"><i data-i="check"></i>Saved</span>
+    </div>
+  </header>
+
+  <div class="page">
+    <div class="notice mockstrip" data-panels="state"><b>Mockup state:</b><div class="segmented" role="tablist" aria-label="Mockup state"><button role="tab" aria-selected="true" data-panel="results">Models</button><button role="tab" aria-selected="false" data-panel="empty">Empty search</button><button role="tab" aria-selected="false" data-panel="offline">Offline first run</button></div></div>
+    <div class="split">
+      <section style="min-width:0">
+        <div class="page-head" style="margin-bottom:var(--s-5)"><div><span class="t-eyebrow">On a model</span><h1 class="t-page mt-2">Choose a <em class="italic">model</em></h1><p class="lede">One studio model or one of your own. Everything below is kept on this computer.</p><span class="catline"><i data-i="clock"></i>Catalogue updated today · works offline</span></div></div>
+        <div data-panel-of="state" data-panel-id="results"><div class="toolbar">
+          <label class="input-wrap search-wrap grow" style="min-width:150px;flex:1 1 150px"><i data-i="search"></i><input class="input search" placeholder="Search: woman, South Asian, plus-size…" aria-label="Search models"></label>
+          <div class="chips"><button class="chip dropdown" data-open="dlg-filters">Gender</button><button class="chip dropdown" data-open="dlg-filters">Age</button><button class="chip dropdown" data-open="dlg-filters">Look</button><button class="chip dropdown" data-open="dlg-filters">Body</button><button class="chip dropdown" data-open="dlg-filters">Collections</button></div>
+        </div><div data-single>
+<div><div class="section-head"><h2 class="t-title">Your models</h2><span class="t-caption">Only on this computer</span></div><div class="grid c4"><button class="tile selectable mtile" aria-selected="false"><div class="media"><img src="../assets/img/library/model-nia-p.webp" alt="Riya"><span class="sel-mark"><i data-i="check" class="sm"></i></span><span class="over-tl"><span class="icon-btn-glass" title="Pin"><i data-i="pin"></i></span></span></div><div class="cap"><div class="grow"><div class="t">Riya</div><div class="m">27 · South Asian</div><div class="mt-1"><span class="badge" style="font-size:10px"><i data-i="lock" class="sm" style="width:11px;height:11px"></i>Only on this computer</span></div></div></div></button><a class="tile add" href="model-create.html"><div class="media" style="--ratio:3/4"><div><span class="plus-disc"><i data-i="plus"></i></span><div class="t-small" style="font-weight:600;color:var(--fg)">Create a model</div><div class="t-caption mt-1">From words or photos</div></div></div><div class="cap"><div class="grow"><div class="t">&nbsp;</div><div class="m">&nbsp;</div><div class="mt-1"><span class="badge" style="visibility:hidden;font-size:10px">&nbsp;</span></div></div></div></a></div></div><div class="mt-10"><div class="section-head"><h2 class="t-title">Pinned</h2><span class="t-caption">2 models</span></div><div class="grid c4"><button class="tile selectable mtile" aria-selected="false"><div class="media"><img src="../assets/img/models/aaina.webp" alt="Aaina"><span class="sel-mark"><i data-i="check" class="sm"></i></span><span class="over-tl"><span class="icon-btn-glass on" title="Unpin"><i data-i="pin"></i></span></span></div><div class="cap"><div class="grow"><div class="t">Aaina</div><div class="m">26 · South Asian</div></div></div></button><button class="tile selectable mtile" aria-selected="false"><div class="media"><img src="../assets/img/models/ansh.webp" alt="Ansh"><span class="sel-mark"><i data-i="check" class="sm"></i></span><span class="over-tl"><span class="icon-btn-glass on" title="Unpin"><i data-i="pin"></i></span></span></div><div class="cap"><div class="grow"><div class="t">Ansh</div><div class="m">28 · South Asian</div></div></div></button></div></div><div class="mt-10"><div class="section-head"><h2 class="t-title">Suggested for your T-shirt</h2><span class="t-caption">Ordered by who your product suits</span></div><div class="grid c4"><button class="tile selectable mtile" aria-selected="true"><div class="media"><img src="../assets/img/models/tara.webp" alt="Tara"><span class="sel-mark"><i data-i="check" class="sm"></i></span><span class="over-tl"><span class="icon-btn-glass" title="Pin"><i data-i="pin"></i></span></span></div><div class="cap"><div class="grow"><div class="t">Tara</div><div class="m">26 · South Asian</div></div></div></button><button class="tile selectable mtile" aria-selected="false"><div class="media"><img src="../assets/img/models/chloe.webp" alt="Chloe"><span class="sel-mark"><i data-i="check" class="sm"></i></span><span class="over-tl"><span class="icon-btn-glass" title="Pin"><i data-i="pin"></i></span></span></div><div class="cap"><div class="grow"><div class="t">Chloe</div><div class="m">24 · European</div></div></div></button><button class="tile selectable mtile" aria-selected="false"><div class="media"><img src="../assets/img/models/camille.webp" alt="Camille"><span class="sel-mark"><i data-i="check" class="sm"></i></span><span class="over-tl"><span class="icon-btn-glass" title="Pin"><i data-i="pin"></i></span></span></div><div class="cap"><div class="grow"><div class="t">Camille</div><div class="m">25 · European</div></div></div></button><button class="tile selectable mtile" aria-selected="false"><div class="media"><img src="../assets/img/models/nia.webp" alt="Nia"><span class="sel-mark"><i data-i="check" class="sm"></i></span><span class="over-tl"><span class="icon-btn-glass" title="Pin"><i data-i="pin"></i></span></span></div><div class="cap"><div class="grow"><div class="t">Nia</div><div class="m">27 · Black</div></div></div></button></div></div><div class="mt-10"><div class="section-head"><h2 class="t-title">All models · 377</h2><span class="t-caption">Showing 7</span></div><div class="grid c4"><button class="tile selectable mtile" aria-selected="false"><div class="media"><img src="../assets/img/models/ethan.webp" alt="Ethan"><span class="sel-mark"><i data-i="check" class="sm"></i></span><span class="over-tl"><span class="icon-btn-glass" title="Pin"><i data-i="pin"></i></span></span></div><div class="cap"><div class="grow"><div class="t">Ethan</div><div class="m">29 · European</div></div></div></button><button class="tile selectable mtile" aria-selected="false"><div class="media"><img src="../assets/img/models/kabir.webp" alt="Kabir"><span class="sel-mark"><i data-i="check" class="sm"></i></span><span class="over-tl"><span class="icon-btn-glass" title="Pin"><i data-i="pin"></i></span></span></div><div class="cap"><div class="grow"><div class="t">Kabir</div><div class="m">30 · South Asian</div></div></div></button><button class="tile selectable mtile" aria-selected="false"><div class="media"><img src="../assets/img/models/luca.webp" alt="Luca"><span class="sel-mark"><i data-i="check" class="sm"></i></span><span class="over-tl"><span class="icon-btn-glass" title="Pin"><i data-i="pin"></i></span></span></div><div class="cap"><div class="grow"><div class="t">Luca</div><div class="m">31 · Mediterranean</div></div></div></button><button class="tile selectable mtile" aria-selected="false"><div class="media"><img src="../assets/img/models/malik.webp" alt="Malik"><span class="sel-mark"><i data-i="check" class="sm"></i></span><span class="over-tl"><span class="icon-btn-glass" title="Pin"><i data-i="pin"></i></span></span></div><div class="cap"><div class="grow"><div class="t">Malik</div><div class="m">33 · Black</div></div></div></button><button class="tile selectable mtile" aria-selected="false"><div class="media"><img src="../assets/img/models/marco.webp" alt="Marco"><span class="sel-mark"><i data-i="check" class="sm"></i></span><span class="over-tl"><span class="icon-btn-glass" title="Pin"><i data-i="pin"></i></span></span></div><div class="cap"><div class="grow"><div class="t">Marco</div><div class="m">35 · Mediterranean</div></div></div></button><button class="tile selectable mtile" aria-selected="false"><div class="media"><img src="../assets/img/models/matteo.webp" alt="Matteo"><span class="sel-mark"><i data-i="check" class="sm"></i></span><span class="over-tl"><span class="icon-btn-glass" title="Pin"><i data-i="pin"></i></span></span></div><div class="cap"><div class="grow"><div class="t">Matteo</div><div class="m">27 · Mediterranean</div></div></div></button><button class="tile selectable mtile" aria-selected="false"><div class="media"><img src="../assets/img/models/rehan.webp" alt="Rehan"><span class="sel-mark"><i data-i="check" class="sm"></i></span><span class="over-tl"><span class="icon-btn-glass" title="Pin"><i data-i="pin"></i></span></span></div><div class="cap"><div class="grow"><div class="t">Rehan</div><div class="m">29 · South Asian</div></div></div></button></div></div><div class="row mt-6" style="justify-content:center"><button class="btn btn-secondary">Show more models</button></div>
+        </div></div>
+        <div data-panel-of="state" data-panel-id="empty" hidden><div class="toolbar">
+          <label class="input-wrap search-wrap grow" style="min-width:150px;flex:1 1 150px"><i data-i="search"></i><input class="input search" placeholder="Search: woman, South Asian, plus-size…" aria-label="Search models"></label>
+          <div class="chips"><button class="chip dropdown" data-open="dlg-filters">Gender</button><button class="chip dropdown" data-open="dlg-filters">Age</button><button class="chip dropdown" data-open="dlg-filters">Look</button><button class="chip dropdown" data-open="dlg-filters">Body</button><button class="chip dropdown" data-open="dlg-filters">Collections</button></div>
+        </div><div class="filters-active"><span class="t-small muted">Filters</span><button class="chip chip-sm on">Body · Plus size <i data-i="x" class="sm x"></i></button><button class="chip chip-sm on">Collections · Modest wear <i data-i="x" class="sm x"></i></button><button class="btn btn-link t-small">Clear filters</button></div>
+        <div class="empty"><span class="art"><i data-i="search"></i></span><h2 class="t-section">No models found</h2><p>Try another search or fewer filters. New models are added to the catalogue every week.</p><button class="btn btn-secondary">Clear search and filters</button></div></div>
+        <div data-panel-of="state" data-panel-id="offline" hidden><div class="empty offline"><span class="art"><i data-i="offline"></i></span><h2 class="t-section">Connect to the internet once to load the studio models</h2><p>The catalogue of models, poses and scenes is downloaded the first time. After that it is kept on this computer and works offline.</p><div class="row wrap" style="justify-content:center"><button class="btn btn-primary"><i data-i="refresh"></i>Try again</button><a class="btn btn-secondary" href="create-product.html">Back to product</a></div><span class="local-note mt-2"><i data-i="lock"></i>Your own models are still here, and you can make one now.</span></div></div>
+      </section>
+      <aside>
+        <div class="card summary-card"><div class="sum-row"><img src="../assets/img/results/real-ghost.webp" alt="" style="object-fit:contain"><div class="grow"><div class="k">Product</div><div class="v">Cobalt T-shirt</div></div><a class="edit" href="create-product.html">Change</a></div><div class="sum-row"><img src="../assets/img/models/tara.webp" alt=""><div class="grow"><div class="k">Model</div><div class="v">Tara · 26</div></div><a class="edit" href="#">Change</a></div><div class="sum-row"><span class="ph" style=""><i data-i="people" class="sm"></i></span><div class="grow"><div class="k">Poses</div><div class="v subtle">Next step</div></div></div><div class="sum-row"><span class="ph" style=""><i data-i="picture" class="sm"></i></span><div class="grow"><div class="k">Scene</div><div class="v subtle">Next step</div></div></div></div>
+        <div class="card price-card">
+          <div class="price-line"><span>Standard quality</span><b>about $0.05 a photo</b></div>
+          <div class="price-line"><span>High quality</span><b>about $0.20 a photo</b></div>
+          <div class="price-total"><span class="t-small muted">From</span><span class="v num">about $0.05</span></div>
+          <div class="t-caption">Pick poses and a scene next. Billed by OpenAI to your key. Nothing is sent until you press Make.</div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <div class="actionbar">
+    <div class="summary"><div class="thumbs"><img src="../assets/img/models/tara.webp" alt=""></div><div class="txt"><b>Tara · 26</b><span class="num">South Asian · studio model</span></div></div>
+    <a class="btn btn-secondary" href="create-product.html">Back</a>
+    <a class="btn btn-primary" href="create-poses.html">Next: poses <i data-i="right"></i></a>
+  </div>
+
+  <div class="scrim" id="dlg-filters" hidden><div class="dialog" role="dialog" aria-label="Filters">
+    <div class="dialog-head"><div><div class="t">Filters</div><div class="d">Show only models that match. 377 models.</div></div><button class="btn btn-ghost btn-icon close" data-close aria-label="Close"><i data-i="x"></i></button></div>
+    <div class="dialog-body">
+      <div class="fgroup"><div class="label">Gender</div><div class="chips"><button class="chip" aria-pressed="true">Women</button><button class="chip" aria-pressed="false">Men</button><button class="chip" aria-pressed="false">Girls</button><button class="chip" aria-pressed="false">Boys</button></div></div>
+      <div class="fgroup"><div class="label">Age</div><div class="chips"><button class="chip" aria-pressed="false">Babies</button><button class="chip" aria-pressed="false">Kids</button><button class="chip" aria-pressed="false">Teens</button><button class="chip" aria-pressed="false">Adults</button><button class="chip" aria-pressed="false">Mature</button></div></div>
+      <div class="fgroup"><div class="label">Look</div><div class="chips"><button class="chip" aria-pressed="false">South Asian</button><button class="chip" aria-pressed="false">East Asian</button><button class="chip" aria-pressed="false">Southeast Asian</button><button class="chip" aria-pressed="false">Black</button><button class="chip" aria-pressed="false">Middle Eastern</button><button class="chip" aria-pressed="false">Hispanic / Latino</button><button class="chip" aria-pressed="false">White</button><button class="chip" aria-pressed="false">Multiracial</button><button class="chip" aria-pressed="false">Indigenous</button></div></div>
+      <div class="fgroup"><div class="label">Body</div><div class="chips"><button class="chip" aria-pressed="false">Slim</button><button class="chip" aria-pressed="false">Average</button><button class="chip" aria-pressed="false">Athletic</button><button class="chip" aria-pressed="false">Curvy</button><button class="chip" aria-pressed="false">Plus size</button></div></div>
+      <div class="fgroup"><div class="label">Collections</div><div class="chips"><button class="chip" aria-pressed="false">Modest wear</button><button class="chip" aria-pressed="false">Maternity</button><button class="chip" aria-pressed="false">Adaptive</button><button class="chip" aria-pressed="false">Supermodels</button></div></div>
+    </div>
+    <div class="dialog-foot"><button class="btn btn-ghost">Clear all</button><span class="grow"></span><button class="btn btn-primary" data-close>Show 142 models</button></div>
+  </div></div>
+
+</main>
+<script>
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-q-set]'); if (!b) return;
+    document.querySelectorAll('[data-q]').forEach(function (el) { el.hidden = el.dataset.q !== b.dataset.qSet; });
+    document.querySelectorAll('[data-q-set]').forEach(function (x) { x.setAttribute('aria-selected', String(x.dataset.qSet === b.dataset.qSet)); });
+  });
+</script>
+</body>
+</html>

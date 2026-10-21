@@ -1,0 +1,13 @@
+dist
+site
+design
+docs
+.wrangler
+src-tauri
+coverage
+playwright-report
+test-results
+package-lock.json
+*.css
+*.md
+src/lib/catalog/fixtures

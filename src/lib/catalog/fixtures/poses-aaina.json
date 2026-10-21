@@ -1,0 +1,156 @@
+{
+ "schema": "aaina-catalog-v1",
+ "modelId": "aaina",
+ "looks": [
+  {
+   "id": "clothing__crewneck_tshirts__front_catalogue",
+   "title": "Front view",
+   "imageUrl": "img/e94988802ef6bf9544ead3c19cfe16e1bff467ea6fd513b59e9e358bdbf4fa92-1080.webp",
+   "pose": "stand upright square to camera, arms lowered outside garment outline, full product unobstructed",
+   "section": "clothing",
+   "category": "crewneck_tshirts",
+   "categoryLabel": "T-shirts",
+   "family": "tops",
+   "familyLabel": "Tops & shirts",
+   "intendedUse": "main_like",
+   "tags": [
+    "T-shirts",
+    "Tops & shirts",
+    "Front",
+    "Full length",
+    "Catalogue",
+    "Clean catalogue",
+    "Calm",
+    "Main image"
+   ],
+   "creativeTags": [
+    "catalogue",
+    "casual",
+    "studio"
+   ],
+   "bestFor": [
+    "crewneck_tshirts",
+    "straight_trousers"
+   ],
+   "alsoWorksFor": [
+    "oversized_tshirts",
+    "shirts",
+    "blouses",
+    "sleeveless_tops",
+    "sweatshirts",
+    "jeans",
+    "flats",
+    "sneakers"
+   ],
+   "facing": "front",
+   "productAngle": "front",
+   "poseStyle": "front_catalogue",
+   "framing": "full_length",
+   "mood": "Clean catalogue",
+   "requiresSourceRoles": [],
+   "generationAvailable": true
+  },
+  {
+   "id": "clothing__crewneck_tshirts__true_rear",
+   "title": "Back view",
+   "imageUrl": "img/6ed186b4c5b8cb7d20c98bfa3dba83fad9beeeb836444926cd9f285e19d6ae65-1080.webp",
+   "pose": "stand with true back square to camera, arms low; bring hair over front shoulder or tie back to expose garment back",
+   "section": "clothing",
+   "category": "crewneck_tshirts",
+   "categoryLabel": "T-shirts",
+   "family": "tops",
+   "familyLabel": "Tops & shirts",
+   "intendedUse": "alternate",
+   "tags": [
+    "T-shirts",
+    "Tops & shirts",
+    "Back",
+    "Full length",
+    "Back view",
+    "Clean catalogue",
+    "Calm"
+   ],
+   "creativeTags": [
+    "catalogue",
+    "studio"
+   ],
+   "bestFor": [
+    "crewneck_tshirts",
+    "straight_trousers",
+    "jeans"
+   ],
+   "alsoWorksFor": [
+    "oversized_tshirts",
+    "shirts",
+    "blouses",
+    "sweatshirts",
+    "hoodies",
+    "backpacks"
+   ],
+   "facing": "true_back",
+   "productAngle": "true_back",
+   "poseStyle": "true_rear",
+   "framing": "full_length",
+   "mood": "Clean catalogue",
+   "requiresSourceRoles": [
+    "back"
+   ],
+   "generationAvailable": true
+  }
+ ],
+ "studio": [
+  {
+   "id": "community:45ecd84f-d14b-5208-a7f0-3e28d5adf1e7",
+   "kind": "pose",
+   "service": "pose_creation",
+   "modelId": "aaina",
+   "title": "Hoodie and shorts, front",
+   "prompt": "Standing straight facing the camera, feet hip-width apart, arms relaxed by her sides. Bucket hat, oversized hoodie, shorts and shoes visible.",
+   "angle": "front",
+   "imageUrl": "img/531ea3540a6b4142ee00cef6d8f8a54f356d3cc911d16e508908344a51a024ec-1080.webp",
+   "creativeTags": [
+    "streetwear",
+    "casual",
+    "studio"
+   ],
+   "bestFor": [
+    "hoodies",
+    "shorts",
+    "sneakers",
+    "bucket_hats"
+   ],
+   "alsoWorksFor": [],
+   "studio": true,
+   "crop": "head-feet",
+   "mine": false,
+   "approvedAt": "2026-09-28T22:17:17.586Z"
+  },
+  {
+   "id": "community:9dae0855-f0b7-597c-b671-bfa4e39a8067",
+   "kind": "pose",
+   "service": "pose_creation",
+   "modelId": "aaina",
+   "title": "Cross-leg stance, cap",
+   "prompt": "Standing angled about 45 degrees facing camera-left, one foot crossed in front of the other, hands in the jogger pockets. Head turned to the lens; cap, sweatshirt and joggers visible. The crossbody strap runs across the body with the small bag at the hip.",
+   "angle": "front",
+   "imageUrl": "img/03504c2c396f6622f92b3ecb70c3c416d1085170d714e9a95332f909be228b6e-1080.webp",
+   "creativeTags": [
+    "streetwear",
+    "casual",
+    "studio"
+   ],
+   "bestFor": [
+    "sweatshirts",
+    "joggers",
+    "sneakers",
+    "caps",
+    "crossbody_bags"
+   ],
+   "alsoWorksFor": [],
+   "studio": true,
+   "crop": "head-feet",
+   "mine": false,
+   "approvedAt": "2026-09-28T22:17:17.404Z"
+  }
+ ]
+}

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>About · Aaina Desktop</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../assets/ds.css">
+<link rel="stylesheet" href="../assets/desktop.css">
+<script src="../assets/shell.js"></script>
+<style>
+  .ab { max-width: 880px; margin: 0; display: flex; flex-direction: column; gap: var(--s-8); padding-top: var(--s-6); }
+  .ab-head { display: flex; flex-direction: column; align-items: flex-start; gap: var(--s-4); }
+  .ab-id { display: flex; align-items: center; gap: 12px; }
+  .ab-id .brand-mark { width: 44px; height: 44px; }
+  .ab-id .nm { font: 400 var(--text-xl)/1.1 var(--font-display); }
+  .ab-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-4); }
+  .ab-card { display: flex; flex-direction: column; gap: var(--s-3); padding: var(--s-5); align-items: flex-start; }
+  .ab-card .ic { width: 40px; height: 40px; border-radius: var(--r-md); background: var(--bg-sunken); display: grid; place-items: center; }
+  .ab-card.main-c { background: var(--accent-soft); border-color: transparent; }
+  .ab-card.main-c .ic { background: var(--bg-raised); color: var(--accent-fg); }
+  .ab-card h2 { font: 600 var(--text-md)/1.3 var(--font-sans); }
+  .ab-card p { flex: 1; }
+  .more-on-aaina { display: flex; align-items: center; gap: var(--s-4); padding: var(--s-4) var(--s-5); border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--bg-raised); }
+  .more-on-aaina .ics { display: flex; gap: 6px; color: var(--fg-subtle); }
+</style>
+<body data-nav="settings">
+<main class="main" id="main">
+  <header class="topbar"><div class="crumbs"><a href="settings.html">Settings</a><span class="sep">/</span><span class="here">About</span></div></header>
+  <div class="page">
+    <div class="ab">
+      <section class="ab-head">
+        <div class="ab-id"><span data-logo></span><div><div class="nm">Aaina Desktop</div><div class="t-mono t-caption">Version 1.0.0</div></div></div>
+        <h1 class="t-page">Free, open source, and <em class="italic">yours</em>.</h1>
+        <p class="muted" style="max-width:60ch">Aaina Desktop is free and open source because good product photos shouldn't need a studio, an account or a subscription. It runs on your computer, keeps your work there, and you only pay OpenAI for the photos you make. If it helps your shop, there are a few small ways to help it back.</p>
+      </section>
+      <section class="ab-cards">
+        <div class="card ab-card main-c"><span class="ic"><i data-i="coffee" class="lg"></i></span><h2>Buy me a coffee</h2><p class="t-small muted">A coffee keeps Aaina Desktop free and growing.</p><a class="btn btn-primary" href="#"><i data-i="coffee" class="sm"></i>Buy me a coffee</a></div>
+        <div class="card ab-card"><span class="ic"><i data-i="github" class="lg"></i></span><h2>Star on GitHub</h2><p class="t-small muted">A star helps other sellers find it.</p><a class="btn btn-secondary" href="#"><i data-i="star" class="sm"></i>Star on GitHub</a></div>
+        <div class="card ab-card"><span class="ic"><i data-i="share" class="lg"></i></span><h2>Tell a friend</h2><p class="t-small muted">Know a seller who needs model photos? Send them the link.</p><button class="btn btn-secondary"><i data-i="copy" class="sm"></i>Copy link</button></div>
+      </section>
+      <section style="display:flex;flex-direction:column;gap:var(--s-4)">
+        <p class="t-small muted">Models, poses and scenes from the Aaina studio. Built with open-source libraries; <a class="link" href="#">see the full list</a>.</p>
+        <div class="more-on-aaina">
+          <span class="ics"><i data-i="video"></i><i data-i="tryon"></i><i data-i="doc"></i></span>
+          <div class="grow"><div class="t-small" style="font-weight:600">Videos, try-ons and listings are on Aaina</div><div class="t-caption mt-1">Same models and scenes, made on Aaina's servers.</div></div>
+          <a class="btn btn-ghost btn-sm" href="#">Open aaina.world <i data-i="expand" class="sm"></i></a>
+        </div>
+      </section>
+    </div>
+  </div>
+</main>
+</body>
