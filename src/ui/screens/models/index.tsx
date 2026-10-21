@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams, useSearchParams } from "react-router";
 import type { Gender, OwnModel } from "../../../lib/contract";
 import { ESTIMATE_USD } from "../../../lib/contract";
 import { Dialog } from "../../components/Dialog";
+import { ConfirmDialog } from "../../components/dialogs";
 import { FieldError, LoadError, Notice } from "../../components/Notice";
 import { toast } from "../../components/Toast";
 import { Chip, Segmented, Skeleton } from "../../components/controls";
@@ -856,6 +857,8 @@ export function ModelScreen() {
   const [renaming, setRenaming] = useState(false);
   const [draft, setDraft] = useState("");
   const [del, setDel] = useState(false);
+  // A new sheet is billed and can change the model's look: it asks first.
+  const [remake, setRemake] = useState(false);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const input = useRef<HTMLInputElement>(null);
@@ -1098,22 +1101,7 @@ export function ModelScreen() {
                   <Icon name="folder" />
                   {os.showInFolder}
                 </button>
-                <button
-                  className="btn btn-secondary grow"
-                  disabled={!ready || busy}
-                  onClick={async () => {
-                    if (!api) return;
-                    setBusy(true);
-                    setErr(null);
-                    try {
-                      await api.remakeSheet(m.id);
-                      model.reload();
-                    } catch (e) {
-                      setErr(messageOf(e));
-                    }
-                    setBusy(false);
-                  }}
-                >
+                <button className="btn btn-secondary grow" disabled={!ready || busy} onClick={() => setRemake(true)}>
                   <Icon name="refresh" />
                   New sheet<span className="cost">{about(ESTIMATE_USD.sheet)}</span>
                 </button>
@@ -1126,6 +1114,27 @@ export function ModelScreen() {
           </div>
         </div>
       </div>
+      {remake && (
+        <ConfirmDialog
+          title="Make a new reference sheet?"
+          description={`${m.name}'s six photos are made again from the same face or photos, so the look may change a little. OpenAI bills about ${usd0(ESTIMATE_USD.sheet)}.`}
+          confirmLabel="Make a new sheet"
+          onClose={() => setRemake(false)}
+          onConfirm={async () => {
+            setRemake(false);
+            if (!api) return;
+            setBusy(true);
+            setErr(null);
+            try {
+              await api.remakeSheet(m.id);
+              model.reload();
+            } catch (e) {
+              setErr(messageOf(e));
+            }
+            setBusy(false);
+          }}
+        />
+      )}
       {del && (
         <Dialog
           alert

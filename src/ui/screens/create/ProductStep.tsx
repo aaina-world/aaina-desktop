@@ -165,7 +165,18 @@ export function ProductStep({ draft, data, start }: { draft: Draft; data: Create
             )}
             {kind === "model" && (
               <>
-                <SumRow k="Model" v="Next step" icon="user" subtle />
+                {data.modelInfo ? (
+                  // Chosen already (New shoot with this model, or an earlier visit to the Model step).
+                  <SumRow
+                    k="Model"
+                    v={[data.modelInfo.name, data.modelInfo.age].filter(Boolean).join(" · ")}
+                    img={data.modelInfo.img}
+                    sheet={data.modelInfo.sheet}
+                    to={stepPath(shoot?.id, "model")}
+                  />
+                ) : (
+                  <SumRow k="Model" v="Next step" icon="user" subtle />
+                )}
                 <SumRow k="Poses" v="Next step" icon="people" subtle />
                 <SumRow k="Scene" v="Next step" icon="picture" subtle />
               </>
