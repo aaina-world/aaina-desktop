@@ -21,7 +21,7 @@ jobs:
       - name: Install
         run: |
           sudo apt-get update
-          sudo apt-get install -y xvfb imagemagick dbus-x11 ./*.deb
+          sudo apt-get install -y xvfb imagemagick dbus-x11 gnome-keyring ./*.deb
       - name: Open it three ways
         run: |
           Xvfb :99 -screen 0 1440x900x24 & sleep 2
@@ -31,10 +31,14 @@ jobs:
             sleep 2
           }
           shot plain
-          shot dmabuf-off WEBKIT_DISABLE_DMABUF_RENDERER=1
-          shot compositing-off WEBKIT_DISABLE_COMPOSITING_MODE=1
+          # With a keychain running and unlocked, as on a normal Linux desktop.
+          dbus-run-session -- sh -c 'echo -n test | gnome-keyring-daemon --unlock --components=secrets >/dev/null; aaina-desktop & app=$!; sleep 25; import -window root keyring.png; kill $app' || true
           ls -la *.png
+          mkdir -p logs; cp -r ~/.local/share/world.aaina.desktop/logs/* logs/ 2>/dev/null || true
+          find ~/.local/share/world.aaina.desktop ~/.config/world.aaina.desktop -maxdepth 2 2>/dev/null | head -50
       - uses: actions/upload-artifact@v4
         with:
           name: linux-check
-          path: "*.png"
+          path: |
+            *.png
+            logs/
