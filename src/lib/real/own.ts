@@ -154,6 +154,7 @@ export function createOwnApi({
         appearance,
         madeFrom: "description",
       });
+      emit({ type: "own", id: model.id });
       void makeFaces(model.id, traits);
       return model;
     },
@@ -182,6 +183,7 @@ export function createOwnApi({
         status: "making-sheet",
       });
       for (const [i, picture] of pictures.entries()) await data.files.writeAppFile(photoPath(model.id, i + 1), picture);
+      emit({ type: "own", id: model.id });
       void makeSheet(model.id, pictures, { gender, age });
       return model;
     },
@@ -196,6 +198,7 @@ export function createOwnApi({
       await data.files.writeAppFile(facePath(ownModelId), bytes);
       for (const face of faces) await data.files.removeApp(face.path);
       const updated = await data.own.updateModel(ownModelId, { faces: [], status: "making-sheet" });
+      emit({ type: "own", id: ownModelId });
       void makeSheet(ownModelId, [bytes], { gender: adultGender(model.gender), age: model.age });
       return updated;
     },
@@ -208,11 +211,16 @@ export function createOwnApi({
       for (const path of candidates) if (await data.files.appFileExists(path)) pictures.push(await data.files.readAppFile(path));
       if (!pictures.length) throw new Error("The pictures this model was made from are gone. Make a new model.");
       const updated = await data.own.updateModel(ownModelId, { status: "making-sheet" });
+      emit({ type: "own", id: ownModelId });
       void makeSheet(ownModelId, pictures, { gender: adultGender(model.gender), age: model.age });
       return updated;
     },
 
-    renameOwnModel: (id, name) => data.own.updateModel(id, { name: nameOrDefault(name) }),
+    async renameOwnModel(id, name) {
+      const model = await data.own.updateModel(id, { name: nameOrDefault(name) });
+      emit({ type: "own", id });
+      return model;
+    },
 
     async deleteOwnModel(id) {
       const ref: ModelRef = { source: "own", id };
@@ -235,6 +243,7 @@ export function createOwnApi({
       const sheet = await sheetOf(input.model);
       const reference = input.referencePath ? await data.files.readAbsolute(input.referencePath) : null;
       const pose = await data.own.createPose({ name: short(words ?? "Pose from my photo", NAME_LENGTH), words, model: input.model });
+      emit({ type: "own", id: pose.id });
       void inBackground(
         async () => {
           const png = await works.makePose({ sheet: sheet.bytes, gender: sheet.gender, words: input.words, reference });
@@ -255,6 +264,7 @@ export function createOwnApi({
       if (!words && !input.referencePath) throw new Error("Describe the scene or add a photo.");
       const reference = input.referencePath ? await data.files.readAbsolute(input.referencePath) : null;
       const scene = await data.own.createScene({ name: short(words ?? "Scene from my photo", NAME_LENGTH), words });
+      emit({ type: "own", id: scene.id });
       void inBackground(
         async () => {
           const png = await works.makeScene({ words: words ?? "A place like the one in my photo", reference });

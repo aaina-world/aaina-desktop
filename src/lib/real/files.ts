@@ -3,7 +3,7 @@ import { open as openDialog } from "@tauri-apps/plugin-dialog";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import type { Api } from "../contract";
 import { photoFileBase, safeName, type DataLayer } from "../data";
-import { renderForSave } from "../engine";
+import { markAiMade, renderForSave } from "../engine";
 import type { EngineStore } from "../engine";
 
 const PHOTO_EXTENSIONS = ["jpg", "jpeg", "png", "webp"];
@@ -27,7 +27,8 @@ export function createFilesApi({
       for (const id of request.photoIds) {
         const photo = await data.photos.get(id);
         if (!photo?.path) continue;
-        const bytes = await renderForSave(await readPhotoFile(photo), request.shape, request.format);
+        const shaped = await renderForSave(await readPhotoFile(photo), request.shape, request.format);
+        const bytes = markAiMade(shaped, request.format, photo.shot.kind === "model");
         const chosen = request.fileName && request.photoIds.length === 1 ? request.fileName : null;
         // Photo titles can hold the customer's own words, so neither name is trusted as a file name.
         const name = chosen ? safeName(chosen, "Photo") : photoFileBase(photo.title, photo.version);

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
 import type { CatalogScene, OwnScene, SceneRef } from "../../../lib/contract";
 import { ESTIMATE_USD } from "../../../lib/contract";
@@ -232,8 +232,10 @@ export function SceneStep({ draft, data }: { draft: Draft; data: CreateData }) {
   const curColour = cur?.source === "colour" ? cur.hex : "#9caf88";
   const [hexText, setHexText] = useState(curColour);
   const curHex = cur?.source === "colour" ? cur.hex : "";
+  // The colour the typed text picked: shown as typed ("#1f4" stays "#1f4"), not rewritten to its full code.
+  const typedHex = useRef<string | null>(null);
   useEffect(() => {
-    if (curHex) setHexText(curHex);
+    if (curHex && curHex !== typedHex.current) setHexText(curHex);
   }, [curHex]);
   const parsed = parseHex(hexText);
   const pickColour = (hex: string, name?: string) => pick({ source: "colour", hex, name: name ?? colourLabel(hex) });
@@ -440,6 +442,7 @@ export function SceneStep({ draft, data }: { draft: Draft; data: CreateData }) {
                   onChange={(e) => {
                     setHexText(e.target.value);
                     const h = parseHex(e.target.value);
+                    typedHex.current = h;
                     if (h) pickColour(h);
                   }}
                 />

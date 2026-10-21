@@ -12,7 +12,8 @@ export default defineConfig({
           environmentOptions: { jsdom: { url: "http://localhost/" } },
           include: ["src/ui/**/*.test.{ts,tsx}"],
           setupFiles: ["src/test/setup.ts"],
-          css: false,
+          // Plain CSS stays out of the screens' tests; `?raw` imports (read by the layering test) keep their text.
+          css: { include: [/\.css\?raw$/] },
           testTimeout: 15_000,
         },
       },

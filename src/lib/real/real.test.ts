@@ -294,6 +294,27 @@ describe("making a shoot: the money rules", () => {
     expect(openaiCalls.filter((c) => c === "/images/edits")).toHaveLength(1);
   });
 
+  it("tells the screens about every change, so an open page never shows old names or misses a waiting photo", async () => {
+    const done = await (async () => {
+      await connect();
+      const { shoot } = await productWithShoot();
+      openai = () => ok({ data: [{ b64_json: PICTURE }] });
+      await api.makeShoot(shoot.id);
+      return until(async () => (await photosOf(shoot.id)).find((p) => p.status === "done"));
+    })();
+    const events: string[] = [];
+    api.subscribe((e) => events.push(`${e.type}:${e.id ?? ""}`));
+    await api.updateShoot(done.shootId, { name: "Olive jacket" });
+    expect(events).toContain(`shoot:${done.shootId}`);
+    openai = () => new Promise<Response>(() => undefined); // stays on its way, so the photo is still waiting below
+    const again = await api.makeAgain(done.id);
+    expect(events).toContain(`photo:${again.id}`);
+    const fixed = await api.fixPhoto(done.id, "Straighten the collar");
+    expect(events).toContain(`photo:${fixed.id}`);
+    const [navy] = await api.otherColours(done.id, [{ hex: "#1f2a4d", name: "Navy" }]);
+    expect(events).toContain(`photo:${navy.id}`);
+  });
+
   it("a content refusal is failed and not charged; Try again puts the same photo back in the queue", async () => {
     await connect();
     const { shoot } = await productWithShoot();
@@ -410,6 +431,12 @@ describe("saving and sharing", () => {
     expect(one.paths).toHaveLength(1);
     expect(one.paths[0]).toMatch(/^\/Out\/.+-v1\.jpg$/);
     expect(two.paths[0]).toBe("/Out/mine.png");
+    // Both carry the AI-made mark, with the synthetic-person keyword for a photo of a model.
+    for (const path of [one.paths[0], two.paths[0]]) {
+      const saved = new TextDecoder().decode(vfs.get(path)!);
+      expect(saved).toContain("trainedAlgorithmicMedia");
+      expect(saved).toContain("contains-synthetic-performer");
+    }
   });
   it("never lets a pose title or a chosen name leave the folder", async () => {
     await connect();

@@ -91,9 +91,9 @@ describe("photos: interruption and folders", () => {
 });
 
 describe("shoots", () => {
-  it("are drafts until started, then making while photos are active, then done, with the newest finished photo as cover", async () => {
+  it("are drafts until started, then making while photos are active, then done; the cover is the product until a photo is finished", async () => {
     const { shoot } = await newShoot();
-    expect(shoot).toMatchObject({ status: "draft", draftStep: "model", photoCount: 0, coverUrl: null });
+    expect(shoot).toMatchObject({ status: "draft", draftStep: "model", photoCount: 0, coverUrl: "app://products/x/a.jpg" });
     const updated = await shoots.update(shoot.id, { model: { source: "studio", id: "aaina" }, plan: [shot], draftStep: "review" });
     expect(updated).toMatchObject({ model: { source: "studio", id: "aaina" }, plan: [shot] });
     await shoots.markStarted(shoot.id);
@@ -176,7 +176,7 @@ describe("products and own things", () => {
 
 describe("settings", () => {
   it("start at the defaults and keep what is changed", async () => {
-    const settings = createSettingsRepo(db, defaultSettings("/Pictures/Aaina"));
+    const settings = createSettingsRepo(db, defaultSettings("/Pictures/Aaina", "/Downloads"));
     expect(await settings.get()).toMatchObject({
       photosFolder: "/Pictures/Aaina",
       quality: "standard",

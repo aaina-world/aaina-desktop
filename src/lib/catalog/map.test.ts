@@ -20,10 +20,11 @@ it("maps an own-pose model with its suits, and a pooled model with the suits of 
   expect(Object.keys(hana.suits!).length).toBeGreaterThan(0);
 });
 
-it("points sheetUrl at the published sheet and shows a face, not the six-photo sheet, as a sheet model's card", () => {
+it("points sheetUrl at the published sheet and shows the full-length preview as every model's card", () => {
   const [aaina, hana] = mapModels(models as unknown as RawModels, sheetMap, show);
   expect(aaina.sheetUrl).toMatch(/^shown:sheets\/[0-9a-f]{64}\.webp$/);
-  expect(hana.cardUrl).toBe(`shown:${(models as unknown as RawModels).items[1].faceImageUrl}`);
+  expect(hana.cardUrl).toBe(`shown:${(models as unknown as RawModels).items[1].previewImageUrl}`);
+  expect(hana.cardUrl).not.toBe(hana.faceUrl);
   expect(aaina.photoUrls.length).toBe(3); // an older model: its reference photos
 });
 
@@ -58,4 +59,16 @@ it("maps scenes: anywhere becomes no region, plain studios are flagged", () => {
   const mapped = mapScenes((scenes as unknown as RawScenes).items, show);
   expect(mapped[0]).toMatchObject({ id: "loc_pose_bank_white_room", name: "White Studio", region: null, plain: true });
   expect(mapped.length).toBe(3);
+});
+
+it("names a studio pose by its pose alone, never the outfit the studio model wore", () => {
+  const poses = mapPoses([], [{ id: "community:a", title: "Pointing at the lens, olive bomber, Navy", imageUrl: "x.webp" }], "tariq", show);
+  expect(poses[0].name).toBe("Pointing at the lens");
+  const outfitOnly = mapPoses(
+    [],
+    [{ id: "community:b", title: "Grey tee and tailored trousers", imageUrl: "x.webp", angle: "front" }],
+    "tariq",
+    show,
+  );
+  expect(outfitOnly[0].name).toBe("Front view");
 });

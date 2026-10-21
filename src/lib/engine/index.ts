@@ -7,3 +7,4 @@ export * from "./jobs";
 export * from "./store";
 export * from "./works";
 export * from "./chatgpt";
+export * from "./xmp";

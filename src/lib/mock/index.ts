@@ -51,6 +51,7 @@ const store = {
 const DEFAULT_SETTINGS: Settings = {
   onboarded: typeof location === "undefined" || !location.search.includes("firstrun"),
   photosFolder: "~/Pictures/Aaina",
+  saveFolder: "~/Downloads",
   quality: "standard",
   parallel: 3,
   saveFormat: "jpeg",

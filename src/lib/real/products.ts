@@ -50,10 +50,12 @@ export function createProductsApi({
       if (patch.name !== undefined) await data.products.rename(id, patch.name.trim() || "Product");
       if (patch.reading !== undefined) await data.products.setReading(id, patch.reading);
       for (const photo of patch.photos ?? []) await data.products.setPhotoRole(photo.id, photo.role);
+      emit({ type: "shoot" }); // shoots show their product's name and photos
       return existing(id);
     },
     async addProductPhotos(id, files) {
       await importPhotos(id, files);
+      emit({ type: "shoot" });
       return existing(id);
     },
     async deleteProduct(id) {
@@ -71,6 +73,7 @@ export function createProductsApi({
       const bytes = await Promise.all(ordered.slice(0, PHOTOS_READ).map((photo) => data.files.readAppFile(photo.path)));
       const reading = await works.readProduct(bytes, { productTypes: PRODUCT_TYPES, typeNames: TYPE_NAMES, productName: product.name });
       await data.products.setReading(id, reading);
+      emit({ type: "shoot" });
       return reading;
     },
   };

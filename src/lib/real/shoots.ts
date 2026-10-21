@@ -109,15 +109,27 @@ export function createShootsApi({
     return photo;
   }
 
+  /** A new or re-queued photo: the screens show it waiting at once, and the queue starts it when there is room. */
+  function queued(photo: Photo): void {
+    emit({ type: "photo", id: photo.id });
+    void queue.kick();
+  }
+
   return {
     shoots: (filter) => data.shoots.list(filter),
     shoot: (id) => data.shoots.get(id),
     async createShoot({ kind, productId }) {
       const product = await data.products.get(productId);
       if (!product) throw new Error("That product is gone.");
-      return data.shoots.create({ kind, productId, name: product.name, quality: (await data.settings.get()).quality });
+      const shoot = await data.shoots.create({ kind, productId, name: product.name, quality: (await data.settings.get()).quality });
+      emit({ type: "shoot", id: shoot.id });
+      return shoot;
     },
-    updateShoot: (id, patch) => data.shoots.update(id, patch),
+    async updateShoot(id, patch) {
+      const shoot = await data.shoots.update(id, patch);
+      emit({ type: "shoot", id });
+      return shoot;
+    },
     async deleteShoot(id) {
       const files = await data.photos.filesOf("shoot", id);
       await data.shoots.remove(id);
@@ -155,7 +167,7 @@ export function createShootsApi({
         shot: changedShot(photo.shot, options),
         change: { kind: "again", ...(trimmed ? { note: trimmed } : {}) },
       });
-      void queue.kick();
+      queued(next);
       return next;
     },
 
@@ -164,14 +176,15 @@ export function createShootsApi({
       const photo = await photoOf(photoId);
       if (photo.status === "failed") {
         await data.photos.requeue(photoId);
-        void queue.kick();
-        return photoOf(photoId);
+        const again = await photoOf(photoId);
+        queued(again);
+        return again;
       }
       // Anything else could be on its way to OpenAI or already paid for; only an interrupted photo may be asked for again.
       if (photo.status !== "interrupted") throw new Error("Only a photo that didn't work can be tried again.");
       // It may have been charged, but the customer chose to ask again: a new version, and the old one stays.
       const next = await queueVersion(photo, await shootOf(photo), { parentId: photo.parentId, change: photo.change });
-      void queue.kick();
+      queued(next);
       return next;
     },
 
@@ -188,7 +201,7 @@ export function createShootsApi({
         change: { kind: "fix", words: text },
         work: "edit",
       });
-      void queue.kick();
+      queued(next);
       return next;
     },
 
@@ -210,7 +223,7 @@ export function createShootsApi({
           }),
         );
       }
-      void queue.kick();
+      for (const photo of made) queued(photo);
       return made;
     },
 

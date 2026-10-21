@@ -21,9 +21,10 @@ type ShootRow = {
   failed_count: number;
   cover_path: string | null;
   cover_root: string | null;
+  product_path: string | null;
 };
 
-// Cover = the newest finished photo. Active = photos still queued or being sent.
+// Cover = the newest finished photo, else (a draft) the product's first photo. Active = photos still queued or being sent.
 const SELECT = `
   SELECT s.*,
     (SELECT COUNT(*) FROM photos p WHERE p.shoot_id = s.id) AS photo_count,
@@ -31,7 +32,8 @@ const SELECT = `
     (SELECT COUNT(DISTINCT p.shot_key) FROM photos p WHERE p.shoot_id = s.id AND p.status = 'done') AS ready_count,
     (SELECT COUNT(*) FROM photos p WHERE p.shoot_id = s.id AND p.status IN ('failed','interrupted')) AS failed_count,
     (SELECT p.path FROM photos p WHERE p.shoot_id = s.id AND p.status = 'done' ORDER BY p.finished_at DESC LIMIT 1) AS cover_path,
-    (SELECT p.root FROM photos p WHERE p.shoot_id = s.id AND p.status = 'done' ORDER BY p.finished_at DESC LIMIT 1) AS cover_root
+    (SELECT p.root FROM photos p WHERE p.shoot_id = s.id AND p.status = 'done' ORDER BY p.finished_at DESC LIMIT 1) AS cover_root,
+    (SELECT pp.path FROM product_photos pp WHERE pp.product_id = s.product_id ORDER BY pp.position LIMIT 1) AS product_path
   FROM shoots s`;
 
 export type ShootsRepo = ReturnType<typeof createShootsRepo>;
@@ -58,7 +60,12 @@ export function createShootsRepo(db: Sql, urls: Urls) {
       plan: fromJson<ShotPlan[]>(row.plan) ?? [],
       status,
       draftStep: row.draft_step,
-      coverUrl: row.cover_path && row.cover_root ? await urls.photo(row.cover_root, row.cover_path) : null,
+      coverUrl:
+        row.cover_path && row.cover_root
+          ? await urls.photo(row.cover_root, row.cover_path)
+          : row.product_path
+            ? await urls.app(row.product_path)
+            : null,
       photoCount: row.photo_count,
       readyCount: row.ready_count,
       failedCount: row.failed_count,

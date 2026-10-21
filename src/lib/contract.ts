@@ -209,6 +209,7 @@ export type Connection = {
 export type Settings = {
   onboarded: boolean;
   photosFolder: string; // absolute path; default <Pictures>/Aaina
+  saveFolder: string; // where Save photo puts copies; default the Downloads folder, then the last one chosen
   quality: Quality;
   parallel: 1 | 2 | 3 | 4;
   saveFormat: "jpeg" | "png";

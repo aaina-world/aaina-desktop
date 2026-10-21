@@ -45,7 +45,9 @@ export class FakeCanvas {
     return this.ctx;
   }
   async convertToBlob(options: { type: string; quality?: number }) {
-    return new Blob([new Uint8Array([options.type === "image/png" ? 0x89 : 0xff, 1, 2, 3])], { type: options.type });
+    // Just enough of each format for code that reads the file's structure (the AI-made marker): a header and an end.
+    const bytes = options.type === "image/png" ? fakePng(this.width, this.height, 45) : new Uint8Array([0xff, 0xd8, 0xff, 0xd9]);
+    return new Blob([bytes as Uint8Array<ArrayBuffer>], { type: options.type });
   }
 }
 
@@ -68,7 +70,7 @@ export function installCanvas(): void {
 /** A PNG-looking byte string with the given pixel size in its header. */
 export function fakePng(width: number, height: number, length = 200): Uint8Array {
   const b = new Uint8Array(Math.max(length, 24));
-  b.set([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+  b.set([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0, 0, 13, 0x49, 0x48, 0x44, 0x52]);
   const v = new DataView(b.buffer);
   v.setUint32(16, width);
   v.setUint32(20, height);

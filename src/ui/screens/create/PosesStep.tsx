@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router";
 import type { CatalogPose, OwnPose, PoseRef, ShotPlan } from "../../../lib/contract";
 import { ESTIMATE_USD } from "../../../lib/contract";
+import { FRAMING_NAMES, framingName } from "../../../lib/labels";
 import { LoadError } from "../../components/Notice";
 import { Segmented } from "../../components/controls";
 import type { CreateData } from "./data";
@@ -18,7 +19,7 @@ export const poseKey = (p: PoseRef) => (p.source === "words" ? "words:" + p.word
 export const modelShots = (plan: ShotPlan[]) => plan.filter((p): p is Extract<ShotPlan, { kind: "model" }> => p.kind === "model");
 
 function poseSub(p: CatalogPose) {
-  return [humanize(p.framing), p.style[0] ? humanize(p.style[0]) : ""].filter(Boolean).join(" · ") || "Studio pose";
+  return [framingName(p.framing), p.style[0] ? humanize(p.style[0]) : ""].filter(Boolean).join(" · ") || "Studio pose";
 }
 
 export function PosesStep({ draft, data }: { draft: Draft; data: CreateData }) {
@@ -63,10 +64,11 @@ export function PosesStep({ draft, data }: { draft: Draft; data: CreateData }) {
   }
 
   const filterPose = (p: CatalogPose) =>
-    (!framing.length || (p.framing && framing.includes(p.framing))) &&
+    (!framing.length || framing.includes(framingName(p.framing) ?? "")) &&
     (!style.length || p.style.some((s) => style.includes(s))) &&
-    matches(dq, p.name, p.framing, ...p.style, ...p.best, ...p.also);
-  const framings = Array.from(new Set(studio.map((p) => p.framing).filter(Boolean) as string[])).sort();
+    matches(dq, p.name, framingName(p.framing), ...p.style, ...p.best, ...p.also);
+  const shown = new Set(studio.map((p) => framingName(p.framing)));
+  const framings = FRAMING_NAMES.filter((name) => shown.has(name));
   const styles = Array.from(new Set(studio.flatMap((p) => p.style))).sort();
 
   const suggested = useMemo(() => {
@@ -318,12 +320,7 @@ export function PosesStep({ draft, data }: { draft: Draft; data: CreateData }) {
             </label>
             <div className="chips">
               {framings.length > 1 && (
-                <ChipMenu
-                  label="Framing"
-                  options={framings.map((v) => ({ value: v, label: humanize(v) }))}
-                  value={framing}
-                  onChange={setFraming}
-                />
+                <ChipMenu label="Framing" options={framings.map((v) => ({ value: v, label: v }))} value={framing} onChange={setFraming} />
               )}
               {styles.length > 1 && (
                 <ChipMenu label="Style" options={styles.map((v) => ({ value: v, label: humanize(v) }))} value={style} onChange={setStyle} />

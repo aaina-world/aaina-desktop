@@ -73,6 +73,13 @@ export function ViewerScreen() {
   const [panel, setPanel] = useState<Panel>("tools");
   const [compare, setCompare] = useState(false);
   const [zoom, setZoom] = useState(false);
+  // Zoom looks at the point under the mouse: the photo is scaled from there and follows the mouse while zoomed.
+  const aimZoom = (e: React.MouseEvent<HTMLElement>) => {
+    const box = e.currentTarget.getBoundingClientRect();
+    const at = (n: number) => `${Math.min(100, Math.max(0, n * 100)).toFixed(1)}%`;
+    e.currentTarget.style.setProperty("--zx", at((e.clientX - box.left) / box.width));
+    e.currentTarget.style.setProperty("--zy", at((e.clientY - box.top) / box.height));
+  };
   const [save, setSave] = useState<Photo | null>(null);
   const [del, setDel] = useState<Photo | null>(null);
   const [words, setWords] = useState("");
@@ -336,7 +343,16 @@ export function ViewerScreen() {
         )}
 
         {!compare && (
-          <div className="photo" id="photo" onClick={() => ready && setZoom((z) => !z)}>
+          <div
+            className="photo"
+            id="photo"
+            onClick={(e) => {
+              if (!ready) return;
+              aimZoom(e);
+              setZoom((z) => !z);
+            }}
+            onMouseMove={(e) => zoom && aimZoom(e)}
+          >
             {ready ? (
               <img src={photo.url!} alt={`${photo.title}, ${shoot?.name ?? ""}`} />
             ) : (
@@ -561,7 +577,9 @@ export function ViewerScreen() {
                   <span className="tt">Delete photo</span>
                   <span className="td">Removes it from this computer</span>
                 </span>
-                <span className="tc">⌫</span>
+                <span className="tc">
+                  <span className="kbd">⌫</span>
+                </span>
               </button>
             </div>
           </>

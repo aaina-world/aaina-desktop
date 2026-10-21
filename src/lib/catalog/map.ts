@@ -1,4 +1,5 @@
 import type { CatalogModel, CatalogPose, CatalogScene, Gender } from "../contract";
+import { outfitFreePoseName } from "./poseOutfit";
 import type { RawModel, RawModels, RawPose, RawScene, RawSheet } from "./raw";
 
 // Pure mapping from the CDN's JSON to the app's contract types. `show` turns a CDN-relative picture path into something
@@ -18,9 +19,8 @@ export function mapModel(raw: RawModel, pools: RawModels["pools"], sheet: RawShe
   const photos = (raw.photos ?? []).filter((photo) => photo.available !== false && photo.status !== "rejected");
   const sheetPhoto = photos.find((photo) => photo.angle === "sheet");
   const poolKey = raw.poolKey ?? null;
-  const preview = raw.previewImageUrl ?? photos.find((photo) => photo.angle !== "sheet")?.imageUrl ?? sheetPhoto?.imageUrl ?? null;
-  // A sheet model's preview is its six-photo sheet; its face picture makes a better card.
-  const card = preview && sheetPhoto && preview === sheetPhoto.imageUrl && raw.faceImageUrl ? raw.faceImageUrl : preview;
+  // A sheet model's preview is already its card: the sheet's full-length front photo, cut to 3:4 by Aaina.
+  const card = raw.previewImageUrl ?? photos.find((photo) => photo.angle !== "sheet")?.imageUrl ?? sheetPhoto?.imageUrl ?? null;
   const sheetPath = sheet?.url ?? null;
   return {
     id: raw.id,
@@ -46,10 +46,11 @@ export function mapModels(raw: RawModels, sheets: Map<string, RawSheet>, show: S
   return raw.items.map((item) => mapModel(item, raw.pools, sheets.get(item.id), show));
 }
 
-export function mapPose(raw: RawPose, listModelId: string, show: Show): CatalogPose {
+/** `studio`: a studio pose, whose title names the outfit the model wore; only its pose is shown. */
+export function mapPose(raw: RawPose, listModelId: string, show: Show, studio = false): CatalogPose {
   return {
     id: raw.id,
-    name: raw.title,
+    name: studio ? outfitFreePoseName(raw.title, raw.facing ?? raw.angle) : raw.title,
     imageUrl: show(raw.imageUrl),
     modelId: raw.modelId ?? (listModelId.startsWith("pool:") ? null : listModelId),
     shownOn: raw.shownOn ?? null,
@@ -64,9 +65,10 @@ export function mapPose(raw: RawPose, listModelId: string, show: Show): CatalogP
 
 /** The poses of one list: Aaina's bank first (only the ones that can be made), then studio poses; never customers' own. */
 export function mapPoses(looks: RawPose[], studio: RawPose[], listModelId: string, show: Show): CatalogPose[] {
-  return [...looks.filter((pose) => pose.generationAvailable !== false), ...studio.filter((pose) => !pose.mine)].map((pose) =>
-    mapPose(pose, listModelId, show),
-  );
+  return [
+    ...looks.filter((pose) => pose.generationAvailable !== false).map((pose) => mapPose(pose, listModelId, show)),
+    ...studio.filter((pose) => !pose.mine).map((pose) => mapPose(pose, listModelId, show, true)),
+  ];
 }
 
 export function mapScene(raw: RawScene, show: Show): CatalogScene {

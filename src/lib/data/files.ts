@@ -1,5 +1,5 @@
 import { convertFileSrc } from "@tauri-apps/api/core";
-import { appConfigDir, appDataDir, join, pictureDir } from "@tauri-apps/api/path";
+import { appConfigDir, appDataDir, downloadDir, join, pictureDir } from "@tauri-apps/api/path";
 import { copyFile, exists, mkdir, readDir, readFile, remove, stat, writeFile } from "@tauri-apps/plugin-fs";
 import { revealItemInDir } from "@tauri-apps/plugin-opener";
 import { baseNameOf, extensionOf, photoFileBase, safeName, uniqueName } from "./names";
@@ -24,6 +24,7 @@ export function createFiles() {
   }
 
   const defaultPhotosFolder = async () => join(await pictureDir(), "Aaina");
+  const defaultSaveFolder = async () => downloadDir();
 
   /** A picture that can be shown in the page (asset: URL). */
   const urlFor = (absolutePath: string) => convertFileSrc(absolutePath);
@@ -128,6 +129,7 @@ export function createFiles() {
     urlFor,
     ensureFolders,
     defaultPhotosFolder,
+    defaultSaveFolder,
     importProductPhoto,
     writeAppFile,
     readAbsolute,

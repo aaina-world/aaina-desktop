@@ -68,12 +68,13 @@ export function ConfirmDialog({
 }
 
 // ---------- Save photo / Save all ----------
-const SHAPES: { id: SaveShape; name: string; sub: string; ratio: string; white?: boolean; top?: string }[] = [
-  { id: "square", name: "Square", sub: "1:1 · 2048 px", ratio: "1/1" },
-  { id: "portrait-4x5", name: "Portrait", sub: "4:5 · 1638 × 2048", ratio: "4/5" },
-  { id: "tall-3x4", name: "Tall", sub: "3:4 · 1536 × 2048", ratio: "3/4" },
-  { id: "white-square", name: "Amazon", sub: "1:1 · white background", ratio: "1/1", white: true },
-  { id: "landscape-4x3", name: "Etsy", sub: "4:3 · 2000 × 1500", ratio: "4/3", top: "center 30%" },
+// What renderForSave really does: sizes follow the photo, a plain wall is never cut into, a scene photo is never stretched.
+const SHAPES: { id: SaveShape; name: string; sub: string; ratio: string; top?: string }[] = [
+  { id: "square", name: "Square", sub: "1:1", ratio: "1/1" },
+  { id: "portrait-4x5", name: "Portrait", sub: "4:5", ratio: "4/5" },
+  { id: "tall-3x4", name: "Tall", sub: "3:4", ratio: "3/4" },
+  { id: "white-square", name: "Amazon", sub: "1:1 · plain walls made pure white", ratio: "1/1" },
+  { id: "landscape-4x3", name: "Etsy", sub: "4:3 · scenes stay square", ratio: "4/3", top: "center 30%" },
 ];
 
 export function SaveDialog({ photos, shootName, onClose }: { photos: Photo[]; shootName: string; onClose: () => void }) {
@@ -87,7 +88,7 @@ export function SaveDialog({ photos, shootName, onClose }: { photos: Photo[]; sh
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fmt = format ?? settings.data?.saveFormat ?? "jpeg";
-  const base = folder ?? settings.data?.photosFolder ?? "~/Pictures/Aaina";
+  const base = folder ?? settings.data?.saveFolder ?? "~/Downloads";
   const target = one ? base : `${base}/${shootName}`;
   const sample = photos[0]?.url ?? undefined;
 
@@ -162,13 +163,7 @@ export function SaveDialog({ photos, shootName, onClose }: { photos: Photo[]; sh
               <button key={s.id} className="chip shp" aria-pressed={shape === s.id} onClick={() => setShape(s.id)}>
                 <span className="pv">
                   <span className="im" style={{ aspectRatio: s.ratio }}>
-                    {sample && (
-                      <img
-                        src={sample}
-                        alt=""
-                        style={{ objectPosition: s.top, filter: s.white ? "brightness(1.35) contrast(.8)" : undefined }}
-                      />
-                    )}
+                    {sample && <img src={sample} alt="" style={{ objectPosition: s.top }} />}
                   </span>
                 </span>
                 <span className="nm">{s.name}</span>
@@ -199,8 +194,12 @@ export function SaveDialog({ photos, shootName, onClose }: { photos: Photo[]; sh
               <button
                 className="btn btn-ghost btn-sm"
                 onClick={async () => {
-                  const f = await (await api()).pickFolder();
-                  if (f) setFolder(f);
+                  const a = await api();
+                  const f = await a.pickFolder();
+                  if (!f) return;
+                  setFolder(f);
+                  // Next time Save opens here.
+                  void a.updateSettings({ saveFolder: f });
                 }}
               >
                 Change

@@ -101,6 +101,7 @@ export const pathModule = {
   appDataDir: vi.fn(async () => DATA),
   appConfigDir: vi.fn(async () => DATA),
   pictureDir: vi.fn(async () => "/Pictures"),
+  downloadDir: vi.fn(async () => "/Downloads"),
 };
 
 /** The keychain behind the `secret_*` Rust commands, plus convertFileSrc. */

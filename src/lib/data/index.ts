@@ -25,7 +25,7 @@ export async function createDataLayer() {
     photo: async (root, relative) => files.urlFor(await files.join(root, relative)),
   };
 
-  const settings = createSettingsRepo(db, defaultSettings(await files.defaultPhotosFolder()));
+  const settings = createSettingsRepo(db, defaultSettings(await files.defaultPhotosFolder(), await files.defaultSaveFolder()));
   const products = createProductsRepo(db, urls);
   const shoots = createShootsRepo(db, urls);
   const photos = createPhotosRepo(db, urls, settings.photosFolder);

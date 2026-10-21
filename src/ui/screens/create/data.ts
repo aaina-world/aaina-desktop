@@ -12,6 +12,7 @@ import type {
   Settings,
   Shoot,
 } from "../../../lib/contract";
+import { framingName } from "../../../lib/labels";
 import { humanize, useApi, useLoad } from "./kit";
 
 export type ModelInfo = { ref: ModelRef; name: string; sub: string; img: string | null; age: number | null; own: boolean; sheet?: boolean };
@@ -101,7 +102,7 @@ export function useCreateData(shoot: Shoot | null) {
       return {
         name: s?.name ?? "Studio pose",
         img: s?.imageUrl ?? null,
-        sub: humanize(s?.framing) || "Studio pose",
+        sub: framingName(s?.framing) ?? "Studio pose",
         framing: s?.framing ?? null,
       };
     },

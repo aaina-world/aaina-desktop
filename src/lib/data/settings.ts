@@ -1,9 +1,10 @@
 import type { Settings } from "../contract";
 import { fromJson, toJson, type Sql } from "./sql";
 
-export const defaultSettings = (photosFolder: string): Settings => ({
+export const defaultSettings = (photosFolder: string, saveFolder: string): Settings => ({
   onboarded: false,
   photosFolder,
+  saveFolder,
   quality: "standard",
   parallel: 2,
   saveFormat: "jpeg",
