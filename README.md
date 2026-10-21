@@ -21,7 +21,7 @@ Get the latest version from the **[releases page](https://github.com/aaina-world
 | System | File | How to install |
 |---|---|---|
 | **Mac** (Apple silicon and Intel) | `Aaina.Desktop_<version>_universal.dmg` | Open the `.dmg` and drag Aaina Desktop into Applications. |
-| **Windows** 10 and 11 | `Aaina.Desktop_<version>_x64-setup.exe` (or the `.msi`) | Run it and follow the steps. |
+| **Windows** 10 and 11 | `Aaina.Desktop_<version>_x64-setup.exe` (or `_x64_en-US.msi`) | Run it and follow the steps. |
 | **Linux**, Debian or Ubuntu | `Aaina.Desktop_<version>_amd64.deb` | `sudo apt install ./Aaina.Desktop_<version>_amd64.deb` |
 | **Linux**, Fedora or openSUSE | `Aaina.Desktop-<version>-1.x86_64.rpm` | `sudo dnf install ./Aaina.Desktop-<version>-1.x86_64.rpm` |
 | **Linux**, any | `Aaina.Desktop_<version>_amd64.AppImage` | `chmod +x Aaina.Desktop_*.AppImage`, then open it. |
@@ -138,7 +138,7 @@ npm run test:e2e                      # end-to-end tests in Chromium
 cd src-tauri && cargo test && cargo clippy
 ```
 
-Releases are built by GitHub Actions when a `v*` tag is pushed (`.github/workflows/release.yml`). The tutorial screenshots and the demo video are made from the app's own screens; see [docs/tools/demo](docs/tools/demo/README.md).
+Releases are built by GitHub Actions when a `v*` tag is pushed (`.github/workflows/release.yml`). Each Windows and Linux build is then installed on a fresh machine, opened, checked to keep running, and photographed: the screenshots are under Artifacts on the workflow run. `.github/workflows/linux-check.yml` (run it from the Actions tab) opens a release's Linux build again on its own, for a closer look. The tutorial screenshots and the demo video are made from the app's own screens; see [docs/tools/demo](docs/tools/demo/README.md).
 
 ## Contributing
 
