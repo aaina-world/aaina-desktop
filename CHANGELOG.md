@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.2 (22 Oct 2026)
+
+- Windows: no more sideways scrolling when the window is small. Windows' frame and scrollbar left less room than the screens needed.
+- Every release now makes a real photo on fresh Windows and Linux machines before it is published.
+
 ## 0.1.1 (22 Oct 2026)
 
 - Windows: staying signed in with ChatGPT works. The sign-in is longer than one Windows keychain entry holds, so it is now kept in parts.
