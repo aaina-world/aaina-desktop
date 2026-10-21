@@ -31,6 +31,9 @@ jobs:
             sleep 2
           }
           shot plain
+          shot sandbox-off WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=1
+          shot software-gl LIBGL_ALWAYS_SOFTWARE=1
+          shot all-off "WEBKIT_DISABLE_SANDBOX_THIS_IS_DANGEROUS=1 WEBKIT_DISABLE_COMPOSITING_MODE=1 WEBKIT_DISABLE_DMABUF_RENDERER=1 LIBGL_ALWAYS_SOFTWARE=1"
           # With a keychain running and unlocked, as on a normal Linux desktop.
           dbus-run-session -- sh -c 'echo -n test | gnome-keyring-daemon --unlock --components=secrets >/dev/null; aaina-desktop & app=$!; sleep 25; import -window root keyring.png; kill $app' || true
           ls -la *.png
