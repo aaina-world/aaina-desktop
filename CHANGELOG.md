@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.1 (22 Oct 2026)
+
+- Windows: staying signed in with ChatGPT works. The sign-in is longer than one Windows keychain entry holds, so it is now kept in parts.
+- Linux: if the keyring (GNOME Keyring or KWallet) isn't running or is locked, the app says so in plain words instead of showing an error code.
+- Every release is now installed and clicked through on fresh Windows and Linux machines before it is published.
+
 ## 0.1.0 (22 Oct 2026)
 
 First public version: model photos of your products on your own computer.
