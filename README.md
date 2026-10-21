@@ -2,9 +2,17 @@
 
 **Model photos of your products, made on your own computer. Free and open source.**
 
-![Aaina Desktop home screen](docs/screenshots/home.png)
+![A finished shoot in Aaina Desktop](docs/screenshots/shoot.webp)
 
 Add a photo of what you sell, pick a studio model, choose poses and a scene, and get photos you can use in your shop. There is no account to make. Your shoots, photos and models stay on your computer.
+
+**New here?** The [tutorials](docs/tutorials/README.md) walk through everything in a few minutes each, and there is a short [demo video](https://desktop.aaina.world/tutorials.html#video).
+
+## Why this exists
+
+Good product photos sell, but a photoshoot with a model, a studio and a photographer is out of reach for most people starting out. [Aaina](https://aaina.world) is a studio that makes those photos with AI. We used AI to build Aaina Desktop: a subset of Aaina's features, rebuilt as a free, open-source app, so that anyone starting a business, or anyone without the money for photoshoots or subscriptions, can have studio-quality photos of what they sell from day one.
+
+There is no subscription and nothing to buy from us. You bring your own OpenAI account and pay OpenAI only for the photos you make, a few cents each. The studio models, poses and scenes come with the app, and everything you make stays on your computer.
 
 ## Download
 
@@ -49,10 +57,12 @@ ChatGPT plans can't make pictures in other apps yet; photos switch over when Ope
 
 ## Getting a key
 
-1. Make or sign in to an account at [platform.openai.com](https://platform.openai.com).
-2. Add a little credit under Billing.
-3. Open API keys, make a new key and copy it.
-4. Paste it in Aaina Desktop when it asks.
+1. Make or sign in to an account at [platform.openai.com](https://platform.openai.com). It is OpenAI's developer site, separate from a ChatGPT subscription.
+2. Add a little credit under Billing. $5 is about 100 standard photos.
+3. Open [API keys](https://platform.openai.com/api-keys), make a new key and copy it.
+4. Paste it in Aaina Desktop when it asks, and press Check key.
+
+More in [Getting started](docs/tutorials/01-getting-started.md).
 
 OpenAI may ask you to verify your organisation before it lets you make photos. That is a step on their side and usually quick.
 

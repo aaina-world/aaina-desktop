@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aaina Desktop tutorials</title>
+<meta name="description" content="How to use Aaina Desktop: connect OpenAI, get a key, make your first shoot, edit and save photos, ghost mannequin, flat-lay, your own models, poses and scenes, and settings.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="site.css">
+</head>
+<body class="tut">
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="/"><img src="favicon.svg" alt="" width="28" height="28">Aaina Desktop</a>
+    <nav><a href="/">Home</a><a href="https://github.com/aaina-world/aaina-desktop">GitHub</a></nav>
+  </header>
+
+  <div class="tut-hero">
+    <span class="eyebrow"><i></i>Tutorials</span>
+    <h1>Everything in Aaina Desktop, in <em>a few minutes</em>.</h1>
+    <p class="lead">From connecting OpenAI to your first finished photos, your own models, poses and scenes, and keeping your work safe.</p>
+    <nav class="toc" aria-label="On this page">
+      <a href="#video">Demo video</a>
+      <a href="#why">Why it's free</a>
+      <a href="#start">Getting started</a>
+      <a href="#key">Get an OpenAI key</a>
+      <a href="#shoot">Your first shoot</a>
+      <a href="#edit">Edit and save</a>
+      <a href="#ghost">Ghost and flat-lay</a>
+      <a href="#models">Your own models</a>
+      <a href="#poses">Your poses and scenes</a>
+      <a href="#library">Shoots and Library</a>
+      <a href="#settings">Settings and privacy</a>
+      <a href="#costs">Costs</a>
+    </nav>
+  </div>
+
+  <section id="video" class="tut-video">
+    <video controls preload="metadata" playsinline poster="video/aaina-desktop-demo.jpg" width="1920" height="1200">
+      <source src="video/aaina-desktop-demo.mp4" type="video/mp4">
+    </video>
+    <p class="small">The whole app in about three minutes, with sound. Every photo in it was made with Aaina Desktop.</p>
+  </section>
+</div>
+
+<section id="why" class="alt">
+  <div class="wrap two">
+    <div>
+      <h2>Why it's <em>free</em></h2>
+    </div>
+    <div class="prose">
+      <p>Good product photos sell, but a photoshoot with a model, a studio and a photographer is out of reach for most people starting out. <a href="https://aaina.world">Aaina</a> is a studio that makes those photos with AI.</p>
+      <p>We used AI to build Aaina Desktop: a part of Aaina's features, rebuilt as a free, open-source app, so anyone starting a business, or anyone without money for photoshoots or subscriptions, can have studio-quality photos of what they sell from day one.</p>
+      <p>There is nothing to buy from us. You use your own OpenAI account and pay OpenAI only for the photos you make, a few cents each. Everything you make stays on your computer.</p>
+    </div>
+  </div>
+</section>
+
+<div class="wrap tut-body">
+  <article id="start">
+    <h2>1. Getting started</h2>
+    <p>Download the app for Mac, Windows or Linux from the <a href="/">home page</a>. There is no account to make. The first builds are not signed yet: on a Mac, open the app once, then choose Open Anyway in System Settings, Privacy and Security; on Windows, choose More info, then Run anyway.</p>
+    <p>Photos are made by OpenAI's image model with <b>your own OpenAI key</b>, so you pay OpenAI directly, at their price, with nothing added. You can connect in two ways, and use both:</p>
+    <ul>
+      <li><b>Sign in with ChatGPT</b> (optional). Before it makes a photo, the app reads your product: what it is, its colour, fabric and details, and who it is for. Signed in, every reading uses your ChatGPT plan, at no cost to your key. If ChatGPT can't answer, the key reads instead.</li>
+      <li><b>Your OpenAI key</b> makes the photos, poses, scenes and models. Without ChatGPT it also does the readings, for a fraction of a cent each. It is kept in your computer's keychain and only sent to OpenAI.</li>
+    </ul>
+    <p>ChatGPT plans can't make pictures in other apps yet, so photos need the key. The app will switch photos over when OpenAI allows it.</p>
+    <figure><img src="img/t/03-connected.webp" alt="Connect OpenAI: signed in with ChatGPT, and an OpenAI key that works" loading="lazy" width="1600" height="1000"></figure>
+  </article>
+
+  <article id="key">
+    <h2>Get an OpenAI key</h2>
+    <ol>
+      <li>Go to <a href="https://platform.openai.com">platform.openai.com</a> and sign up or sign in. It is OpenAI's developer site, a separate account from a ChatGPT subscription, though you can use the same email.</li>
+      <li>Open Settings, Billing, and add a little credit. $5 is plenty to start: about 100 standard photos.</li>
+      <li>Open <a href="https://platform.openai.com/api-keys">API keys</a>, choose Create new secret key, name it "Aaina Desktop", and copy it. OpenAI shows it only once.</li>
+      <li>In Aaina Desktop, paste it into API key and press Check key. "Key works" means you are ready.</li>
+    </ol>
+    <p>OpenAI may ask a new account to verify the organisation before it makes pictures; the app shows the link if so. You can set a monthly spending limit in OpenAI's billing settings, and delete a key any time.</p>
+  </article>
+
+  <article id="shoot">
+    <h2>2. Your first shoot</h2>
+    <p>A shoot is one product on one model, in one scene, in up to six poses; each pose is one photo. Start with New shoot, or drop a product photo on Home.</p>
+    <h3>Add your product</h3>
+    <p>One clear photo is enough: the whole product, even light, a plain background. A back photo and a close-up make the result more faithful. The app reads it and shows <b>What we see</b>; correct anything that is wrong.</p>
+    <figure><img src="img/t/11-product.webp" alt="Add your product, with what the app read from the photo" loading="lazy" width="1600" height="1000"></figure>
+    <h3>Pick a model</h3>
+    <p>The best fits for your product come first. Search in plain words or filter by gender, age, look, body and collections.</p>
+    <figure><img src="img/t/12-models.webp" alt="Choose a model, suggested for a slip dress" loading="lazy" width="1600" height="1000"></figure>
+    <h3>Choose poses</h3>
+    <p>Poses made for your kind of product come first. Filter by framing or style, or search. Pick up to six.</p>
+    <figure><img src="img/t/15-poses-picked.webp" alt="Three poses picked" loading="lazy" width="1600" height="1000"></figure>
+    <h3>Pick a scene</h3>
+    <p>A studio or a place from the catalogue, a plain colour (free), or a scene you made. White studio is the safest for marketplaces.</p>
+    <figure><img src="img/t/17-scene-picked.webp" alt="A warm studio scene picked" loading="lazy" width="1600" height="1000"></figure>
+    <h3>Review and make</h3>
+    <p>Set the frame and expression for each pose, choose Standard or High quality, and see the total before anything is sent. Photos arrive in about a minute each.</p>
+    <figure><img src="img/t/20-review.webp" alt="Review with the price before anything is sent" loading="lazy" width="1600" height="1000"></figure>
+    <figure><img src="img/t/22-shoot-done.webp" alt="A finished shoot with three photos" loading="lazy" width="1600" height="1000"></figure>
+  </article>
+
+  <article id="edit">
+    <h2>3. Edit and save photos</h2>
+    <p>Open a photo to check it. Compare slides it against your product photo. Every change makes a new version and keeps the earlier ones:</p>
+    <ul>
+      <li><b>Make again:</b> a new version from the same choices.</li>
+      <li><b>Fix something:</b> one small change in plain words, the rest stays.</li>
+      <li><b>Other colours:</b> the same photo with the product in up to six other colours.</li>
+      <li><b>Frame and expression:</b> crop closer or change the smile.</li>
+    </ul>
+    <figure><img src="img/t/24-fix.webp" alt="Fix something in the photo viewer" loading="lazy" width="1600" height="1000"></figure>
+    <p><b>Save photo</b> as a high-quality JPEG or an original PNG, square, portrait, tall or in a marketplace's own shape. Every saved photo is marked as AI-made inside the file; the picture is not changed. A photo OpenAI refuses is not charged.</p>
+    <figure><img src="img/t/26-save.webp" alt="Save a photo: file type, shape and folder" loading="lazy" width="1600" height="1000"></figure>
+  </article>
+
+  <article id="ghost">
+    <h2>4. Ghost mannequin and flat-lay</h2>
+    <p><b>Ghost mannequin:</b> the garment alone in its worn 3D shape, from the front, three-quarter, side and back (a back photo makes the back exact). <b>Flat-lay:</b> laid flat and shot from above, clean, neatly folded or styled. Start them like any shoot.</p>
+    <figure><img src="img/t/31-ghost-angles.webp" alt="Ghost mannequin angles" loading="lazy" width="1600" height="1000"></figure>
+  </article>
+
+  <article id="models">
+    <h2>5. Your own models</h2>
+    <p>Make a model only you can use: describe a person and pick one of three faces, or use 1 to 3 photos of a real adult who has agreed to be your model. The app makes a <b>reference sheet</b>, six photos of the same person, that keeps the face and body the same in every photo.</p>
+    <figure><img src="img/t/43-model-pick-face.webp" alt="Pick one of three faces" loading="lazy" width="1600" height="1000"></figure>
+    <figure><img src="img/t/45-model-ready.webp" alt="The finished reference sheet" loading="lazy" width="1600" height="1000"></figure>
+  </article>
+
+  <article id="poses">
+    <h2>6. Your own poses and scenes</h2>
+    <p>Describe a pose in words, or show one in a photo (only read, never kept). Describe a place for a scene, optionally with a reference photo. Scenes never have people in them. Each is about $0.04, and is kept in your Library for every shoot.</p>
+    <figure><img src="img/t/46-make-pose.webp" alt="Make a pose from words" loading="lazy" width="1600" height="1000"></figure>
+    <figure><img src="img/t/49-scenes-made.webp" alt="A scene you made, in your Library" loading="lazy" width="1600" height="1000"></figure>
+  </article>
+
+  <article id="library">
+    <h2>7. Shoots and Library</h2>
+    <p><b>Shoots</b> lists everything you made: filter, search, save or delete several at once, and open each shoot's folder. <b>Library</b> keeps your products, models, poses and scenes ready for any shoot.</p>
+    <figure><img src="img/t/50-shoots.webp" alt="Shoots" loading="lazy" width="1600" height="1000"></figure>
+  </article>
+
+  <article id="settings">
+    <h2>8. Settings, backup and privacy</h2>
+    <p>Change your connection, default quality, how many photos are made at once, the photos folder and theme; keep the catalogue for offline use; check for updates. <b>Back up everything</b> to one file and restore it on any computer.</p>
+    <figure><img src="img/t/51-settings-data.webp" alt="Back up, restore and delete in Settings" loading="lazy" width="1600" height="1000"></figure>
+    <p><b>Stays on your computer:</b> products, shoots, photos, own models, settings and your key. <b>Sent to OpenAI:</b> your product photos, plus the model, pose and scene for each photo you make. <b>Sent to Aaina:</b> nothing; the app only downloads the public catalogue. No account, no tracking, no ads.</p>
+  </article>
+
+  <article id="costs">
+    <h2>Costs</h2>
+    <table>
+      <tr><td>A photo, standard quality</td><td class="mono">about $0.05</td></tr>
+      <tr><td>A photo, high quality</td><td class="mono">about $0.20</td></tr>
+      <tr><td>Fix something, or each other colour</td><td class="mono">about $0.05</td></tr>
+      <tr><td>A ghost mannequin angle or flat-lay style</td><td class="mono">about $0.05</td></tr>
+      <tr><td>Your own pose or scene</td><td class="mono">about $0.04</td></tr>
+      <tr><td>Your own model (3 faces, then the sheet)</td><td class="mono">about $0.15 + $0.20</td></tr>
+      <tr><td>Reading a product</td><td class="mono">free with ChatGPT</td></tr>
+    </table>
+    <p class="small">Billed by OpenAI to your own account. Aaina Desktop is free. The longer guides are on <a href="https://github.com/aaina-world/aaina-desktop/tree/main/docs/tutorials">GitHub</a>.</p>
+  </article>
+</div>
+
+<footer>
+  <div class="wrap">
+    <span>MIT licensed code. &copy; 2026 Aaina</span>
+    <nav>
+      <a href="/">Home</a>
+      <a href="https://github.com/aaina-world/aaina-desktop/blob/main/PRIVACY.md">Privacy</a>
+      <a href="https://github.com/aaina-world/aaina-desktop">GitHub</a>
+    </nav>
+  </div>
+</footer>
+</body>
+</html>
