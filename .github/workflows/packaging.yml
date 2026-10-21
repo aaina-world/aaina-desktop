@@ -12,6 +12,7 @@ on:
 jobs:
   flathub:
     runs-on: ubuntu-24.04
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - name: Install Flatpak tools
@@ -50,6 +51,7 @@ jobs:
 
   winget:
     runs-on: windows-latest
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - name: Make sure winget is here
@@ -68,10 +70,11 @@ jobs:
           winget validate --manifest $dir.DirectoryName
           "MANIFEST=$($dir.DirectoryName)" | Out-File -FilePath $env:GITHUB_ENV -Append
       - name: Install with winget, as a person would
+        timeout-minutes: 15
         shell: pwsh
         run: |
           winget settings --enable LocalManifestFiles
-          winget install --manifest $env:MANIFEST --scope user --silent --accept-package-agreements --accept-source-agreements --disable-interactivity
+          winget install --manifest $env:MANIFEST --scope user --silent --accept-package-agreements --accept-source-agreements --disable-interactivity --verbose-logs
           if ($LASTEXITCODE -ne 0) { throw "winget install failed: $LASTEXITCODE" }
       - name: Open it
         shell: pwsh
@@ -88,6 +91,12 @@ jobs:
           $bmp.Save("out/winget.png")
           if ($app.HasExited) { throw "The app closed on its own" }
           Stop-Process -Id $app.Id
+      - name: Keep winget's own log
+        if: always()
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force out | Out-Null
+          Get-ChildItem "$env:LOCALAPPDATA\Packages\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe\LocalState\DiagOutputDir" -ErrorAction SilentlyContinue | Copy-Item -Destination out -ErrorAction SilentlyContinue
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always()
         with:
@@ -97,12 +106,15 @@ jobs:
 
   homebrew:
     runs-on: macos-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - name: Put the cask in a local tap
         run: |
           brew tap-new --no-git aaina-world/test
-          cp packaging/homebrew/Casks/aaina-desktop.rb "$(brew --repository)/Library/Taps/aaina-world/homebrew-test/Casks/"
+          tap="$(brew --repository)/Library/Taps/aaina-world/homebrew-test"
+          mkdir -p "$tap/Casks"
+          cp packaging/homebrew/Casks/aaina-desktop.rb "$tap/Casks/"
       - name: Homebrew's own check
         run: brew audit --cask --online --strict aaina-world/test/aaina-desktop || echo "::warning::brew audit has findings"
       - name: Install with Homebrew, as a person would
