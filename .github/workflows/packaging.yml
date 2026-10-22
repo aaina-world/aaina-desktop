@@ -59,9 +59,10 @@ jobs:
         shell: pwsh
         run: |
           # The newest winget, so it knows the manifest format Microsoft asks for (1.12).
-          Install-PSResource -Name Microsoft.WinGet.Client -TrustRepository -Quiet
-          Import-Module Microsoft.WinGet.Client
-          Repair-WinGetPackageManager -AllUsers -Latest
+          # Straight from winget's latest release (a download, not GitHub's rate-limited API).
+          $bundle = "$env:RUNNER_TEMP\winget.msixbundle"
+          Invoke-WebRequest -Uri https://github.com/microsoft/winget-cli/releases/latest/download/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle -OutFile $bundle
+          Add-AppxPackage -Path $bundle -ForceApplicationShutdown
           winget --version
       - name: winget's own check of the manifest
         shell: pwsh
