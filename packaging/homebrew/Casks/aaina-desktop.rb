@@ -1,8 +1,8 @@
 # Homebrew cask for our own tap (aaina-world/homebrew-tap): brew install aaina-world/tap/aaina-desktop
 # Homebrew's main list only takes signed apps, and these builds aren't signed yet.
 cask "aaina-desktop" do
-  version "0.1.3"
-  sha256 "9867d513d18fda317b1b30c99d6391dff76688e8b0fc39dfd9c365e1300104d7"
+  version "0.1.4"
+  sha256 "8cd54005b8a881cc59e7efbe0a1359061c9451301e0a34e6477beb0e32181dbe"
 
   url "https://github.com/aaina-world/aaina-desktop/releases/download/v#{version}/Aaina.Desktop_#{version}_universal.dmg",
       verified: "github.com/aaina-world/aaina-desktop/"
