@@ -21,6 +21,7 @@ Get the latest version from the **[releases page](https://github.com/aaina-world
 | System | File | How to install |
 |---|---|---|
 | **Mac** (Apple silicon and Intel) | `Aaina.Desktop_<version>_universal.dmg` | Open the `.dmg` and drag Aaina Desktop into Applications. |
+| **Mac**, with [Homebrew](https://brew.sh) | | `brew install aaina-world/tap/aaina-desktop` |
 | **Windows** 10 and 11 | `Aaina.Desktop_<version>_x64-setup.exe` (or `_x64_en-US.msi`) | Run it and follow the steps. |
 | **Linux**, Debian or Ubuntu | `Aaina.Desktop_<version>_amd64.deb` | `sudo apt install ./Aaina.Desktop_<version>_amd64.deb` |
 | **Linux**, Fedora or openSUSE | `Aaina.Desktop-<version>-1.x86_64.rpm` | `sudo dnf install ./Aaina.Desktop-<version>-1.x86_64.rpm` |
