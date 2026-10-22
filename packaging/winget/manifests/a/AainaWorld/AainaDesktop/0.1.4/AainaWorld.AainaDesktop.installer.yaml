@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=https://aka.ms/winget-manifest.installer.1.6.0.schema.json
+# yaml-language-server: $schema=https://aka.ms/winget-manifest.installer.1.12.0.schema.json
 PackageIdentifier: AainaWorld.AainaDesktop
 PackageVersion: 0.1.4
 InstallerLocale: en-US
@@ -18,4 +18,4 @@ Installers:
     InstallerSha256: 297B9B4D041D73D383E79C884EA4273114E044BACD1FE99B43AC1C87242A7248
     UpgradeBehavior: install
 ManifestType: installer
-ManifestVersion: 1.6.0
+ManifestVersion: 1.12.0
