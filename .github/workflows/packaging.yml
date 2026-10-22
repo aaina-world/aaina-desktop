@@ -55,21 +55,23 @@ jobs:
     timeout-minutes: 40
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-      - name: Make sure the newest winget is here
+      - name: Make sure winget is here
         shell: pwsh
-        run: |
-          # The newest winget, so it knows the manifest format Microsoft asks for (1.12).
-          # Straight from winget's latest release (a download, not GitHub's rate-limited API).
-          $bundle = "$env:RUNNER_TEMP\winget.msixbundle"
-          Invoke-WebRequest -Uri https://github.com/microsoft/winget-cli/releases/latest/download/Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle -OutFile $bundle
-          Add-AppxPackage -Path $bundle -ForceApplicationShutdown
-          winget --version
+        run: winget --version
+
       - name: winget's own check of the manifest
         shell: pwsh
         run: |
+          # The manifest is in format 1.12 (what Microsoft asks for and checks with its newest winget). The runner's winget
+          # may only know 1.10, whose fields are the same, so the local check uses a copy labelled 1.10.
           $dir = Get-ChildItem packaging/winget/manifests -Recurse -Filter *.installer.yaml | Select-Object -First 1
-          winget validate --manifest $dir.DirectoryName
-          "MANIFEST=$($dir.DirectoryName)" | Out-File -FilePath $env:GITHUB_ENV -Append
+          $copy = "$env:RUNNER_TEMP\manifest"
+          New-Item -ItemType Directory -Force $copy | Out-Null
+          Get-ChildItem $dir.DirectoryName -Filter *.yaml | ForEach-Object {
+            (Get-Content $_.FullName -Raw) -replace '1\.12\.0', '1.10.0' | Set-Content -NoNewline (Join-Path $copy $_.Name)
+          }
+          winget validate --manifest $copy
+          "MANIFEST=$copy" | Out-File -FilePath $env:GITHUB_ENV -Append
       - name: Install with winget, as a person would
         timeout-minutes: 15
         shell: pwsh
