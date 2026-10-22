@@ -6,7 +6,7 @@ Aaina Desktop in three free stores. Everything here is ready to submit; nothing 
 |---|---|---|---|
 | [Flathub](https://flathub.org) | Linux (every distribution) | Software / Discover, or `flatpak install flathub world.aaina.AainaDesktop` | `flathub/` |
 | [winget](https://learn.microsoft.com/windows/package-manager/) | Windows 10 and 11 | `winget install AainaWorld.AainaDesktop` | `winget/manifests/…` |
-| Homebrew, our own tap | Mac | `brew install aaina-world/tap/aaina-desktop` | `homebrew/Casks/aaina-desktop.rb` |
+| Homebrew, [our own tap](https://github.com/aaina-world/homebrew-tap) (live) | Mac | `brew install aaina-world/tap/aaina-desktop` | `homebrew/Casks/aaina-desktop.rb` |
 
 The **Store packages** workflow (`.github/workflows/packaging.yml`) installs each package on a fresh machine, runs the store's own checks, opens the app and keeps a screenshot. Run it before every submission.
 
@@ -41,8 +41,6 @@ Each store takes a pull request on GitHub, from a GitHub account. The account's 
 
 Homebrew's main list only accepts signed and notarised apps, so the cask lives in our own tap:
 
-1. Create a public repository `aaina-world/homebrew-tap` with the cask at `Casks/aaina-desktop.rb`.
-2. People then run `brew install aaina-world/tap/aaina-desktop`.
-3. Updates: copy the cask from `update.mjs` into the tap.
+The tap is live at [aaina-world/homebrew-tap](https://github.com/aaina-world/homebrew-tap), and people install with `brew install aaina-world/tap/aaina-desktop`. After each release, copy the cask that `update.mjs` writes into the tap's `Casks/` folder.
 
 The cask keeps macOS's own check: until the app is signed, people approve it once with Open Anyway (the cask's caveats say how), the same as with the download.

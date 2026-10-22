@@ -140,6 +140,11 @@ jobs:
           kill $app
       - name: Uninstall cleanly
         run: brew uninstall --cask --zap aaina-world/test/aaina-desktop
+      - name: The public tap installs the same way (brew install aaina-world/tap/aaina-desktop)
+        run: |
+          brew install --cask aaina-world/tap/aaina-desktop
+          test -d "/Applications/Aaina Desktop.app"
+          brew uninstall --cask --zap aaina-world/tap/aaina-desktop
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always()
         with:
