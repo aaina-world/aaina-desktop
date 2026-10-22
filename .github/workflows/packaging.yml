@@ -78,6 +78,10 @@ jobs:
           # as the README says). Nobody can click it on a test machine, so it is switched off here only.
           New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System" -Force | Out-Null
           Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System" -Name EnableSmartScreen -Value 0 -Type DWord
+          # Same for the "Do you want to run this file?" prompt on files downloaded from the internet.
+          New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Attachments" -Force | Out-Null
+          Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Attachments" -Name SaveZoneInformation -Value 1 -Type DWord
+          $env:SEE_MASK_NOZONECHECKS = "1"
           winget settings --enable LocalManifestFiles
           winget install --manifest $env:MANIFEST --scope user --silent --accept-package-agreements --accept-source-agreements --disable-interactivity --verbose-logs
           if ($LASTEXITCODE -ne 0) { throw "winget install failed: $LASTEXITCODE" }
@@ -127,11 +131,12 @@ jobs:
       - name: Open it
         run: |
           mkdir -p out
-          open -a "Aaina Desktop"
+          "/Applications/Aaina Desktop.app/Contents/MacOS/aaina-desktop" > out/app.log 2>&1 &
+          app=$!
           sleep 25
           screencapture -x out/homebrew.png || true
-          pgrep -f "Aaina Desktop.app" || { echo "The app is not running"; exit 1; }
-          osascript -e 'quit app "Aaina Desktop"' || true
+          kill -0 $app || { cat out/app.log; echo "The app closed on its own"; exit 1; }
+          kill $app
       - name: Uninstall cleanly
         run: brew uninstall --cask --zap aaina-world/test/aaina-desktop
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
