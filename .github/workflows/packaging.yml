@@ -28,7 +28,8 @@ jobs:
           flatpak run --command=flatpak-builder-lint org.flatpak.Builder appstream world.aaina.AainaDesktop.metainfo.xml
       - name: Build and install
         working-directory: packaging/flathub
-        run: flatpak run org.flatpak.Builder --user --install-deps-from=flathub --install --force-clean --repo=repo build world.aaina.AainaDesktop.yml
+        # Installing the runtime needs a session bus, which a CI machine doesn't start on its own.
+        run: dbus-run-session -- flatpak run org.flatpak.Builder --user --install-deps-from=flathub --install --force-clean --repo=repo build world.aaina.AainaDesktop.yml
       - name: Flathub's check of the built app
         working-directory: packaging/flathub
         run: flatpak run --command=flatpak-builder-lint org.flatpak.Builder repo repo || echo "::warning::repo lint has findings (some only apply on Flathub's own build servers)"
@@ -73,6 +74,10 @@ jobs:
         timeout-minutes: 15
         shell: pwsh
         run: |
+          # The builds aren't signed yet, so Windows shows its "unrecognised app" warning once (a person clicks Run anyway,
+          # as the README says). Nobody can click it on a test machine, so it is switched off here only.
+          New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System" -Force | Out-Null
+          Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System" -Name EnableSmartScreen -Value 0 -Type DWord
           winget settings --enable LocalManifestFiles
           winget install --manifest $env:MANIFEST --scope user --silent --accept-package-agreements --accept-source-agreements --disable-interactivity --verbose-logs
           if ($LASTEXITCODE -ne 0) { throw "winget install failed: $LASTEXITCODE" }

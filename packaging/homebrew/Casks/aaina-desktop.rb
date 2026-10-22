@@ -15,8 +15,6 @@ cask "aaina-desktop" do
     strategy :github_latest
   end
 
-  depends_on macos: ">= :catalina"
-
   app "Aaina Desktop.app"
 
   # The app isn't signed yet, so macOS would refuse to open it from a download. It was built from public code by GitHub
