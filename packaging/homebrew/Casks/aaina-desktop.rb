@@ -17,12 +17,10 @@ cask "aaina-desktop" do
 
   app "Aaina Desktop.app"
 
-  # The app isn't signed yet, so macOS would refuse to open it from a download. It was built from public code by GitHub
-  # Actions; this removes the "downloaded from the internet" mark so it opens normally.
-  postflight do
-    system_command "/usr/bin/xattr",
-                   args: ["-dr", "com.apple.quarantine", "#{appdir}/Aaina Desktop.app"]
-  end
+  caveats <<~EOS
+    Aaina Desktop isn't signed by Apple yet, so macOS asks once before it opens.
+    Open the app, then go to System Settings, Privacy & Security, and choose Open Anyway.
+  EOS
 
   zap trash: [
     "~/Library/Application Support/world.aaina.desktop",

@@ -83,7 +83,7 @@ describe("restore", () => {
     expect(vfs.has("/data/aaina.db-shm")).toBe(false);
     expect(text("/data/products/p/1.jpg")).toBe("product");
     expect(text("/Pictures/Aaina/Shoot/a.png")).toBe("photo");
-    expect(JSON.parse(text("/data/restored.json"))).toEqual({ ...HERE, backedUpFrom: "/Old/Pictures/Aaina" });
+    expect(JSON.parse(text("/data/restored.json"))).toEqual(HERE);
   });
   it("never lets the backup choose where photos go, and never overwrites a file", async () => {
     putFile("/B/aaina.db", DB);
@@ -104,11 +104,11 @@ describe("restore", () => {
     expect(text("/data/aaina.db")).toBe(DB);
   });
   it("on the next start keeps this computer's folders and points restored photos at their new folder", async () => {
-    putFile("/data/restored.json", JSON.stringify({ ...HERE, backedUpFrom: "/Old/Pictures/Aaina" }));
+    putFile("/data/restored.json", JSON.stringify(HERE));
     const update = vi.fn(async () => ({}));
     expect(await applyRestoreNote(db, files, { update })).toBe(true);
     expect(update).toHaveBeenCalledWith(HERE);
-    expect(sqls).toContain("UPDATE photos SET root = $1 WHERE root = $2");
+    expect(sqls).toContain("UPDATE photos SET root = $1 WHERE root IS NOT NULL");
     expect(vfs.has("/data/restored.json")).toBe(false);
     expect(await applyRestoreNote(db, files, { update })).toBe(false);
   });

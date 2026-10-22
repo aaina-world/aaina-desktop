@@ -118,3 +118,19 @@ describe("stored paths", () => {
       expect(() => insideRelative(bad)).toThrow(/outside Aaina's folders/);
   });
 });
+
+describe("deleting a photo", () => {
+  it("removes only that one picture file, never a folder or another kind of file", async () => {
+    const { createFiles } = await import("./files");
+    const files = createFiles();
+    putFile("/Downloads/unrelated-folder/keep.txt", "the person's file");
+    putFile("/Downloads/notes.txt", "the person's file");
+    putFile("/Pictures/Aaina/Shoot/photo-v1.png", "photo");
+    await files.removePhotoFile("/Downloads", "unrelated-folder");
+    await files.removePhotoFile("/Downloads", "notes.txt");
+    await files.removePhotoFile("/Pictures/Aaina", "Shoot/photo-v1.png");
+    expect(vfs.has("/Downloads/unrelated-folder/keep.txt")).toBe(true);
+    expect(vfs.has("/Downloads/notes.txt")).toBe(true);
+    expect(vfs.has("/Pictures/Aaina/Shoot/photo-v1.png")).toBe(false);
+  });
+});

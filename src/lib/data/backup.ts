@@ -45,9 +45,6 @@ export async function restoreFrom(
   if (!(await exists(backedUp))) throw new Error("This folder is not an Aaina backup.");
   const head = new TextDecoder().decode((await readFile(backedUp)).slice(0, SQLITE_HEADER.length));
   if (head !== SQLITE_HEADER) throw new Error("This folder is not an Aaina backup.");
-  const note = await files.join(folder, PHOTOS_NOTE);
-  const backedUpFrom = (await exists(note)) ? (await readTextFile(note)).trim() : null;
-
   await db.close();
   const configDir = await files.configDir();
   const live = await files.join(configDir, DB_NAME);
@@ -55,11 +52,11 @@ export async function restoreFrom(
   await files.copyOne(backedUp, live);
   for (const name of BACKED_UP_FOLDERS) await files.copyTree(await files.join(folder, name), await files.appPath(name));
   await files.copyTree(await files.join(folder, "photos"), here.photosFolder);
-  await writeTextFile(await files.join(configDir, RESTORE_NOTE), JSON.stringify({ ...here, backedUpFrom }));
+  await writeTextFile(await files.join(configDir, RESTORE_NOTE), JSON.stringify(here));
 }
 
 /**
- * After a restore: keep this computer's folders (not the ones in the restored settings), and point the restored photos
+ * After a restore: keep this computer's folders (not the ones in the restored settings), and point every restored photo
  * at the folder they were copied into. Returns true when a restore was applied.
  */
 export async function applyRestoreNote(
@@ -69,13 +66,11 @@ export async function applyRestoreNote(
 ): Promise<boolean> {
   const note = await files.join(await files.configDir(), RESTORE_NOTE);
   if (!(await exists(note))) return false;
-  const { photosFolder, saveFolder, backedUpFrom } = JSON.parse(await readTextFile(note)) as {
-    photosFolder: string;
-    saveFolder: string;
-    backedUpFrom: string | null;
-  };
+  const { photosFolder, saveFolder } = JSON.parse(await readTextFile(note)) as { photosFolder: string; saveFolder: string };
   await settings.update({ photosFolder, saveFolder });
-  if (backedUpFrom) await db.execute(`UPDATE photos SET root = $1 WHERE root = $2`, [photosFolder, backedUpFrom]);
+  // Every restored photo points at this computer's photos folder (where restore copied them), whatever folder the
+  // backup's database names: a folder from someone else's backup is never trusted for showing or deleting files.
+  await db.execute(`UPDATE photos SET root = $1 WHERE root IS NOT NULL`, [photosFolder]);
   await remove(note);
   return true;
 }

@@ -12,6 +12,8 @@ export type ImportedPhoto = { path: string; width: number; height: number };
 
 export type Files = ReturnType<typeof createFiles>;
 
+const PHOTO_FILE = /\.(png|jpe?g|webp)$/i;
+
 /**
  * A path stored relative to one of the app's folders (in the database, or in a backup): plain names only, so it can
  * never point outside that folder. Throws for an absolute path, a drive letter, a backslash or a ".." part.
@@ -112,7 +114,13 @@ export function createFiles() {
     if (await exists(absolutePath)) await remove(absolutePath, { recursive: true });
   }
   const removeApp = async (relative: string) => removeIfExists(await appPath(relative));
-  const removePhotoFile = async (photosFolder: string, relative: string) => removeIfExists(await photoPath(photosFolder, relative));
+  /** Deletes one finished photo: only a single picture file, never a folder and never any other kind of file. */
+  async function removePhotoFile(photosFolder: string, relative: string): Promise<void> {
+    if (!PHOTO_FILE.test(relative)) return;
+    const absolute = await photoPath(photosFolder, relative);
+    if (!(await exists(absolute)) || !(await stat(absolute)).isFile) return;
+    await remove(absolute);
+  }
 
   const reveal = (absolutePath: string) => revealItemInDir(absolutePath);
 

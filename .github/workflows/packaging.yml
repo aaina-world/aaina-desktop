@@ -131,6 +131,7 @@ jobs:
       - name: Open it
         run: |
           mkdir -p out
+          # Started directly, as macOS's Open Anyway would: the test machine can't click that.
           "/Applications/Aaina Desktop.app/Contents/MacOS/aaina-desktop" > out/app.log 2>&1 &
           app=$!
           sleep 25

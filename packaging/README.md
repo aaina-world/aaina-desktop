@@ -45,4 +45,4 @@ Homebrew's main list only accepts signed and notarised apps, so the cask lives i
 2. People then run `brew install aaina-world/tap/aaina-desktop`.
 3. Updates: copy the cask from `update.mjs` into the tap.
 
-The cask removes macOS's "downloaded from the internet" mark after installing, so the unsigned app opens without the Open Anyway step. The tap's README should say so plainly.
+The cask keeps macOS's own check: until the app is signed, people approve it once with Open Anyway (the cask's caveats say how), the same as with the download.
