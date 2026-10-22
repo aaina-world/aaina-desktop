@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.4 (22 Oct 2026)
+
+- After restoring a backup, every restored photo is treated as being in your own photos folder, whatever the backup says, and deleting a photo only ever removes that one picture file. A backup from someone else can't lead to other files being deleted.
+
 ## 0.1.3 (22 Oct 2026)
 
 Safety fixes from an independent review.
